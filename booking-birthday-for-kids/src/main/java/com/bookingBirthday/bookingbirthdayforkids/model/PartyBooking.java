@@ -52,4 +52,7 @@ public class PartyBooking extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
+
+    @OneToMany(mappedBy = "partyBooking")
+    private List<UpgradeService> upgradeServices;
 }
