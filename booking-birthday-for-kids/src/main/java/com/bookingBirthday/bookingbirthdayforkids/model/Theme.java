@@ -17,7 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Theme {
+public class Theme extends BaseEntity{
     @NotBlank(message = "Theme name cannot be blank")
     private String themeName;
     @NotBlank(message = "Description cannot be blank")

@@ -15,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Venue {
+public class Venue extends BaseEntity{
     @NotBlank(message = "Venue cannot be blank")
     private String venueName;
     @NotBlank(message = "Description cannot be blank")
