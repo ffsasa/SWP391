@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -16,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 public class Package extends BaseEntity{
     @NotBlank(message = "Package name cannot blank")
     private String packageName;
@@ -25,6 +23,4 @@ public class Package extends BaseEntity{
     @NotNull(message = "Pricing value cannot be null")
     @Min(value = 0, message = "Pricing value must be greater than or equal to 0")
     private float pricing;
-    @OneToMany(mappedBy = "pack")
-    private List<PackageService> packageServiceList;
 }

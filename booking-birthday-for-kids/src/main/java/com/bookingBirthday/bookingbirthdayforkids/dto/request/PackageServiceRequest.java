@@ -8,8 +8,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PackageServiceRequest {
-    private String serviceId;
-    private String packageId;
-    private String count;
-    private Float pricing;
+    private long serviceId;
+    private long packageId;
+    private int count;
+    private float pricing;
 }

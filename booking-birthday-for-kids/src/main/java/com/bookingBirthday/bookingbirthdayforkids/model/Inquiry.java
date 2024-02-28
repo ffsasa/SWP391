@@ -2,10 +2,7 @@ package com.bookingBirthday.bookingbirthdayforkids.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 public class Inquiry extends BaseEntity{
     @NotBlank(message = "Question cannot be blank")
     private String inquiryQuestion;

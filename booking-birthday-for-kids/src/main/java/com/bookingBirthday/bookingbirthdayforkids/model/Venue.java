@@ -2,15 +2,14 @@ package com.bookingBirthday.bookingbirthdayforkids.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 public class Venue extends BaseEntity {
     @NotBlank(message = "Venue cannot be blank")
     private String venueName;

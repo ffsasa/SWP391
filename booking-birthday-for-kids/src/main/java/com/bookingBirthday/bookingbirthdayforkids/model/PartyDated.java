@@ -3,10 +3,7 @@ package com.bookingBirthday.bookingbirthdayforkids.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
@@ -15,9 +12,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 public class PartyDated extends BaseEntity{
-    private String slotID;
-    private String venueID;
+    private long slotID;
+    private long venueID;
     @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDateTime Date;

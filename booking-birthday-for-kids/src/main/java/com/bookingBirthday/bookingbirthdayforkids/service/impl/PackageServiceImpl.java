@@ -2,7 +2,6 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.PackageRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
-import com.bookingBirthday.bookingbirthdayforkids.model.Account;
 import com.bookingBirthday.bookingbirthdayforkids.model.Package;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PackageRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.PackageService;
@@ -58,7 +57,9 @@ public class PackageServiceImpl implements PackageService {
     public ResponseEntity<ResponseObj> update(Long id, PackageRequest packageRequest) {
         Optional<Package> existPackage  = packageRepository.findById(id);
         if (existPackage.isPresent()){
-            existPackage.get().setUserName(accountRequest.getUserName() == null ? existAccount.get().getUserName() : packageRequest.getUserName());
+            existPackage.get().setPackageName(packageRequest.getPackageName() == null ? existPackage.get().getPackageName() : packageRequest.getPackageName());
+            existPackage.get().setPackageImgUrl(packageRequest.getPackageImgUrl() == null ? existPackage.get().getPackageImgUrl() : packageRequest.getPackageImgUrl());
+            existPackage.get().setPricing(packageRequest.getPricing() == 0 ? existPackage.get().getPricing() : packageRequest.getPricing());
             existPackage.get().setUpdateAt(LocalDateTime.now());
             packageRepository.save(existPackage.get());
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", existPackage));
@@ -70,6 +71,15 @@ public class PackageServiceImpl implements PackageService {
 
     @Override
     public ResponseEntity<ResponseObj> delete(Long id) {
-        return null;
+        Optional<Package> pack = packageRepository.findById(id);
+        if (pack.isPresent()){
+            pack.get().setActive(false);
+            pack.get().setUpdateAt(LocalDateTime.now());
+            packageRepository.save(pack.get());
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Delete successful", null));
+        }
+        else
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Package does not exist", null));
     }
-}
+    }
+
