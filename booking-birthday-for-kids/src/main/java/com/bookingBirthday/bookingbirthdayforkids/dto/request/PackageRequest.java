@@ -10,5 +10,5 @@ import lombok.*;
 public class PackageRequest {
     private String packageName;
     private String packageImgUrl;
-    private String pricing;
+    private Float pricing;
 }

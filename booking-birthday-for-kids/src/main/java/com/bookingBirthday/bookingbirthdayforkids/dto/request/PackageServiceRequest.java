@@ -11,5 +11,5 @@ public class PackageServiceRequest {
     private String serviceId;
     private String packageId;
     private String count;
-    private String pricing;
+    private Float pricing;
 }
