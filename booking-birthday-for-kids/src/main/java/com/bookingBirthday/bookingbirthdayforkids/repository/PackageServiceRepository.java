@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PackageServiceRepository extends JpaRepository<PackageService, Long> {
-    boolean existsById (Long Id);
+    boolean existsById (Long id);
 }

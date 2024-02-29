@@ -1,5 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -23,4 +24,7 @@ public class Package extends BaseEntity{
     @NotNull(message = "Pricing value cannot be null")
     @Min(value = 0, message = "Pricing value must be greater than or equal to 0")
     private float pricing;
+//    @OneToMany (mappedBy = "package")
+//    @JsonManagedReference
+//    private List<PackageService> packageServiceList;
 }

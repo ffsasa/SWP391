@@ -1,6 +1,7 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -22,7 +23,8 @@ public class Slot extends BaseEntity{
     @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDateTime TimeEnd;
-
-    @OneToMany (mappedBy = "slot")
-    private List<PartyDated> partyDatedList;
+//
+//    @OneToMany (mappedBy = "slot")
+//    @JsonManagedReference
+//    private List<PartyDated> partyDatedList;
 }

@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PartyDatedRepository extends JpaRepository<PartyDated, Long> {
+    boolean existsById(Long id);
 
 }

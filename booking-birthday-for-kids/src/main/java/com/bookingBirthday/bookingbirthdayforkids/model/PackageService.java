@@ -21,7 +21,8 @@ public class PackageService extends BaseEntity{
     @NotNull(message = "Pricing value cannot be null")
     @Min(value = 0, message = "Pricing value must be greater than or equal to 0")
     private float pricing;
-    @ManyToOne
-    @JoinColumn(name = "Package")
-    private Package Package;
+
+//    @ManyToOne
+//    @JoinColumn(name = "Package")
+//    private Package Package;
 }

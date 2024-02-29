@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SlotRepository extends JpaRepository<Slot, Long> {
+
+    //   boolean existsById(Long id);
 }
