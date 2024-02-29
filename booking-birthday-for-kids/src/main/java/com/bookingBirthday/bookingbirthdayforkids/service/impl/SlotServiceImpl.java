@@ -43,21 +43,15 @@ public class SlotServiceImpl implements SlotService {
         }
     }
 
-    @Override
-    public ResponseEntity<ResponseObj> create(SlotRequest slotRequest) {
-        return null;
-    }
 
-//    @Override
-//    public ResponseEntity<ResponseObj> create(SlotRequest slotRequest){
-//        if (slotRepository.existsById (slotRequest.getslotId())){
-//            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(), "Slot has already", null));}
-//        Slot slot = new Slot() ;
-//        slot.setTimeStart(slotRequest.getTimeStart());
-//        slot.setTimeEnd(slotRequest.getTimeEnd());
-//        slotRepository.save(slot);
-//        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(),"Create successful", slot));
-//    }
+    @Override
+    public ResponseEntity<ResponseObj> create(SlotRequest slotRequest){
+        Slot slot = new Slot() ;
+        slot.setTimeStart(slotRequest.getTimeStart());
+        slot.setTimeEnd(slotRequest.getTimeEnd());
+        slotRepository.save(slot);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(),"Create successful", slot));
+    }
 
     @Override
     public ResponseEntity<ResponseObj> update(Long id, SlotRequest slotRequest) {

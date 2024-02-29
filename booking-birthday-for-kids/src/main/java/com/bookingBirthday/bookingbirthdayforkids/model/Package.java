@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -24,7 +25,8 @@ public class Package extends BaseEntity{
     @NotNull(message = "Pricing value cannot be null")
     @Min(value = 0, message = "Pricing value must be greater than or equal to 0")
     private float pricing;
-//    @OneToMany (mappedBy = "package")
+
+//    @OneToMany(mappedBy = "apackage", cascade = CascadeType.ALL)
 //    @JsonManagedReference
-//    private List<PackageService> packageServiceList;
+//    private List<PackageService> packageServices = new ArrayList<>();
 }

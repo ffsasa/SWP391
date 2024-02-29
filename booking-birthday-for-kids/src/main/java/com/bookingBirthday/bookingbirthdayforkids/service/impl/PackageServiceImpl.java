@@ -34,7 +34,7 @@ public class PackageServiceImpl implements PackageService {
             if(Package.isPresent())
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), null, Package));
             else
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Account does not exist", null));
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Package does not exist", null));
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
@@ -42,13 +42,13 @@ public class PackageServiceImpl implements PackageService {
 
     @Override
     public ResponseEntity<ResponseObj> create(PackageRequest packageRequest) {
-        if (packageRepository.existsByPackageName(packageRequest.getPackageName())){
-            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(), "Package Name has already", null));}
         Package pack = new Package();
         pack.setPackageName(packageRequest.getPackageName());
         pack.setPackageImgUrl(packageRequest.getPackageImgUrl());
         pack.setPricing(packageRequest.getPricing());
-
+        pack.setActive(true);
+        pack.setCreateAt(LocalDateTime.now());
+        pack.setUpdateAt(LocalDateTime.now());
         packageRepository.save(pack);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(),"Create successful", pack));
     }

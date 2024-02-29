@@ -7,6 +7,7 @@ import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -23,8 +24,7 @@ public class Slot extends BaseEntity{
     @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDateTime TimeEnd;
-//
-//    @OneToMany (mappedBy = "slot")
-//    @JsonManagedReference
-//    private List<PartyDated> partyDatedList;
+
+//    @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL)
+//    private List<PartyDated> partyDateds = new ArrayList<>();
 }

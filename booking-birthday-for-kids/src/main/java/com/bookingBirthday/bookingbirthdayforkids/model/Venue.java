@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -23,7 +24,6 @@ public class Venue extends BaseEntity {
     private String location;
     private int capacity;
 
-//    @OneToMany (mappedBy = "venue")
-//    @JsonManagedReference
-//    private List<PartyDated> partyDatedList;
+//    @OneToMany(mappedBy = "venue", cascade = CascadeType.ALL)
+//    private List<Venue> venues = new ArrayList<>();
 }

@@ -19,12 +19,13 @@ public class PartyDated extends BaseEntity{
     @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDateTime Date;
+
 //    @ManyToOne
-//    @JoinColumn(name = "slot")
+//    @JoinColumn(name = "slot_id")
 //    private Slot slot;
 //
 //    @ManyToOne
-//    @JoinColumn(name = "venue")
+//    @JoinColumn(name = "venue_id")
 //    private Venue venue;
 
 }

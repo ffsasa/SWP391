@@ -42,12 +42,13 @@ public class PartyDatedServiceImpl implements PartyDatedService {
 
     @Override
     public ResponseEntity<ResponseObj> create(PartyDatedRequest partyDatedRequest){
-        if (partyDatedRepository.existsById(partyDatedRequest.getSlotId())){
-            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(), "PartyDate has already", null));}
         PartyDated partyDated = new PartyDated();
         partyDated.setSlotID(partyDatedRequest.getSlotId());
         partyDated.setVenueID(partyDatedRequest.getVenueId());
         partyDated.setDate(partyDatedRequest.getDate());
+        partyDated.setActive(true);
+        partyDated.setCreateAt(LocalDateTime.now());
+        partyDated.setUpdateAt(LocalDateTime.now());
 
         partyDatedRepository.save(partyDated);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(),"Create successful", partyDated));

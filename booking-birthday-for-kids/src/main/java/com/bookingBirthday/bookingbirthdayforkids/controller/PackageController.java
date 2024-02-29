@@ -2,7 +2,7 @@ package com.bookingBirthday.bookingbirthdayforkids.controller;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.PackageRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
-import com.bookingBirthday.bookingbirthdayforkids.model.PackageService;
+import com.bookingBirthday.bookingbirthdayforkids.service.PackageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +14,7 @@ public class PackageController {
     PackageService packageService;
 
     @GetMapping("/get-all")
-    public ResponseEntity<ResponseObj> getAll(){
-        return packageService.getAll();
+    public ResponseEntity<ResponseObj> getAll(){ return packageService.getAll();
     }
 
     @GetMapping("/get-id/{id}")

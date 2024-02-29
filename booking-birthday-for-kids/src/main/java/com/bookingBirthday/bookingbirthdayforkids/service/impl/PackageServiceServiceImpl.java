@@ -41,13 +41,14 @@ public class PackageServiceServiceImpl implements PackageServiceService {
 
     @Override
     public ResponseEntity<ResponseObj> create(PackageServiceRequest packageServiceRequest) {
-        if (packageServiceRepository.existsById(packageServiceRequest.getPackageId())){
-            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(), "Package ID has already", null));}
         PackageService packageService = new PackageService();
         packageService.setPackageID(packageServiceRequest.getPackageId());
         packageService.setServiceID(packageServiceRequest.getServiceId());
         packageService.setPricing(packageServiceRequest.getPricing());
         packageService.setCount(packageServiceRequest.getCount());
+        packageService.setActive(true);
+        packageService.setCreateAt(LocalDateTime.now());
+        packageService.setUpdateAt(LocalDateTime.now());
         packageServiceRepository.save(packageService);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(),"Create successful", packageService));
     }

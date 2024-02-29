@@ -23,6 +23,7 @@ public class PackageService extends BaseEntity{
     private float pricing;
 
 //    @ManyToOne
-//    @JoinColumn(name = "Package")
-//    private Package Package;
+//    @JoinColumn(name = "package_id")
+//    private Package aPackage;
+
 }
