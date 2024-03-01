@@ -1,5 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -17,7 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 public class Venue extends BaseEntity{
-    @NotBlank(message = "Venue cannot be blank")
+    @NotBlank(message = "Venue name cannot be blank")
     private String venueName;
     @NotBlank(message = "Description cannot be blank")
     private String venueDescription;
@@ -28,6 +29,7 @@ public class Venue extends BaseEntity{
     private int capacity;
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(
             name = "theme_venue",
             joinColumns = @JoinColumn(name = "venue_id"),
@@ -36,5 +38,6 @@ public class Venue extends BaseEntity{
     Set<Theme> themeSet;
 
     @OneToMany(mappedBy = "venue")
+    @JsonIgnore
     private List<PartyBooking> partyBookingList;
 }

@@ -36,9 +36,9 @@ public class themeController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id,@RequestBody ThemeRequest themeRequest, BindingResult bindingResult){
-//        if(bindingResult.hasErrors())
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST.toString());
+    public ResponseEntity<?> update(@PathVariable Long id,@Valid @RequestBody ThemeRequest themeRequest, BindingResult bindingResult){
+        if(bindingResult.hasErrors())
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST.toString());
         return themeService.update(id, themeRequest);
     }
 
