@@ -1,5 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
@@ -25,8 +26,10 @@ public class Theme extends BaseEntity{
     private String themeImgUrl;
 
     @ManyToMany(mappedBy = "themeSet")
+    @JsonIgnore
     Set<Venue> venueSet;
 
     @OneToMany(mappedBy = "theme")
+    @JsonIgnore
     private List<PartyBooking> partyBookingList;
 }

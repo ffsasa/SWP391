@@ -24,13 +24,10 @@ import java.util.List;
 @Entity
 public class PartyBooking extends BaseEntity{
     @NotBlank(message = "Kid Name cannot blank")
-    @NotNull(message = "Kid Name cannot null")
     private String kidName;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
-    @JsonIgnore
     private LocalDate kidDOB;
     @NotBlank(message = "Email cannot blank")
-    @NotNull(message = "Email cannot null")
     @Email(message = "Invalid email format")
     private String email;
     @NotBlank(message = "Phone number cannot be blank")
