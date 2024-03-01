@@ -1,5 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Getter
@@ -8,7 +9,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PackageRequest {
-    private String packageName;
+    @NotBlank(message = "Package name cannot blank")
+    private String packageName ;
+    @NotBlank(message = "PackageImgUrl cannot blank")
     private String packageImgUrl;
     private float  pricing;
 }

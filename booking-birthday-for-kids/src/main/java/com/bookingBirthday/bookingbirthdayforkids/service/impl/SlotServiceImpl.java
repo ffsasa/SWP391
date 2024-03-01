@@ -49,6 +49,7 @@ public class SlotServiceImpl implements SlotService {
         Slot slot = new Slot() ;
         slot.setTimeStart(slotRequest.getTimeStart());
         slot.setTimeEnd(slotRequest.getTimeEnd());
+        slot.setActive(true);
         slotRepository.save(slot);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(),"Create successful", slot));
     }
@@ -73,7 +74,7 @@ public class SlotServiceImpl implements SlotService {
         Optional<Slot> slot = slotRepository.findById(id);
         if (slot.isPresent()){
             slot.get().setActive(false);
-            slot.get().setUpdateAt(LocalDateTime.now());
+            slot.get().setDeleteAt(LocalDateTime.now());
             slotRepository.save(slot.get());
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Delete successful", null));
         }

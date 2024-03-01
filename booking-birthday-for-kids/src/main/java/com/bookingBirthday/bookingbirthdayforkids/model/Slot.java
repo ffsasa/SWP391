@@ -17,14 +17,15 @@ import java.util.List;
 @Entity
 @Builder
 public class Slot extends BaseEntity{
-    @JsonIgnore
+//    @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-mm-dd")
-    private LocalDateTime TimeStart;
+    private String timeStart;
 
-    @JsonIgnore
+//    @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-mm-dd")
-    private LocalDateTime TimeEnd;
+    private String timeEnd;
 
-//    @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL)
-//    private List<PartyDated> partyDateds = new ArrayList<>();
+    @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<PartyDated> partyDated;
 }

@@ -19,7 +19,7 @@ public class PackageServiceController {
     }
 
     @GetMapping("/get-id/{id}")
-    public ResponseEntity<ResponseObj> getByid(@PathVariable Long id){
+    public ResponseEntity<ResponseObj> getById(@PathVariable Long id){
         return packageServiceService.getById(id);
     }
 

@@ -75,7 +75,7 @@ public class PartyDatedServiceImpl implements PartyDatedService {
         Optional<PartyDated> partyDated = partyDatedRepository.findById(id);
         if (partyDated.isPresent()){
             partyDated.get().setActive(false);
-            partyDated.get().setUpdateAt(LocalDateTime.now());
+            partyDated.get().setDeleteAt(LocalDateTime.now());
             partyDatedRepository.save(partyDated.get());
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Delete successful", null));
         }

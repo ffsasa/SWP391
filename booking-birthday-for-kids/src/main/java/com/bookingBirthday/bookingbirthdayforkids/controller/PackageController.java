@@ -3,9 +3,14 @@ package com.bookingBirthday.bookingbirthdayforkids.controller;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.PackageRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.service.PackageService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.naming.Binding;
 
 @RestController
 @RequestMapping("/api/package")
@@ -18,12 +23,14 @@ public class PackageController {
     }
 
     @GetMapping("/get-id/{id}")
-    public ResponseEntity<ResponseObj> getByid(@PathVariable Long id){
+    public ResponseEntity<ResponseObj> getById(@PathVariable Long id){
         return packageService.getById(id);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ResponseObj> create(@RequestBody PackageRequest packageRequest){
+    public ResponseEntity<?> create(@Valid @RequestBody PackageRequest packageRequest, BindingResult bindingResult){
+        if(bindingResult.hasErrors())
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST.toString());
         return packageService.create(packageRequest);
     }
 

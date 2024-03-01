@@ -11,6 +11,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SlotRequest {
-    private LocalDateTime timeStart;
-    private LocalDateTime timeEnd;
+    private String timeStart;
+    private String timeEnd;
 }

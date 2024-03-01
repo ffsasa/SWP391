@@ -1,5 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
@@ -20,12 +21,10 @@ public class PartyDated extends BaseEntity{
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDateTime Date;
 
-//    @ManyToOne
-//    @JoinColumn(name = "slot_id")
-//    private Slot slot;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "venue_id")
-//    private Venue venue;
+    @ManyToOne
+    @JoinColumn(name = "slot_id")
+    @JsonBackReference
+    private Slot slot;
+
 
 }

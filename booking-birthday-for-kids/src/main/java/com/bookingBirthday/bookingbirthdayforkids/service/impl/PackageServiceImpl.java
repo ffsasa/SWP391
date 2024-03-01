@@ -74,7 +74,7 @@ public class PackageServiceImpl implements PackageService {
         Optional<Package> pack = packageRepository.findById(id);
         if (pack.isPresent()){
             pack.get().setActive(false);
-            pack.get().setUpdateAt(LocalDateTime.now());
+            pack.get().setDeleteAt(LocalDateTime.now());
             packageRepository.save(pack.get());
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Delete successful", null));
         }
