@@ -3,10 +3,7 @@ package com.bookingBirthday.bookingbirthdayforkids.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -35,7 +32,8 @@ public class PartyBooking extends BaseEntity{
     @NotBlank(message = "Phone number cannot be blank")
     @Pattern(regexp = "\\d{10}", message = "Invalid phone number format")
     private int phone;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private StatusEnum status;
 
     @ManyToOne
     @JoinColumn(name = "theme_id")
@@ -46,10 +44,6 @@ public class PartyBooking extends BaseEntity{
     @JoinColumn(name = "venue_id")
     @JsonBackReference
     private Venue venue;
-
-    @OneToMany(mappedBy = "partyBooking")
-    @JsonManagedReference
-    private List<Review> reviewList;
 
     @ManyToOne
     @JoinColumn(name = "account_id")

@@ -65,7 +65,6 @@ public class ThemeServiceImpl implements ThemeService {
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
-
     }
 
     @Override
