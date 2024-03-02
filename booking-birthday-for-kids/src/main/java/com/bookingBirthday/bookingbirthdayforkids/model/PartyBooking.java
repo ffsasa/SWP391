@@ -1,6 +1,8 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -37,19 +39,24 @@ public class PartyBooking extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "theme_id")
+    @JsonBackReference
     private Theme theme;
 
     @ManyToOne
     @JoinColumn(name = "venue_id")
+    @JsonBackReference
     private Venue venue;
 
     @OneToMany(mappedBy = "partyBooking")
+    @JsonManagedReference
     private List<Review> reviewList;
 
     @ManyToOne
     @JoinColumn(name = "account_id")
+    @JsonBackReference
     private Account account;
 
     @OneToMany(mappedBy = "partyBooking")
+    @JsonManagedReference
     private List<UpgradeService> upgradeServices;
 }

@@ -1,9 +1,7 @@
 package com.bookingBirthday.bookingbirthdayforkids.controller;
 
-import com.bookingBirthday.bookingbirthdayforkids.dto.request.ThemeRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.VenueRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
-import com.bookingBirthday.bookingbirthdayforkids.service.ThemeService;
 import com.bookingBirthday.bookingbirthdayforkids.service.VenueService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/api/venue")
-public class venueController {
+public class VenueController {
     @Autowired
     VenueService venueService;
 

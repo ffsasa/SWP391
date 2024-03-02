@@ -1,6 +1,7 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -24,5 +25,6 @@ public class UpgradeService extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "party_booking_id")
     @JsonBackReference
+    @JsonIgnore
     private PartyBooking partyBooking;
 }

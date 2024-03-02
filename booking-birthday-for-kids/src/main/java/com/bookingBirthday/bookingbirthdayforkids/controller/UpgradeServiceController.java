@@ -1,8 +1,8 @@
 package com.bookingBirthday.bookingbirthdayforkids.controller;
 
-import com.bookingBirthday.bookingbirthdayforkids.dto.request.ThemeRequest;
+import com.bookingBirthday.bookingbirthdayforkids.dto.request.UpgradeServiceRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
-import com.bookingBirthday.bookingbirthdayforkids.service.ThemeService;
+import com.bookingBirthday.bookingbirthdayforkids.service.UpgradeServiceService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,38 +12,36 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/api/theme")
-public class themeController {
-
+public class UpgradeServiceController {
     @Autowired
-    ThemeService themeService;
+    UpgradeServiceService upgradeServiceService;
 
     @GetMapping("/get-all")
     public ResponseEntity<ResponseObj> getAll() {
-        return themeService.getAll();
+        return upgradeServiceService.getAll();
     }
 
     @GetMapping("/get-id/{id}")
     public ResponseEntity<ResponseObj> getById(@PathVariable Long id){
-        return themeService.getById(id);
+        return upgradeServiceService.getById(id);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> create(@Valid @RequestBody ThemeRequest themeRequest, BindingResult bindingResult){
+    public ResponseEntity<?> create(@Valid @RequestBody UpgradeServiceRequest upgradeServiceRequest, BindingResult bindingResult){
         if(bindingResult.hasErrors())
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST.toString());
-        return themeService.create(themeRequest);
+        return upgradeServiceService.create(upgradeServiceRequest);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id,@Valid @RequestBody ThemeRequest themeRequest, BindingResult bindingResult){
+    public ResponseEntity<?> update(@PathVariable Long id,@Valid @RequestBody UpgradeServiceRequest upgradeServiceRequest, BindingResult bindingResult){
         if(bindingResult.hasErrors())
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST.toString());
-        return themeService.update(id, themeRequest);
+        return upgradeServiceService.update(id, upgradeServiceRequest);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
-        return themeService.delete(id);
+        return upgradeServiceService.delete(id);
     }
 }
