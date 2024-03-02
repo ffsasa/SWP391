@@ -1,5 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -31,6 +32,11 @@ public class Review extends BaseEntity{
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     @JsonIgnore
     private LocalDateTime reviewDate;
+
+    @ManyToOne
+    @JsonBackReference
+    @JoinColumn(name = "account_id")
+    private Account account;
 
 
 }
