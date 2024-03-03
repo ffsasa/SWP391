@@ -2,8 +2,11 @@ package com.bookingBirthday.bookingbirthdayforkids.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,13 +22,13 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 public class Payment extends BaseEntity {
-    @NotBlank(message = "amount cannot blank")
+    @Min(value = 1, message = "Min at least = 1")
     private float amount;
-    @NotBlank(message = "Exipre date cannot blank")
     @DateTimeFormat(pattern = "yyyy-mm-dd")
+    @NotNull(message = "Expire date cannot null")
     private LocalDateTime expireDate;
     @JsonIgnore
-    private int status;
+    private String status;
 
     @ManyToOne
     @JoinColumn(name = "account_id")
@@ -38,6 +41,7 @@ public class Payment extends BaseEntity {
     private PaymentMethod paymentMethod;
 
     @OneToMany(mappedBy = "payment")
+    @JsonManagedReference
     private List<Transaction> transactionList;
 
 

@@ -1,5 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -21,5 +22,6 @@ public class PaymentMethod extends BaseEntity {
     private String methodDescription;
 
     @OneToMany(mappedBy = "paymentMethod")
+    @JsonManagedReference
     private List<Payment> paymentList;
 }

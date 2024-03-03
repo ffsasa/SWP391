@@ -1,8 +1,10 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,14 +19,16 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 public class Transaction extends BaseEntity {
-    @NotBlank(message = "Status cannot be blank")
+    @NotNull(message = "Status cannot null")
     private String status;
 
     @DateTimeFormat(pattern = "yyyy-mm-dd")
+    @NotBlank(message = "Transaction date cannot be blank")
     @JsonIgnore
     private LocalDateTime transactionDate;
 
     @ManyToOne
     @JoinColumn(name = "payment_id")
+    @JsonBackReference
     private Payment payment;
 }
