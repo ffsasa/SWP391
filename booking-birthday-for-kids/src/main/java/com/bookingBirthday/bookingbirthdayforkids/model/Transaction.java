@@ -22,10 +22,10 @@ import java.time.LocalDateTime;
 @Entity
 public class Transaction extends BaseEntity {
     @NotNull(message = "Status cannot null")
+    @JsonIgnore
     private String status;
 
     @DateTimeFormat(pattern = "yyyy-mm-dd")
-    @NotBlank(message = "Transaction date cannot be blank")
     @JsonIgnore
     private LocalDateTime transactionDate;
 
