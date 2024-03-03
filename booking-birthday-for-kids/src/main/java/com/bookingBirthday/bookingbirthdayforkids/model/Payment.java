@@ -46,5 +46,10 @@ public class Payment extends BaseEntity {
     @JsonManagedReference
     private List<Transaction> transactionList;
 
+    @ManyToOne
+    @JoinColumn(name = "partyBooking_id")
+    @JsonBackReference
+    private PartyBooking partyBooking;
+
 
 }
