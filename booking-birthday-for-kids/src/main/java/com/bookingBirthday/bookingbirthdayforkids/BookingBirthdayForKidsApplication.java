@@ -1,7 +1,10 @@
 package com.bookingBirthday.bookingbirthdayforkids;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
 =======
 >>>>>>> main
 import org.springframework.boot.SpringApplication;
