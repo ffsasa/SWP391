@@ -22,7 +22,7 @@ import java.util.List;
 public class Account extends BaseEntity{
 
     @NotBlank(message = "User Name cannot blank")
-    private String userName;
+    private String username;
     @NotBlank(message = "Password cannot blank")
     private String password;
     @NotBlank(message = "Full name cannot blank")
