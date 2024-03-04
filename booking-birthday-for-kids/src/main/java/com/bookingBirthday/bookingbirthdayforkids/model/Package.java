@@ -1,5 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -9,6 +10,7 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -24,7 +26,14 @@ public class Package extends BaseEntity{
     @Min(value = 0, message = "Pricing value must be greater than or equal to 0")
     private float pricing;
 
-    @OneToMany(mappedBy = "apackage", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "apackage", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<PackageService> packageServices;
+    private List<PackageService> packageServiceList;
+
+    @OneToMany(mappedBy = "apackage", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<PartyBooking> partyBookingList;
+
+    @ManyToMany(mappedBy = "packageSet")
+    Set<Venue> venueSet;
 }

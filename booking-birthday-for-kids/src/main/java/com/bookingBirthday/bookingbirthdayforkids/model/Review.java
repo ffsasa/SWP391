@@ -34,9 +34,12 @@ public class Review extends BaseEntity{
     private LocalDateTime reviewDate;
 
     @ManyToOne
-    @JsonBackReference
     @JoinColumn(name = "account_id")
+    @JsonBackReference
     private Account account;
 
-
+    @ManyToOne
+    @JoinColumn(name = "partyBooking_id")
+    @JsonBackReference
+    private PartyBooking partyBooking;
 }

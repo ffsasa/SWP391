@@ -23,8 +23,12 @@ public class UpgradeService extends BaseEntity{
     private float pricing;
 
     @ManyToOne
-    @JoinColumn(name = "party_booking_id")
+    @JoinColumn(name = "partyBooking_id")
     @JsonBackReference
-    @JsonIgnore
     private PartyBooking partyBooking;
+
+    @ManyToOne
+    @JoinColumn(name = "service_id")
+    @JsonBackReference
+    private Service service;
 }
