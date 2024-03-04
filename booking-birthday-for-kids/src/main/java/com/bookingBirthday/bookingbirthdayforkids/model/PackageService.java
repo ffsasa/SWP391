@@ -28,4 +28,8 @@ public class PackageService extends BaseEntity{
     @JsonBackReference
     private Package apackage;
 
+    @ManyToOne
+    @JoinColumn(name = "service_id")
+    @JsonBackReference
+    private Service service;
 }

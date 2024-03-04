@@ -46,11 +46,28 @@ public class PartyBooking extends BaseEntity{
     private Venue venue;
 
     @ManyToOne
+    @JoinColumn(name = "package_id")
+    @JsonBackReference
+    private Package apackage;
+
+    @ManyToOne
     @JoinColumn(name = "account_id")
     @JsonBackReference
     private Account account;
 
-    @OneToMany(mappedBy = "partyBooking")
+    @OneToMany(mappedBy = "partyBooking", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<UpgradeService> upgradeServices;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "partyDated_id", referencedColumnName = "id")
+    private PartyDated partyDated;
+
+    @OneToMany(mappedBy = "partyBooking", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Payment> paymentList;
+
+    @OneToMany(mappedBy = "partyBooking", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Review> reviewList;
 }

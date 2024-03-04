@@ -26,5 +26,11 @@ public class PartyDated extends BaseEntity{
     @JsonBackReference
     private Slot slot;
 
+    @OneToOne(mappedBy = "partyDated", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private PartyBooking partyBooking;
 
+    @ManyToOne
+    @JoinColumn(name = "venue_id")
+    @JsonBackReference
+    private Venue venue;
 }
