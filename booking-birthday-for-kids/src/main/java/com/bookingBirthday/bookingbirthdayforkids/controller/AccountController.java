@@ -6,6 +6,8 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.Account;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.AccountRequest;
 import com.bookingBirthday.bookingbirthdayforkids.service.AccountService;
+import com.bookingBirthday.bookingbirthdayforkids.util.JavaMail;
+import com.google.firebase.auth.FirebaseAuthException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,10 +26,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/account")
 @EnableMethodSecurity(securedEnabled = true)
-@CrossOrigin(origins = "http://Localhost:3000")
+@CrossOrigin(origins = {"http://Localhost:3000", "https://localhost:8080"}, allowCredentials = "true")
 public class AccountController {
     @Autowired
     AccountService accountService;
+
+    @Autowired
+    JavaMail javaMail;
 
 
     @GetMapping("/get-all")
@@ -56,6 +61,11 @@ public class AccountController {
         return accountService.create(accountRequest);
     }
 
+    @PostMapping("/signing/gmail")
+    public ResponseEntity<?> loginWithGmail(@RequestParam String accessToken) throws FirebaseAuthException {
+        return accountService.loginWithGmail(accessToken);
+    }
+
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody LoginRequest loginRequest
@@ -66,6 +76,12 @@ public class AccountController {
     @GetMapping("/test")
     public ResponseEntity<?> test(){
         return ResponseEntity.ok((Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+    }
+
+    @GetMapping("/test1")
+    public ResponseEntity<?> test1(){
+        javaMail.sendEmail("tranquoccuong0179@gmail.com", "123", "123");
+        return ResponseEntity.ok().body(javaMail);
     }
 //
 //    @PutMapping("/update/{id}")
