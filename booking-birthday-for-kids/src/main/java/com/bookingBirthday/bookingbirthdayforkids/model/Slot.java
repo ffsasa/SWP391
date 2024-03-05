@@ -25,7 +25,7 @@ public class Slot extends BaseEntity{
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private String timeEnd;
 
-    @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "slot", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<PartyDated> partyDated;
 }
