@@ -15,8 +15,6 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 public class PartyDated extends BaseEntity{
-    private long slotID;
-    private long venueID;
     @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDateTime Date;
