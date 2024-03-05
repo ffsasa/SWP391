@@ -13,10 +13,6 @@ import lombok.*;
 @Entity
 @Builder
 public class PackageService extends BaseEntity{
-    @NotNull(message = "Package ID cannot blank")
-    private long packageID;
-    @NotNull(message = "Service ID cannot blank")
-    private long serviceID;
     @NotNull(message = "Count value cannot be null")
     private int count;
     @NotNull(message = "Pricing value cannot be null")
@@ -31,5 +27,5 @@ public class PackageService extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "service_id")
     @JsonBackReference
-    private Service service;
+    private Services services;
 }

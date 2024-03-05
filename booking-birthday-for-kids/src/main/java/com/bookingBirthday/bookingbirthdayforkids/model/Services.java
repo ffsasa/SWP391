@@ -1,7 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -19,21 +18,21 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Service extends BaseEntity{
-    @NotBlank(message = "Service name cannot be blank")
+public class Services extends BaseEntity{
+    @NotBlank(message = "Services name cannot be blank")
     private String serviceName;
 
-    @NotBlank(message = "Description of service name cannot be blank")
+    @NotBlank(message = "Description of services name cannot be blank")
     private String description;
     @NotNull(message = "Pricing value cannot be null")
     @Min(value = 0, message = "Pricing value must be greater than or equal to 0")
     private float pricing;
 
-    @OneToMany(mappedBy = "service", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "services", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<PackageService> packageServiceList;
 
-    @OneToMany(mappedBy = "service", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "services", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<UpgradeService> upgradeServiceList;
 
