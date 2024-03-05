@@ -24,16 +24,10 @@ import java.util.List;
 @Entity
 public class Account extends BaseEntity implements UserDetails {
 
-    @NotBlank(message = "User Name cannot blank")
     private String username;
-    @NotBlank(message = "Password cannot blank")
     private String password;
-    @NotBlank(message = "Full name cannot blank")
     private String fullName;
-    @Email(message = "Invalid email format")
     private String email;
-    @NotBlank(message = "Phone number cannot be blank")
-    @Pattern(regexp = "\\d{10}", message = "Invalid phone number format")
     private String phone;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     @JsonIgnore
@@ -58,6 +52,10 @@ public class Account extends BaseEntity implements UserDetails {
     @Override
     public String getUsername() {
         return username;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     @Override

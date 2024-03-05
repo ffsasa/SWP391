@@ -12,6 +12,9 @@ import com.bookingBirthday.bookingbirthdayforkids.repository.AccountRepository;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.AccountRequest;
 import com.bookingBirthday.bookingbirthdayforkids.repository.RoleRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.AccountService;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -107,14 +110,69 @@ public class AccountServiceImpl implements AccountService {
                 )
         );
         Account account = (Account) authentication.getPrincipal();
-        var user = accountRepository.findByUsername(request.getUsername())
-                .orElseThrow(() ->new RuntimeException("User Not Found"));
-        var jwtToken = jwtService.generateToken(user);
+//
+//        var user = accountRepository.findByUsername(request.getUsername())
+//                .orElseThrow(() ->new RuntimeException("User Not Found"));
+        var jwtToken = jwtService.generateToken(account);
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
         authenticationResponse.setToken(jwtToken);
         return ResponseEntity.status(HttpStatus.OK).body(authenticationResponse);
 
     }
+
+    public ResponseEntity<?> loginWithGmail(String accessToken) throws FirebaseAuthException {
+        Role role = roleRepository.findByName(RoleEnum.CUSTOMER);
+        FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(accessToken);
+        if(accountRepository.findByEmail(decodedToken.getEmail()).isPresent()){
+//            authenticationManager.authenticate(
+//                    new UsernamePasswordAuthenticationToken(
+//                            decodedToken.getEmail(),
+//                            null
+//                    )
+//            );
+
+            var user = accountRepository.findByEmail(decodedToken.getEmail())
+                    .orElseThrow(() ->new RuntimeException("Email Not Found"));
+            var jwtToken = jwtService.generateToken(user);
+            AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+            authenticationResponse.setToken(jwtToken);
+
+
+            return ResponseEntity.status(HttpStatus.OK).body(jwtToken);
+        }
+        else {
+        Account account = new Account();
+        account.setFullName(decodedToken.getName());
+        account.setEmail(decodedToken.getEmail());
+        account.setUsername(decodedToken.getEmail());
+        account.setAvatarUrl(decodedToken.getPicture());
+        account.setActive(true);
+        account.setRole(role);
+        account.setCreateAt(LocalDateTime.now());
+        account.setUpdateAt(LocalDateTime.now());
+        accountRepository.save(account);
+
+//        authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(
+//                        decodedToken.getEmail(),
+//                        null
+//                )
+//        );
+
+        var user = accountRepository.findByEmail(decodedToken.getEmail())
+                .orElseThrow(() ->new RuntimeException("Email Not Found"));
+        var jwtToken = jwtService.generateToken(user);
+        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+        authenticationResponse.setToken(jwtToken);
+
+
+
+        return ResponseEntity.status(HttpStatus.OK).body(jwtToken);
+        }
+
+    }
+
+
     //    @Override
 //    public ResponseEntity<ResponseObj> update(Long id, AccountRequest accountRequest) {
 ////        Account existAccount = accountRepository.findById(id).orElseThrow();
