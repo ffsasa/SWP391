@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 public class Transaction extends BaseEntity {
     @NotNull(message = "Status cannot null")
     @JsonIgnore
-    private String status;
+    private int status;
 
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     @JsonIgnore
