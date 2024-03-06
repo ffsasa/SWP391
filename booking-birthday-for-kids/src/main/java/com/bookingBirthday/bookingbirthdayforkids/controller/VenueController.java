@@ -7,7 +7,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,5 +43,15 @@ public class VenueController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
         return venueService.delete(id);
+    }
+
+    @PostMapping("/add-theme")
+    public ResponseEntity<ResponseObj> addTheme(@RequestParam Long venueId, @RequestParam Long themeId){
+        return venueService.addTheme(venueId, themeId);
+    }
+
+    @PostMapping("/add-package")
+    public ResponseEntity<ResponseObj> addPackage(@RequestParam Long venueId, @RequestParam Long packageId){
+        return venueService.addPackage(venueId, packageId);
     }
 }
