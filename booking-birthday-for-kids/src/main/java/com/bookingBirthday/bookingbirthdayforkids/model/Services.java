@@ -25,7 +25,7 @@ public class Services extends BaseEntity{
     @NotBlank(message = "Description of services name cannot be blank")
     private String description;
     @NotNull(message = "Pricing value cannot be null")
-    @Min(value = 0, message = "Pricing value must be greater than or equal to 0")
+    @Min(value = 1, message = "Pricing value must be greater than or equal to 0")
     private float pricing;
 
     @OneToMany(mappedBy = "services", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
