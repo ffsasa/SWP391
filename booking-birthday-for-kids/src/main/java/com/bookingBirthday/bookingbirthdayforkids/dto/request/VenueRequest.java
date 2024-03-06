@@ -4,8 +4,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-import java.util.Set;
-
 @Getter
 @Setter
 @Builder
@@ -21,8 +19,4 @@ public class VenueRequest {
     public String location;
     @Min(value = 1, message = "Capacity value must be greater than or equal to 1")
     public int capacity;
-    @NotBlank(message = "ThemeId cannot be blank")
-    public long themeId;
-    @NotBlank(message = "PackageId cannot be blank")
-    public long packageId;
 }

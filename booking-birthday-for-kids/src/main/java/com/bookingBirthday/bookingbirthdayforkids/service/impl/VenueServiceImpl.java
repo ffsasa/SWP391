@@ -2,8 +2,11 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.VenueRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
+import com.bookingBirthday.bookingbirthdayforkids.model.Package;
 import com.bookingBirthday.bookingbirthdayforkids.model.Theme;
 import com.bookingBirthday.bookingbirthdayforkids.model.Venue;
+import com.bookingBirthday.bookingbirthdayforkids.repository.PackageRepository;
+import com.bookingBirthday.bookingbirthdayforkids.repository.ThemeRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.VenueRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.VenueService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +15,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class VenueServiceImpl implements VenueService {
 
     @Autowired
     VenueRepository venueRepository;
+
+    @Autowired
+    PackageRepository packageRepository;
+
+    @Autowired
+    ThemeRepository themeRepository;
 
     @Override
     public ResponseEntity<ResponseObj> getAll() {
@@ -106,6 +117,42 @@ public class VenueServiceImpl implements VenueService {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
 
         } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> addTheme(Long venueId, Long themeId) {
+        try {
+            Theme theme = themeRepository.findById(themeId).get();
+            Optional<Venue> venue = venueRepository.findById(venueId);
+            if(venue.isPresent()){
+                Set<Theme> themeSet = venueRepository.findById(venueId).get().getThemeSet();
+                themeSet.add(theme);
+                venue.get().setThemeSet(themeSet);
+                venueRepository.save(venue.get());
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", null));
+            } else
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> addPackage(Long venueId, Long packageId) {
+        try {
+            Package aPackage = packageRepository.findById(packageId).get();
+            Optional<Venue> venue = venueRepository.findById(venueId);
+            if (venue.isPresent()) {
+                Set<Package> packageSet = venueRepository.findById(venueId).get().getPackageSet();
+                packageSet.add(aPackage);
+                venue.get().setPackageSet(packageSet);
+                venueRepository.save(venue.get());
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", null));
+            } else
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
