@@ -19,9 +19,7 @@ import java.util.List;
 @Getter
 @Setter
 public class PaymentMethod extends BaseEntity {
-    @NotBlank(message = "Method cannot be blank")
     private String methodName;
-    @NotBlank(message = "Description cannot be blank")
     private String methodDescription;
 
     @OneToMany(mappedBy = "paymentMethod", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
