@@ -26,6 +26,7 @@ public class Theme extends BaseEntity{
     private String themeImgUrl;
 
     @ManyToMany(mappedBy = "themeSet")
+    @JsonIgnore
     Set<Venue> venueSet;
 
     @OneToMany(mappedBy = "theme", fetch = FetchType.EAGER, cascade = CascadeType.ALL)

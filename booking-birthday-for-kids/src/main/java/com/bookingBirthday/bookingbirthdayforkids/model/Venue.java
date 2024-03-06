@@ -30,6 +30,7 @@ public class Venue extends BaseEntity{
     private int capacity;
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(
             name = "theme_venue",
             joinColumns = @JoinColumn(name = "venue_id"),
@@ -38,6 +39,7 @@ public class Venue extends BaseEntity{
     Set<Theme> themeSet;
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(
             name = "package_venue",
             joinColumns = @JoinColumn(name = "venue_id"),
