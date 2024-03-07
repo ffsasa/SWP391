@@ -24,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -138,7 +139,7 @@ public class AccountServiceImpl implements AccountService {
             authenticationResponse.setToken(jwtToken);
 
 
-            return ResponseEntity.status(HttpStatus.OK).body(jwtToken);
+            return ResponseEntity.status(HttpStatus.OK).body(authenticationResponse);
         }
         else {
         Account account = new Account();
@@ -165,10 +166,15 @@ public class AccountServiceImpl implements AccountService {
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
         authenticationResponse.setToken(jwtToken);
 
-
-
-        return ResponseEntity.status(HttpStatus.OK).body(jwtToken);
+        return ResponseEntity.status(HttpStatus.OK).body(authenticationResponse);
         }
+
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> information() {
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "200", account));
 
     }
 

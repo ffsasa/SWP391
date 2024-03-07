@@ -4,6 +4,7 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.request.InquiryQuestionReq
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.Account;
 import com.bookingBirthday.bookingbirthdayforkids.model.Inquiry;
+import com.bookingBirthday.bookingbirthdayforkids.model.InquiryStatus;
 import com.bookingBirthday.bookingbirthdayforkids.repository.AccountRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.InquiryRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.InquiryQuestionService;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,6 +34,7 @@ public class InquiryQuestionServiceImpl implements InquiryQuestionService {
         Inquiry inquiry = new Inquiry();
         inquiry.setInquiryQuestion(inquiryRequest.getInquiryQuestion());
         inquiry.setActive(true);
+        inquiry.setStatus(InquiryStatus.PENDING);
         inquiry.setCreateAt(LocalDateTime.now());
         inquiry.setUpdateAt(LocalDateTime.now());
         inquiry.setAccount(account);
@@ -41,27 +44,49 @@ public class InquiryQuestionServiceImpl implements InquiryQuestionService {
 
     @Override
     public ResponseEntity<ResponseObj> update(Long id, InquiryQuestionRequest inquiryRequest) {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if(userId == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+        }
+        Account account = accountRepository.findById(userId).get();
         Optional<Inquiry> inquiry = inquiryRepository.findById(id);
 
         if (inquiry.isPresent()){
+            if(!inquiry.get().getAccount().getId().equals(account.getId()))
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to update this inquiry", null));
+
             inquiry.get().setInquiryQuestion(inquiryRequest.getInquiryQuestion() == null ? inquiry.get().getInquiryQuestion() : inquiryRequest.getInquiryQuestion());
             inquiry.get().setUpdateAt(LocalDateTime.now());
             inquiryRepository.save(inquiry.get());
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", inquiry));
         }
 
-        return null;
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Update fail", null));
+
     }
 
     @Override
     public ResponseEntity<ResponseObj> getAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List", inquiryRepository.findAllByIsActiveIsTrue()));
+        Long userId = AuthenUtil.getCurrentUserId();
+        if(userId == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+        }
+        List<Inquiry> inquiryList = inquiryRepository.findByAccountId(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List", inquiryList));
     }
 
     @Override
     public ResponseEntity<ResponseObj> delete(Long id) {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if(userId == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+        }
+        Account account = accountRepository.findById(userId).get();
         Optional<Inquiry> inquiry = inquiryRepository.findById(id);
         if (inquiry.isPresent()){
+            if(!inquiry.get().getAccount().getId().equals(account.getId()))
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to update this inquiry", null));
+
             inquiry.get().setActive(false);
             inquiry.get().setUpdateAt(LocalDateTime.now());
             inquiry.get().setDeleteAt(LocalDateTime.now());
