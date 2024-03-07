@@ -79,15 +79,15 @@ public class PartyBookingServiceImpl implements PartyBookingService {
 
             partyBookingRepository.save(partyBooking);
 
-            Map<Long, Integer> dataUpgrade = partyBookingRequest.getDataUpgrade();
+            Map<String, Integer> dataUpgrade = partyBookingRequest.getDataUpgrade();
 
             if(dataUpgrade != null){
-                for(Map.Entry<Long, Integer> entry : dataUpgrade.entrySet()){
-                    long serviceId = entry.getKey();
+                for(Map.Entry<String, Integer> entry : dataUpgrade.entrySet()){
+                    String serviceId = entry.getKey();
                     int count = entry.getValue();
-                    Optional<Services> services = servicesRepository.findById(serviceId);
+                    Optional<Services> services = servicesRepository.findById(Long.valueOf(serviceId));
 
-                    if(!services.isPresent()){
+                    if(services.isEmpty()){
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This service does not exist", null));
                     }
 
