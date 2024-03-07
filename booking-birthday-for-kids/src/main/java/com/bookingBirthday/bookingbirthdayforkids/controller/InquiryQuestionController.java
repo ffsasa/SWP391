@@ -5,10 +5,13 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.service.InquiryQuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/inquiry")
+@CrossOrigin(origins = {"http://Localhost:3000", "https://localhost:8080"}, allowCredentials = "true")
+@PreAuthorize("hasAuthority('CUSTOMER')")
 public class InquiryQuestionController {
     @Autowired
     InquiryQuestionService inquiryService;
