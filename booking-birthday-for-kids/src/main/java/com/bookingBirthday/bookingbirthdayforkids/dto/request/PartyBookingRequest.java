@@ -36,5 +36,5 @@ public class PartyBookingRequest {
     @NotNull(message = "Package ID cannot be null")
     private Long packageId;
 
-    private Map<Long, Integer> dataUpgrade;
+    private Map<String, Integer> dataUpgrade;
 }
