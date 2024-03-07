@@ -16,5 +16,6 @@ public interface AccountService {
 
     public ResponseEntity<AuthenticationResponse> authenticate(LoginRequest request);
     public ResponseEntity<?> loginWithGmail(String accessToken) throws FirebaseAuthException;
+    public ResponseEntity<ResponseObj> information();
 
 }

@@ -61,7 +61,7 @@ public class AccountController {
         return accountService.create(accountRequest);
     }
 
-    @PostMapping("/signing/gmail")
+    @PostMapping("/signin/gmail")
     public ResponseEntity<?> loginWithGmail(@RequestParam String accessToken) throws FirebaseAuthException {
         return accountService.loginWithGmail(accessToken);
     }
@@ -73,9 +73,9 @@ public class AccountController {
         return accountService.authenticate(loginRequest);
     }
 
-    @GetMapping("/test")
+    @GetMapping("/information")
     public ResponseEntity<?> test(){
-        return ResponseEntity.ok((Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        return accountService.information();
     }
 
     @GetMapping("/test1")
