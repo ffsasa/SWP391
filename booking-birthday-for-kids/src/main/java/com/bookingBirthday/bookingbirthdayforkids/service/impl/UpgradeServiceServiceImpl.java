@@ -61,8 +61,8 @@ public class UpgradeServiceServiceImpl implements UpgradeServiceService {
             Services services = servicesRepository.findById(upgradeServiceRequest.getServiceId()).get();
 
             UpgradeService upgradeService = new UpgradeService();
-            upgradeService.setCount(upgradeService.getCount());
-            upgradeService.setPricing(upgradeService.getCount()*services.getPricing());
+            upgradeService.setCount(upgradeServiceRequest.getCount());
+            upgradeService.setPricing(upgradeServiceRequest.getCount()*services.getPricing());
             upgradeService.setActive(true);
             upgradeService.setCreateAt(LocalDateTime.now());
             upgradeService.setUpdateAt(LocalDateTime.now());
