@@ -35,5 +35,6 @@ public class Package extends BaseEntity{
     private List<PartyBooking> partyBookingList;
 
     @ManyToMany(mappedBy = "packageSet")
+    @JsonIgnore
     Set<Venue> venueSet;
 }
