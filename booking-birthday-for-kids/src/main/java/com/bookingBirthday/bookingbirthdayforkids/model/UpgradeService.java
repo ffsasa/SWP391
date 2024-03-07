@@ -30,5 +30,5 @@ public class UpgradeService extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "service_id")
     @JsonBackReference
-    private Service service;
+    private Services services;
 }

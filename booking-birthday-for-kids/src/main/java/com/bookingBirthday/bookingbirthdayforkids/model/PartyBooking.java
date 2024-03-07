@@ -31,7 +31,7 @@ public class PartyBooking extends BaseEntity{
     private String email;
     @NotBlank(message = "Phone number cannot be blank")
     @Pattern(regexp = "\\d{10}", message = "Invalid phone number format")
-    private int phone;
+    private String phone;
     @Enumerated(EnumType.STRING)
     private StatusEnum status;
 
