@@ -40,20 +40,24 @@ public class Account extends BaseEntity implements UserDetails {
     @JsonBackReference
     private Role role;
 
-    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     @JsonManagedReference
+    @JsonIgnore
     private List<Inquiry> inquiryList;
 
-    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     @JsonManagedReference
+    @JsonIgnore
     private List<PartyBooking> partyBookingList;
 
-    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     @JsonManagedReference
+    @JsonIgnore
     private List<Review> reviewList;
 
-    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     @JsonManagedReference
+    @JsonIgnore
     private List<Payment> paymentList;
 
     @Override

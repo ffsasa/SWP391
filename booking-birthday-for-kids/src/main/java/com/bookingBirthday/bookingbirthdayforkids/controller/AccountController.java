@@ -36,14 +36,14 @@ public class AccountController {
 
 
     @GetMapping("/get-all")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     public ResponseEntity<ResponseObj> getAll(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "5") int size){
         return accountService.getAll(page, size);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @GetMapping("/get-id/{id}")
     public ResponseEntity<ResponseObj> getByid(@PathVariable Long id){
         return accountService.getById(id);
@@ -66,11 +66,25 @@ public class AccountController {
         return accountService.loginWithGmail(accessToken);
     }
 
-    @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(
+    @PostMapping("/customer/authenticate")
+    public ResponseEntity<ResponseObj> authenticate(
             @RequestBody LoginRequest loginRequest
     ){
         return accountService.authenticate(loginRequest);
+    }
+
+    @PostMapping("/admin/authenticate")
+    public ResponseEntity<ResponseObj> authenticateAdmin(
+            @RequestBody LoginRequest loginRequest
+    ){
+        return accountService.authenticateAdmin(loginRequest);
+    }
+
+    @PostMapping("/host/authenticate")
+    public ResponseEntity<ResponseObj> authenticateHost(
+            @RequestBody LoginRequest loginRequest
+    ){
+        return accountService.authenticateHost(loginRequest);
     }
 
     @GetMapping("/information")

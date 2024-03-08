@@ -14,8 +14,11 @@ public interface AccountService {
 
     public ResponseEntity<?> create(AccountRequest accountRequest);
 
-    public ResponseEntity<AuthenticationResponse> authenticate(LoginRequest request);
+    public ResponseEntity<ResponseObj> authenticate(LoginRequest request);
     public ResponseEntity<?> loginWithGmail(String accessToken) throws FirebaseAuthException;
     public ResponseEntity<ResponseObj> information();
 
+    ResponseEntity<ResponseObj> authenticateAdmin(LoginRequest loginRequest);
+
+    ResponseEntity<ResponseObj> authenticateHost(LoginRequest loginRequest);
 }
