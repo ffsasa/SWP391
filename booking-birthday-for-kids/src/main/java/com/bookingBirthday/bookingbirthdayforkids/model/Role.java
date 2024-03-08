@@ -19,7 +19,7 @@ public class Role extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private RoleEnum name;
 
-    @OneToMany(mappedBy = "role", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
     @JsonIgnore
     @JsonManagedReference
     private List<Account> accountList;

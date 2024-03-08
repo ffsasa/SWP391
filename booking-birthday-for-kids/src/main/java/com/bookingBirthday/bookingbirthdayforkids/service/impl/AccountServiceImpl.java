@@ -102,7 +102,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public ResponseEntity<AuthenticationResponse> authenticate(LoginRequest request) {
+    public ResponseEntity<ResponseObj> authenticate(LoginRequest request) {
+        Role role = roleRepository.findByName(RoleEnum.CUSTOMER);
         Authentication authentication;
         authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -111,14 +112,65 @@ public class AccountServiceImpl implements AccountService {
                 )
         );
         Account account = (Account) authentication.getPrincipal();
+        if(!role.equals(account.getRole())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "You are not permisson", null));
+        }
 //
 //        var user = accountRepository.findByUsername(request.getUsername())
 //                .orElseThrow(() ->new RuntimeException("User Not Found"));
         var jwtToken = jwtService.generateToken(account);
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
         authenticationResponse.setToken(jwtToken);
-        return ResponseEntity.status(HttpStatus.OK).body(authenticationResponse);
+        authenticationResponse.setRole(role);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Login success", authenticationResponse));
+    }
 
+    @Override
+    public ResponseEntity<ResponseObj> authenticateAdmin(LoginRequest loginRequest) {
+        Role role = roleRepository.findByName(RoleEnum.ADMIN);
+        Authentication authentication;
+        authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getUsername(),
+                        loginRequest.getPassword()
+                )
+        );
+        Account account = (Account) authentication.getPrincipal();
+        if(!role.equals(account.getRole())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "You are not permisson", null));
+        }
+//
+//        var user = accountRepository.findByUsername(request.getUsername())
+//                .orElseThrow(() ->new RuntimeException("User Not Found"));
+        var jwtToken = jwtService.generateToken(account);
+        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+        authenticationResponse.setToken(jwtToken);
+        authenticationResponse.setRole(role);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Login success", authenticationResponse));
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> authenticateHost(LoginRequest loginRequest) {
+        Role role = roleRepository.findByName(RoleEnum.HOST);
+        Authentication authentication;
+        authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getUsername(),
+                        loginRequest.getPassword()
+                )
+        );
+        Account account = (Account) authentication.getPrincipal();
+        if(!role.equals(account.getRole())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "You are not permisson", null));
+        }
+//
+//        var user = accountRepository.findByUsername(request.getUsername())
+//                .orElseThrow(() ->new RuntimeException("User Not Found"));
+        var jwtToken = jwtService.generateToken(account);
+        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+        authenticationResponse.setToken(jwtToken);
+        authenticationResponse.setRole(role);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Login success", authenticationResponse));
     }
 
     public ResponseEntity<?> loginWithGmail(String accessToken) throws FirebaseAuthException {
@@ -142,16 +194,16 @@ public class AccountServiceImpl implements AccountService {
             return ResponseEntity.status(HttpStatus.OK).body(authenticationResponse);
         }
         else {
-        Account account = new Account();
-        account.setFullName(decodedToken.getName());
-        account.setEmail(decodedToken.getEmail());
-        account.setUsername(decodedToken.getEmail());
-        account.setAvatarUrl(decodedToken.getPicture());
-        account.setActive(true);
-        account.setRole(role);
-        account.setCreateAt(LocalDateTime.now());
-        account.setUpdateAt(LocalDateTime.now());
-        accountRepository.save(account);
+            Account account = new Account();
+            account.setFullName(decodedToken.getName());
+            account.setEmail(decodedToken.getEmail());
+            account.setUsername(decodedToken.getEmail());
+            account.setAvatarUrl(decodedToken.getPicture());
+            account.setActive(true);
+            account.setRole(role);
+            account.setCreateAt(LocalDateTime.now());
+            account.setUpdateAt(LocalDateTime.now());
+            accountRepository.save(account);
 
 //        authenticationManager.authenticate(
 //                new UsernamePasswordAuthenticationToken(
@@ -160,13 +212,13 @@ public class AccountServiceImpl implements AccountService {
 //                )
 //        );
 
-        var user = accountRepository.findByEmail(decodedToken.getEmail())
-                .orElseThrow(() ->new RuntimeException("Email Not Found"));
-        var jwtToken = jwtService.generateToken(user);
-        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
-        authenticationResponse.setToken(jwtToken);
+            var user = accountRepository.findByEmail(decodedToken.getEmail())
+                    .orElseThrow(() ->new RuntimeException("Email Not Found"));
+            var jwtToken = jwtService.generateToken(user);
+            AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+            authenticationResponse.setToken(jwtToken);
 
-        return ResponseEntity.status(HttpStatus.OK).body(authenticationResponse);
+            return ResponseEntity.status(HttpStatus.OK).body(authenticationResponse);
         }
 
     }

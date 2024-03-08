@@ -27,14 +27,14 @@ public class PartyBookingRequest {
     @Pattern(regexp = "\\d{10}", message = "Invalid phone number format")
     private String phone;
 
-    @NotNull(message = "Account ID cannot be null")
-    private Long accountId;
     @NotNull(message = "Theme ID cannot be null")
     private Long themeId;
     @NotNull(message = "Venue ID cannot be null")
     private Long venueId;
     @NotNull(message = "Package ID cannot be null")
     private Long packageId;
+    @NotNull(message = "Slot ID cannot be null")
+    private Long slotId;
 
     private Map<String, Integer> dataUpgrade;
 }
