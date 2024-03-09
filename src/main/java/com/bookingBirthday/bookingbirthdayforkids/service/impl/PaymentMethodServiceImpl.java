@@ -23,7 +23,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     @Override
     public ResponseEntity<ResponseObj> getAll(){
         try{
-            List<PaymentMethod> paymentMethodList = paymentMethodRepository.findAll();
+            List<PaymentMethod> paymentMethodList = paymentMethodRepository.findAllByIsActiveIsTrue();
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), null, paymentMethodList));
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", null));
@@ -76,7 +76,9 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     public ResponseEntity<ResponseObj> delete(Long id) {
         Optional<PaymentMethod> paymentMethod = paymentMethodRepository.findById(id);
         if (paymentMethod.isPresent()){
-            paymentMethodRepository.delete(paymentMethod.get());
+            paymentMethod.get().setDeleteAt(LocalDateTime.now());
+            paymentMethod.get().setActive(false);
+            paymentMethodRepository.save(paymentMethod.get());
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Delete successful", null));
         }
         else

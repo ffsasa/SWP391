@@ -23,7 +23,7 @@ public class ServicesServicesImpl implements ServicesService {
     @Override
     public ResponseEntity<ResponseObj> getAll(){
         try{
-            List<Services> servicesList = servicesRepository.findAll();
+            List<Services> servicesList = servicesRepository.findAllByIsActiveIsTrue();
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), null, servicesList));
 
         }catch (Exception e){
@@ -82,7 +82,9 @@ public class ServicesServicesImpl implements ServicesService {
     public ResponseEntity<ResponseObj> delete(Long id) {
         Optional<Services> services = servicesRepository.findById(id);
         if (services.isPresent()){
-            servicesRepository.delete(services.get());
+            services.get().setDeleteAt(LocalDateTime.now());
+            services.get().setActive(false);
+            servicesRepository.save(services.get());
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Delete successful", null));
         }
         else

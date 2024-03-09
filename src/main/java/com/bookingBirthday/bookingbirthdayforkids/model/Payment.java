@@ -26,8 +26,8 @@ public class Payment extends BaseEntity {
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     @NotNull(message = "Expire date cannot null")
     private LocalDateTime expireDate;
-    @JsonIgnore
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private StatusEnum status;
 
     @ManyToOne
     @JoinColumn(name = "account_id")
