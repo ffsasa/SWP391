@@ -52,8 +52,9 @@ public class PartyDatedServiceImpl implements PartyDatedService {
         PartyDated partyDated = new PartyDated();
         Slot slot = slotRepository.findById(partyDatedRequest.getSlotId()).get();
         Venue venue = venueRepository.findById(partyDatedRequest.getVenueId()).get();
-        partyDated.setSlot(slot);
-        partyDated.setVenue(venue);
+        //SỬ LẠI Ở ĐÂY
+//        partyDated.setSlot(slot);
+//        partyDated.setVenue(venue);
         partyDated.setDate(partyDatedRequest.getDate());
         partyDated.setActive(true);
         partyDated.setCreateAt(LocalDateTime.now());
@@ -69,10 +70,9 @@ public class PartyDatedServiceImpl implements PartyDatedService {
         Venue venue1= venueRepository.findById(partyDatedRequest.getVenueId()).get();
         Optional<PartyDated> existPartyDated  = partyDatedRepository.findById(id);
         if (existPartyDated.isPresent()){
-            existPartyDated.get().setSlot(slot == null ? existPartyDated.get().getSlot() : slot);
-            existPartyDated.get().setVenue(venue1 == null ? existPartyDated.get().getVenue() : venue1);
-//            existPartyDated.get().setSlotID(partyDatedRequest.getSlotId() == 0 ? existPartyDated.get().getSlotID() : partyDatedRequest.getSlotId());
-//            existPartyDated.get().setVenueID(partyDatedRequest.getVenueId() == 0 ? existPartyDated.get().getVenueID() : partyDatedRequest.getVenueId());
+            //SỬA LẠI Ở ĐÂY
+//            existPartyDated.get().setSlot(slot == null ? existPartyDated.get().getSlot() : slot);
+//            existPartyDated.get().setVenue(venue1 == null ? existPartyDated.get().getVenue() : venue1);
             existPartyDated.get().setDate(partyDatedRequest.getDate() == null ? existPartyDated.get().getDate() : partyDatedRequest.getDate());
             existPartyDated.get().setUpdateAt(LocalDateTime.now());
             partyDatedRepository.save(existPartyDated.get());
