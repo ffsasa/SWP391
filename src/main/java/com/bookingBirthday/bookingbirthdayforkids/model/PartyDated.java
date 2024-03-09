@@ -2,7 +2,6 @@ package com.bookingBirthday.bookingbirthdayforkids.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,16 +18,11 @@ public class PartyDated extends BaseEntity{
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDateTime Date;
 
-    @ManyToOne
-    @JoinColumn(name = "slot_id")
-    @JsonBackReference
-    private Slot slot;
-
     @OneToOne(mappedBy = "partyDated", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private PartyBooking partyBooking;
 
     @ManyToOne
-    @JoinColumn(name = "venue_id")
+    @JoinColumn(name = "slotInVenue_id")
     @JsonBackReference
-    private Venue venue;
+    private SlotInVenue slotInVenue;
 }
