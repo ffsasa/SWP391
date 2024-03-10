@@ -5,6 +5,7 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.*;
 import com.bookingBirthday.bookingbirthdayforkids.model.Package;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PartyDatedRepository;
+import com.bookingBirthday.bookingbirthdayforkids.repository.SlotInVenueRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.SlotRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.VenueRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.PartyDatedService;
@@ -22,9 +23,7 @@ public class PartyDatedServiceImpl implements PartyDatedService {
     @Autowired
     PartyDatedRepository partyDatedRepository;
     @Autowired
-    SlotRepository slotRepository;
-    @Autowired
-    VenueRepository venueRepository;
+    SlotInVenueRepository slotInVenueRepository;
     @Override
     public ResponseEntity<ResponseObj> getAll() {
         List<PartyDated> partyDatedList = partyDatedRepository.findAllByIsActiveIsTrue();
@@ -50,11 +49,8 @@ public class PartyDatedServiceImpl implements PartyDatedService {
     @Override
     public ResponseEntity<ResponseObj> create(PartyDatedRequest partyDatedRequest){
         PartyDated partyDated = new PartyDated();
-        Slot slot = slotRepository.findById(partyDatedRequest.getSlotId()).get();
-        Venue venue = venueRepository.findById(partyDatedRequest.getVenueId()).get();
-        //SỬ LẠI Ở ĐÂY
-//        partyDated.setSlot(slot);
-//        partyDated.setVenue(venue);
+        SlotInVenue slotInVenue = slotInVenueRepository.findById(partyDatedRequest.getSlotInVenueId()).get();
+        partyDated.setSlotInVenue(slotInVenue);
         partyDated.setDate(partyDatedRequest.getDate());
         partyDated.setActive(true);
         partyDated.setCreateAt(LocalDateTime.now());
@@ -66,13 +62,10 @@ public class PartyDatedServiceImpl implements PartyDatedService {
 
     @Override
     public ResponseEntity<ResponseObj> update(Long id, PartyDatedRequest partyDatedRequest) {
-        Slot slot = slotRepository.findById(partyDatedRequest.getSlotId()).get();
-        Venue venue1= venueRepository.findById(partyDatedRequest.getVenueId()).get();
+        SlotInVenue slotInVenue = slotInVenueRepository.findById(partyDatedRequest.getSlotInVenueId()).get();
         Optional<PartyDated> existPartyDated  = partyDatedRepository.findById(id);
         if (existPartyDated.isPresent()){
-            //SỬA LẠI Ở ĐÂY
-//            existPartyDated.get().setSlot(slot == null ? existPartyDated.get().getSlot() : slot);
-//            existPartyDated.get().setVenue(venue1 == null ? existPartyDated.get().getVenue() : venue1);
+            existPartyDated.get().setSlotInVenue(slotInVenue == null ? existPartyDated.get().getSlotInVenue() : slotInVenue);
             existPartyDated.get().setDate(partyDatedRequest.getDate() == null ? existPartyDated.get().getDate() : partyDatedRequest.getDate());
             existPartyDated.get().setUpdateAt(LocalDateTime.now());
             partyDatedRepository.save(existPartyDated.get());

@@ -50,6 +50,8 @@ public class SlotServiceImpl implements SlotService {
         slot.setTimeStart(slotRequest.getTimeStart());
         slot.setTimeEnd(slotRequest.getTimeEnd());
         slot.setActive(true);
+        slot.setCreateAt(LocalDateTime.now());
+        slot.setUpdateAt(LocalDateTime.now());
         slotRepository.save(slot);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(),"Create successful", slot));
     }
