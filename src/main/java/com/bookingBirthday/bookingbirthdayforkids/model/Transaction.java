@@ -22,10 +22,6 @@ public class Transaction extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private StatusEnum status;
 
-    @DateTimeFormat(pattern = "yyyy-mm-dd")
-    @JsonIgnore
-    private LocalDateTime transactionDate;
-
     @ManyToOne
     @JoinColumn(name = "payment_id")
     @JsonBackReference

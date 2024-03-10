@@ -29,13 +29,15 @@ public class PaymentMethodController {
         return  paymentMethodService.create(paymentMethodRequest);
     }
 
+    @PutMapping("/update-payment-method/{id}")
+    public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody PaymentMethodRequest paymentMethodRequest){
+        return paymentMethodService.update(id, paymentMethodRequest);
+    }
+
     @DeleteMapping("/delete-payment-method/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
         return paymentMethodService.delete(id);
     }
 
-    @PutMapping("/update-payment-method/{id}")
-    public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody PaymentMethodRequest paymentMethodRequest){
-        return paymentMethodService.update(id, paymentMethodRequest);
-    }
+
 }

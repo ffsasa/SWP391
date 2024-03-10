@@ -34,13 +34,14 @@ public class ServicesController {
         return  servicesService.create(servicesRequest);
     }
 
+    @PutMapping("/update-service/{id}")
+    public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody ServicesRequest servicesRequest){
+        return servicesService.update(id, servicesRequest);
+    }
     @DeleteMapping("/delete-service/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
         return servicesService.delete(id);
     }
 
-    @PutMapping("/update-service/{id}")
-    public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody ServicesRequest servicesRequest){
-        return servicesService.update(id, servicesRequest);
-    }
+
 }

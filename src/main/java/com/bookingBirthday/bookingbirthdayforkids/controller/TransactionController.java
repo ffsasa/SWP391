@@ -31,13 +31,14 @@ public class TransactionController {
         return  transactionService.create(transactionRequest);
     }
 
+    @PutMapping("/update-transaction/{id}")
+    public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody TransactionRequest transactionRequest){
+        return transactionService.update(id, transactionRequest);
+    }
     @DeleteMapping("/delete-transaction/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
         return transactionService.delete(id);
     }
 
-    @PutMapping("/update-service/{id}")
-    public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody TransactionRequest transactionRequest){
-        return transactionService.update(id, transactionRequest);
-    }
+
 }

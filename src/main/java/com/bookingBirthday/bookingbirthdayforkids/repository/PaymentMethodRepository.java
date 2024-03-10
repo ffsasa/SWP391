@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface PaymentMethodRepository extends JpaRepository<PaymentMethod, Long> {
-    List<PaymentMethod> findAllByIsActiveIsTrue();
+
 }

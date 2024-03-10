@@ -26,12 +26,14 @@ public class TransactionServiceImpl implements TransactionService {
     PaymentRepository paymentRepository;
     @Override
     public ResponseEntity<ResponseObj> getAll() {
-        try{
-            List<Transaction> transactionList = transactionRepository.findAllByIsActiveIsTrue();
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), null, transactionList));
-
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", null));
+        try {
+            List<Transaction> transactionList = transactionRepository.findAll();
+            if (transactionList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+            }
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", transactionList));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
 
@@ -55,7 +57,6 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setPayment(payment);
         transaction.setCreateAt(LocalDateTime.now());
         transaction.setStatus(StatusEnum.PENDING);
-        transaction.setTransactionDate(LocalDateTime.now());
         transaction.setActive(true);
         transactionRepository.save(transaction);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(),"Create successful", transaction));
@@ -69,7 +70,6 @@ public class TransactionServiceImpl implements TransactionService {
         if (existTransaction.isPresent()){
             existTransaction.get().setPayment(payment == null ? existTransaction.get().getPayment() : payment);
             existTransaction.get().setUpdateAt(LocalDateTime.now());
-            existTransaction.get().setTransactionDate(LocalDateTime.now());
             existTransaction.get().setStatus(StatusEnum.PENDING);
             transactionRepository.save(existTransaction.get());
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", existTransaction));

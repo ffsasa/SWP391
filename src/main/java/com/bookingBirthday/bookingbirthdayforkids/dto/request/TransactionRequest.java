@@ -13,9 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class TransactionRequest {
-    @DateTimeFormat(pattern = "yyyy-mm-dd")
-    @JsonIgnore
-    private LocalDateTime transactionDate;
 
     @NotNull(message = "Payment ID cannot be null")
     private Long paymentID;
