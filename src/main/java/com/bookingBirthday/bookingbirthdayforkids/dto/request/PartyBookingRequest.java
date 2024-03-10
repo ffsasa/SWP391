@@ -33,8 +33,8 @@ public class PartyBookingRequest {
     private Long venueId;
     @NotNull(message = "Package ID cannot be null")
     private Long packageId;
-    @NotNull(message = "Slot ID cannot be null")
-    private Long slotId;
+    @NotNull(message = "Slot in venue ID cannot be null")
+    private Long slotInVenueId;
 
     private Map<String, Integer> dataUpgrade;
 }
