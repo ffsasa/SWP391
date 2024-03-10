@@ -22,9 +22,7 @@ public class PartyDatedServiceImpl implements PartyDatedService {
     @Autowired
     PartyDatedRepository partyDatedRepository;
     @Autowired
-    SlotRepository slotRepository;
-    @Autowired
-    VenueRepository venueRepository;
+    SlotInVenueRepository slotInVenueRepository;
     @Override
     public ResponseEntity<ResponseObj> getAll() {
         List<PartyDated> partyDatedList = partyDatedRepository.findAllByIsActiveIsTrue();
@@ -50,8 +48,10 @@ public class PartyDatedServiceImpl implements PartyDatedService {
     @Override
     public ResponseEntity<ResponseObj> create(PartyDatedRequest partyDatedRequest){
         PartyDated partyDated = new PartyDated();
-        Slot slot = slotRepository.findById(partyDatedRequest.getSlotId()).get();
-        Venue venue = venueRepository.findById(partyDatedRequest.getVenueId()).get();
+        SlotInVenue slotInVenue = slotInVenueRepository.findbyId(partyDatedRequest.getSlotId()).get();
+        partyDated.setSlotInVenue(slotInVenue);
+//        Slot slot = slotRepository.findById(partyDatedRequest.getSlotId()).get();
+//        Venue venue = venueRepository.findById(partyDatedRequest.getVenueId()).get();
         //SỬ LẠI Ở ĐÂY
 //        partyDated.setSlot(slot);
 //        partyDated.setVenue(venue);
@@ -66,10 +66,12 @@ public class PartyDatedServiceImpl implements PartyDatedService {
 
     @Override
     public ResponseEntity<ResponseObj> update(Long id, PartyDatedRequest partyDatedRequest) {
-        Slot slot = slotRepository.findById(partyDatedRequest.getSlotId()).get();
-        Venue venue1= venueRepository.findById(partyDatedRequest.getVenueId()).get();
+        SlotInVenue slotInVenue = slotInVenueRepository.findbyId(partyDatedRequest.getSlotId()).get();
+//        Slot slot = slotRepository.findById(partyDatedRequest.getSlotId()).get();
+//        Venue venue1= venueRepository.findById(partyDatedRequest.getVenueId()).get();
         Optional<PartyDated> existPartyDated  = partyDatedRepository.findById(id);
         if (existPartyDated.isPresent()){
+            existPartyDated.get().setSlotInVenue(slotInVenue == null ? existPartyDated.get().getSlotInVenue() : slotInVenue);
             //SỬA LẠI Ở ĐÂY
 //            existPartyDated.get().setSlot(slot == null ? existPartyDated.get().getSlot() : slot);
 //            existPartyDated.get().setVenue(venue1 == null ? existPartyDated.get().getVenue() : venue1);
