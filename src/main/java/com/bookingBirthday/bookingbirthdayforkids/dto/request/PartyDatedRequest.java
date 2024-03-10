@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PartyDatedRequest {
-    private long slotId;
-    private long venueId;
+    private Long slotInVenueId;
     private LocalDateTime date;
 }
