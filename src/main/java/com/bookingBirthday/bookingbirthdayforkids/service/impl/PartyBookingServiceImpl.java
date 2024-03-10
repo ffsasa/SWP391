@@ -95,11 +95,12 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             partyDated.setPartyBooking(partyBooking);
             partyDated.setCreateAt(LocalDateTime.now());
             partyDated.setUpdateAt(LocalDateTime.now());
+            //SỬA LẠI Ở ĐÂY
 //            partyDated.setDate();
-            partyDated.setSlot(slot);
-            partyDated.setActive(true);
-            partyDated.setPartyBooking(partyBooking);
-            partyDatedRepository.save(partyDated);
+//            partyDated.setSlot(slot);
+//            partyDated.setActive(true);
+//            partyDated.setPartyBooking(partyBooking);
+//            partyDatedRepository.save(partyDated);
 
             Map<String, Integer> dataUpgrade = partyBookingRequest.getDataUpgrade();
 

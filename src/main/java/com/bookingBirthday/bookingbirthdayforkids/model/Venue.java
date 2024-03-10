@@ -53,5 +53,5 @@ public class Venue extends BaseEntity{
 
     @OneToMany(mappedBy = "venue")
     @JsonManagedReference
-    private List<PartyDated> packageDatedList;
+    private List<SlotInVenue> slotInVenueList;
 }
