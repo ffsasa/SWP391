@@ -19,6 +19,7 @@ public class PartyDated extends BaseEntity{
     private LocalDateTime Date;
 
     @OneToOne(mappedBy = "partyDated", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
     private PartyBooking partyBooking;
 
     @ManyToOne

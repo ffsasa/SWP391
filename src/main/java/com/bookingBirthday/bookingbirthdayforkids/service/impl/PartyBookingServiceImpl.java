@@ -35,7 +35,9 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     @Autowired
     PartyDatedRepository partyDatedRepository;
     @Autowired
-    SlotRepository slotRepository;
+    SlotInVenueRepository slotInVenueRepository;
+    @Autowired
+    PackageRepository packageRepository;
 
     @Override
     public ResponseEntity<ResponseObj> getAll() {
@@ -66,9 +68,12 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     @Override
     public ResponseEntity<ResponseObj> create(PartyBookingRequest partyBookingRequest) {
         try {
-            Venue venue = venueRepository.findById(partyBookingRequest.getVenueId()).get();
+            Optional<SlotInVenue> slotInVenue = slotInVenueRepository.findById(partyBookingRequest.getSlotInVenueId());
+            if(!slotInVenue.isPresent()){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in venue does not exist", null));
+            }
+            Venue venue = slotInVenue.get().getVenue();
             Theme theme = themeRepository.findById(partyBookingRequest.getThemeId()).get();
-            Slot slot = slotRepository.findById(partyBookingRequest.getSlotId()).get();
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
@@ -86,21 +91,18 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             partyBooking.setUpdateAt(LocalDateTime.now());
             partyBooking.setAccount(account);
             partyBooking.setTheme(theme);
+            PartyDated partyDated = new PartyDated();
+            partyDated.setSlotInVenue(slotInVenue.get());
+            partyDated.setActive(true);
+            partyDated.setCreateAt(LocalDateTime.now());
+            partyDated.setUpdateAt(LocalDateTime.now());
+            partyDatedRepository.save(partyDated);
+            //bỏ sau
             partyBooking.setVenue(venue);
-
+            partyBooking.setPartyDated(partyDated);
             partyBookingRepository.save(partyBooking);
 
 
-            PartyDated partyDated = new PartyDated();
-            partyDated.setPartyBooking(partyBooking);
-            partyDated.setCreateAt(LocalDateTime.now());
-            partyDated.setUpdateAt(LocalDateTime.now());
-            //SỬA LẠI Ở ĐÂY
-//            partyDated.setDate();
-//            partyDated.setSlot(slot);
-//            partyDated.setActive(true);
-//            partyDated.setPartyBooking(partyBooking);
-//            partyDatedRepository.save(partyDated);
 
             Map<String, Integer> dataUpgrade = partyBookingRequest.getDataUpgrade();
 
@@ -147,12 +149,18 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 if (!existPartyBooking.get().getAccount().getId().equals(account.getId())) {
                     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to update this booking", null));
                 }
+                Optional<PartyDated> existPartyDated = partyDatedRepository.findPartyDatedByPartyBookingId(id);
+                SlotInVenue slotInVenue = slotInVenueRepository.findById(partyBookingRequest.getSlotInVenueId()).get();
+                existPartyDated.get().setSlotInVenue(slotInVenue);
+
 
                 existPartyBooking.get().setKidName(partyBookingRequest.getKidName() == null ? existPartyBooking.get().getKidName() : partyBookingRequest.getKidName());
                 existPartyBooking.get().setKidDOB(partyBookingRequest.getKidDOB() == null ? existPartyBooking.get().getKidDOB() : partyBookingRequest.getKidDOB());
                 existPartyBooking.get().setEmail(partyBookingRequest.getEmail() == null ? existPartyBooking.get().getEmail() : partyBookingRequest.getEmail());
                 existPartyBooking.get().setPhone(partyBookingRequest.getPhone() == null ? existPartyBooking.get().getPhone() : partyBookingRequest.getPhone());
                 existPartyBooking.get().setUpdateAt(LocalDateTime.now());
+
+                existPartyBooking.get().setPartyDated(existPartyDated.get());
                 partyBookingRepository.save(existPartyBooking.get());
 
                 Map<String, Integer> dataUpgrade = partyBookingRequest.getDataUpgrade();
