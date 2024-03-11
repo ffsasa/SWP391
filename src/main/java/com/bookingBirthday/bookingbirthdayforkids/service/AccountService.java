@@ -4,8 +4,10 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.request.AccountRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.LoginRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.AuthenticationResponse;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
+import com.bookingBirthday.bookingbirthdayforkids.model.Account;
 import com.google.firebase.auth.FirebaseAuthException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface AccountService {
     public ResponseEntity<ResponseObj> getAll(int page, int size);
@@ -21,4 +23,6 @@ public interface AccountService {
     ResponseEntity<ResponseObj> authenticateAdmin(LoginRequest loginRequest);
 
     ResponseEntity<ResponseObj> authenticateHost(LoginRequest loginRequest);
+    ResponseEntity<ResponseObj> updateImg(MultipartFile imgFile);
+    ResponseEntity<ResponseObj> updateAccount(Long id, AccountRequest accountRequest);
 }

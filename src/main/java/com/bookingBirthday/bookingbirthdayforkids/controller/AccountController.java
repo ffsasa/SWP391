@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -19,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,11 +99,16 @@ public class AccountController {
         javaMail.sendEmail("tranquoccuong0179@gmail.com", "123", "123");
         return ResponseEntity.ok().body(javaMail);
     }
-//
-//    @PutMapping("/update/{id}")
-//    public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody AccountRequest accountRequest){
-//        return accountService.update(id, accountRequest);
-//    }
+
+    @PutMapping(value = "/update-img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseObj> updateImg(@RequestPart(name = "fileImg", required = true)MultipartFile fileImg){
+        return accountService.updateImg(fileImg);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody AccountRequest accountRequest){
+        return accountService.updateAccount(id, accountRequest);
+    }
 //
 //    @DeleteMapping("/delete/{id}")
 //    public ResponseEntity<ResponseObj> delete(@PathVariable Long id){

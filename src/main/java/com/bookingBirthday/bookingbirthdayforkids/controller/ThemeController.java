@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ public class ThemeController {
         return themeService.getById(id);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PostMapping("/create")
     public ResponseEntity<?> create(@Valid @RequestBody ThemeRequest themeRequest, BindingResult bindingResult){
         if(bindingResult.hasErrors())
@@ -34,6 +36,7 @@ public class ThemeController {
         return themeService.create(themeRequest);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PutMapping("/update/{id}")
     public ResponseEntity<?> update(@PathVariable Long id,@Valid @RequestBody ThemeRequest themeRequest, BindingResult bindingResult){
         if(bindingResult.hasErrors())
@@ -41,6 +44,7 @@ public class ThemeController {
         return themeService.update(id, themeRequest);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
         return themeService.delete(id);

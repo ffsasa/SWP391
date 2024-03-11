@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +27,7 @@ public class VenueController {
         return venueService.getById(id);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PostMapping("/create")
     public ResponseEntity<?> create(@Valid @RequestBody VenueRequest venueRequest, BindingResult bindingResult){
         if(bindingResult.hasErrors())
@@ -33,6 +35,7 @@ public class VenueController {
         return venueService.create(venueRequest);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PutMapping("/update/{id}")
     public ResponseEntity<?> update(@PathVariable Long id,@Valid @RequestBody VenueRequest venueRequest, BindingResult bindingResult){
         if(bindingResult.hasErrors())
@@ -40,6 +43,7 @@ public class VenueController {
         return venueService.update(id, venueRequest);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
         return venueService.delete(id);

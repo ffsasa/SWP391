@@ -11,6 +11,7 @@ import org.springframework.core.io.Resource;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Configuration
 public class FirebaseConfiguration {
@@ -19,17 +20,20 @@ public class FirebaseConfiguration {
     Resource resourceFile;
 
     @Bean
-    public FirebaseAuth firebaseAuth(){
+    public FirebaseAuth firebaseAuth() {
         return FirebaseAuth.getInstance();
     }
 
     @PostConstruct
-    public void initializeFirebaseApp() throws IOException{
-        FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(resourceFile.getInputStream()))
-                .setServiceAccountId("firebase-adminsdk-rc3cl@birthday-party-for-kids-243a5.iam.gserviceaccount.com")
-                .setStorageBucket("birthday-party-for-kids-243a5.appspot.com")
-                .build();
-        FirebaseApp.initializeApp(options);
+    public void initializeFirebaseApp() throws IOException {
+        if (FirebaseApp.getApps().isEmpty()) {
+            InputStream serviceAccount = resourceFile.getInputStream();
+            FirebaseOptions options = FirebaseOptions.builder()
+                    .setCredentials(GoogleCredentials.fromStream(resourceFile.getInputStream()))
+                    .setServiceAccountId("firebase-adminsdk-rc3cl@birthday-party-for-kids-243a5.iam.gserviceaccount.com")
+                    .setStorageBucket("birthday-party-for-kids-243a5.appspot.com")
+                    .build();
+            FirebaseApp.initializeApp(options);
+        }
     }
 }

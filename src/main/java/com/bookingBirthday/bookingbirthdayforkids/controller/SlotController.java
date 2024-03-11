@@ -5,6 +5,7 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.service.SlotService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,16 +24,19 @@ public class SlotController {
         return slotService.getById(id);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PostMapping("/create")
     public ResponseEntity<ResponseObj> create(@RequestBody SlotRequest slotRequest){
         return slotService.create(slotRequest);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PutMapping("/update/{id}")
     public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody SlotRequest slotRequest){
         return slotService.update(id, slotRequest);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
         return slotService.delete(id);
