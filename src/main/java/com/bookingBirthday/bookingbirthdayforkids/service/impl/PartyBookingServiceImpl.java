@@ -3,6 +3,7 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.PartyBookingRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.*;
+import com.bookingBirthday.bookingbirthdayforkids.model.Package;
 import com.bookingBirthday.bookingbirthdayforkids.repository.*;
 import com.bookingBirthday.bookingbirthdayforkids.service.PartyBookingService;
 import com.bookingBirthday.bookingbirthdayforkids.util.AuthenUtil;
@@ -74,6 +75,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             }
             Venue venue = slotInVenue.get().getVenue();
             Theme theme = themeRepository.findById(partyBookingRequest.getThemeId()).get();
+            Package aPackage = packageRepository.findById(partyBookingRequest.getPackageId()).get();
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
@@ -91,6 +93,8 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             partyBooking.setUpdateAt(LocalDateTime.now());
             partyBooking.setAccount(account);
             partyBooking.setTheme(theme);
+            partyBooking.setApackage(aPackage);
+
             PartyDated partyDated = new PartyDated();
             partyDated.setSlotInVenue(slotInVenue.get());
             partyDated.setActive(true);
@@ -152,7 +156,8 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 Optional<PartyDated> existPartyDated = partyDatedRepository.findPartyDatedByPartyBookingId(id);
                 SlotInVenue slotInVenue = slotInVenueRepository.findById(partyBookingRequest.getSlotInVenueId()).get();
                 existPartyDated.get().setSlotInVenue(slotInVenue);
-
+                Package aPackage = packageRepository.findById(partyBookingRequest.getPackageId()).get();
+                existPartyBooking.get().setApackage(aPackage);
 
                 existPartyBooking.get().setKidName(partyBookingRequest.getKidName() == null ? existPartyBooking.get().getKidName() : partyBookingRequest.getKidName());
                 existPartyBooking.get().setKidDOB(partyBookingRequest.getKidDOB() == null ? existPartyBooking.get().getKidDOB() : partyBookingRequest.getKidDOB());
