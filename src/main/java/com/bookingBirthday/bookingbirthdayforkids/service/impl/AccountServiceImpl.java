@@ -12,9 +12,11 @@ import com.bookingBirthday.bookingbirthdayforkids.repository.AccountRepository;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.AccountRequest;
 import com.bookingBirthday.bookingbirthdayforkids.repository.RoleRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.AccountService;
+import com.bookingBirthday.bookingbirthdayforkids.util.AuthenUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +29,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -44,6 +47,8 @@ public class AccountServiceImpl implements AccountService {
     AuthenticationManager authenticationManager;
     @Autowired
     RoleRepository roleRepository;
+    @Autowired
+    FirebaseService firebaseService;
     @Override
     public ResponseEntity<ResponseObj> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -230,8 +235,57 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
+    @Override
+    public ResponseEntity<ResponseObj> updateImg(MultipartFile imgFile) {
+        Role role = roleRepository.findByName(RoleEnum.CUSTOMER);
+        Account account;
+        try {
+            Long userId = AuthenUtil.getCurrentUserId();
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+            }
+            account = accountRepository.findById(userId).get();
+            if (imgFile != null) {
+                String img = firebaseService.uploadImage(imgFile);
+                account.setAvatarUrl(img);
+                account.setUsername(account.getUsername());
+                account.setPassword(account.getPassword());
+                account.setPhone(account.getPhone());
+                account.setActive(true);
+                account.setFullName(account.getFullName());
+                account.setEmail(account.getEmail());
+                account.setRole(role);
+                account.setUpdateAt(LocalDateTime.now());
+                accountRepository.save(account);
+            }
+        }catch(Exception e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Image is invalid", null));
+            }
 
-    //    @Override
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Successful", account));
+        }
+
+    @Override
+    public ResponseEntity<ResponseObj> updateAccount(Long id, AccountRequest accountRequest) {
+        Optional<Account> existAccount = accountRepository.findById(id);
+        if(existAccount.isPresent()){
+            existAccount.get().setUsername(accountRequest.getUsername() == null ? existAccount.get().getUsername() : accountRequest.getUsername());
+            existAccount.get().setPassword(accountRequest.getPassword() == null ? existAccount.get().getPassword() : passwordEncoder.encode(accountRequest.getPassword()));
+            existAccount.get().setPhone(accountRequest.getPassword() == null ? existAccount.get().getPhone() : accountRequest.getPhone());
+            existAccount.get().setFullName(accountRequest.getFullName() == null ? existAccount.get().getFullName() : accountRequest.getFullName());
+            existAccount.get().setEmail(accountRequest.getEmail() == null ? existAccount.get().getEmail() : accountRequest.getEmail());
+            existAccount.get().setUpdateAt(LocalDateTime.now());
+            accountRepository.save(existAccount.get());
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Update account successful", existAccount));
+        }
+        else
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Account does not exist", null));
+    }
+
+
+
+
+        //    @Override
 //    public ResponseEntity<ResponseObj> update(Long id, AccountRequest accountRequest) {
 ////        Account existAccount = accountRepository.findById(id).orElseThrow();
 //        Optional<Account> existAccount = accountRepository.findById(id);

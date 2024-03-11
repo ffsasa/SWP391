@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,6 +34,8 @@ public class Account extends BaseEntity implements UserDetails {
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     @JsonIgnore
     private LocalDateTime dob;
+
+    @Column(name = "avatar_url",columnDefinition = "TEXT")
     private String avatarUrl;
 
     @ManyToOne
