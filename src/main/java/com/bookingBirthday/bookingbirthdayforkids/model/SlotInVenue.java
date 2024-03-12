@@ -41,6 +41,11 @@ public class SlotInVenue extends BaseEntity{
     @JsonBackReference
     private Slot slot;
 
+    @Transient
+    @JsonProperty("slotObject")
+    private Slot fakeFieldName;
+    // Getter và setter cho fakeFieldName
+
     @OneToMany(mappedBy = "slotInVenue", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     @JsonIgnore

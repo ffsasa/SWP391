@@ -2,6 +2,7 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.ThemeRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
+import com.bookingBirthday.bookingbirthdayforkids.model.Services;
 import com.bookingBirthday.bookingbirthdayforkids.model.Theme;
 import com.bookingBirthday.bookingbirthdayforkids.repository.ThemeRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.ThemeService;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +21,8 @@ public class ThemeServiceImpl implements ThemeService {
 
     @Autowired
     ThemeRepository themeRepository;
+    @Autowired
+    FirebaseService firebaseService;
 
     @Override
     public ResponseEntity<ResponseObj> getAll() {
@@ -47,24 +51,28 @@ public class ThemeServiceImpl implements ThemeService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> create(ThemeRequest themeRequest) {
-        try {
-            if (themeRepository.existsByThemeName(themeRequest.getThemeName()))
-                return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(), "This theme name already exists", null));
-
-            Theme theme = new Theme();
-            theme.setThemeName(themeRequest.getThemeName());
-            theme.setThemDescription(themeRequest.getThemDescription());
-            theme.setThemeImgUrl(themeRequest.getThemeImgUrl());
-            theme.setActive(true);
-            theme.setCreateAt(LocalDateTime.now());
-            theme.setUpdateAt(LocalDateTime.now());
-
-            themeRepository.save(theme);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", theme));
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String themeName, String themDescription) {
+        if(themeRepository.existsByThemeName(themeName)){
+            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(),"Theme name has already exist", null));
         }
+        Theme theme = new Theme();
+        try {
+            if (imgFile != null) {
+                String img = firebaseService.uploadImage(imgFile);
+                theme.setThemeName(themeName);
+                theme.setThemDescription(themDescription);
+                theme.setThemeImgUrl(img);
+                theme.setActive(true);
+                theme.setCreateAt(LocalDateTime.now());
+                theme.setUpdateAt(LocalDateTime.now());
+                themeRepository.save(theme);
+            }
+
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Image is invalid", null));
+
+        }
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", theme));
     }
 
     @Override

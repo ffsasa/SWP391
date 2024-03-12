@@ -55,6 +55,10 @@ public class SlotInVenueServiceImpl implements SlotInVenueService {
         if (slotInVenueList.isEmpty()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
         }
+        slotInVenueList.forEach(slotInVenue -> {
+            Optional<Slot> slotObject = slotRepository.findById(slotInVenue.getSlot().getId());
+                slotInVenue.setFakeFieldName(slotObject.get());
+        });
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List", slotInVenueList));
     }
 }
