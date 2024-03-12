@@ -35,8 +35,9 @@ public class PackageController {
     @PostMapping(value = "/create-package", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> create(@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
                                     @RequestPart String packageName,
+                                    @RequestPart String packageDescription,
                                     @RequestPart String pricing){
-        return packageService.create(fileImg, packageName, Float.parseFloat(pricing));
+        return packageService.create(fileImg, packageName, packageDescription, Float.parseFloat(pricing));
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
