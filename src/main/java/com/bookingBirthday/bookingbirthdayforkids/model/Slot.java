@@ -36,9 +36,11 @@ public class Slot extends BaseEntity{
         try {
             LocalTime start = LocalTime.parse(this.timeStart, DateTimeFormatter.ofPattern("HH:mm:ss"));
             LocalTime end = LocalTime.parse(this.timeEnd, DateTimeFormatter.ofPattern("HH:mm:ss"));
-            return start.isBefore(end);
+            long minutesBetween = java.time.Duration.between(start, end).toMinutes();
+            return start.isBefore(end) && minutesBetween >= 30;
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException("Invalid time format");
         }
     }
+
 }
