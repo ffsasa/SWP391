@@ -4,6 +4,7 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.request.VenueRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.service.VenueService;
 import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/venue")
@@ -28,7 +31,12 @@ public class VenueController {
 
     @GetMapping("/check-slot-in-venue")
     public ResponseEntity<ResponseObj> checkSlotInVenue(@RequestParam String date) {
-        return venueService.checkSlotInVenue((LocalDate) LocalDate.parse(date));
+        try {
+            return venueService.checkSlotInVenue(LocalDate.parse(date));
+        } catch (Exception e) {
+            List<Object> errors = new ArrayList<>();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid date", errors));
+        }
     }
 
     @GetMapping("/get-id/{id}")
