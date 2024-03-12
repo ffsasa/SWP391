@@ -9,34 +9,34 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/inquiry")
+@RequestMapping("/api/inquiry")
 @CrossOrigin(origins = {"http://Localhost:3000", "https://localhost:8080"}, allowCredentials = "true")
 @PreAuthorize("hasAuthority('CUSTOMER')")
 public class InquiryQuestionController {
     @Autowired
     InquiryQuestionService inquiryService;
 
-    @PostMapping("/create-question")
+    @PostMapping("/api/create-question")
     public ResponseEntity<ResponseObj> create(@RequestBody InquiryQuestionRequest inquiryRequest){
         return inquiryService.create(inquiryRequest);
     }
 
-    @GetMapping("/get-all-question")
+    @GetMapping("/api/get-all-question")
     public ResponseEntity<ResponseObj> getAll(){
         return inquiryService.getAll();
     }
 
-    @GetMapping("/get-question-byid/{id}")
+    @GetMapping("/api/get-question-by-id/{id}")
     public ResponseEntity<ResponseObj> getById(@PathVariable Long id){
         return inquiryService.getById(id);
     }
 
-    @DeleteMapping("/delete-question/{id}")
+    @DeleteMapping("/api/delete-question/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
         return inquiryService.delete(id);
     }
 
-    @PutMapping("/update-question/{id}")
+    @PutMapping("/api/update-question/{id}")
     public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody InquiryQuestionRequest inquiryRequest){
         return inquiryService.update(id, inquiryRequest);
     }

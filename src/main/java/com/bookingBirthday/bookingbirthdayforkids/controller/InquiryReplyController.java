@@ -9,16 +9,16 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/inquiry")
+@RequestMapping("/api/inquiry")
 @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
 public class InquiryReplyController {
     @Autowired
     InquiryReplyService inquiryReplyService;
-    @PutMapping("/reply/{id}")
-    public ResponseEntity<ResponseObj> reply(@RequestParam Long id, @RequestBody InquiryReplyRequest inquiryReplyRequest){
+    @PutMapping("/api/reply/{id}")
+    public ResponseEntity<ResponseObj> reply(@PathVariable Long id, @RequestBody InquiryReplyRequest inquiryReplyRequest){
         return inquiryReplyService.reply(id, inquiryReplyRequest);
     }
-    @GetMapping("/get-all")
+    @GetMapping("/api/get-all")
     public ResponseEntity<ResponseObj> getAll(){
         return inquiryReplyService.getAll();
     }
