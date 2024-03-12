@@ -60,7 +60,7 @@ public class ServicesServicesImpl implements ServicesService {
             if (imgFile != null) {
                 String img = firebaseService.uploadImage(imgFile);
                 services.setServiceName(serviceName);
-                services.setDescription(description);
+                services.setServiceDescription(description);
                 services.setPricing(pricing);
                 services.setServiceImgUrl(img);
                 services.setActive(true);
@@ -81,7 +81,7 @@ public class ServicesServicesImpl implements ServicesService {
 
         if (existServices.isPresent()){
             existServices.get().setServiceName(servicesRequest.getServiceName() == null ? existServices.get().getServiceName() : servicesRequest.getServiceName());
-            existServices.get().setDescription(servicesRequest.getDescription() == null ? existServices.get().getDescription(): servicesRequest.getDescription());
+            existServices.get().setServiceDescription(servicesRequest.getDescription() == null ? existServices.get().getServiceDescription(): servicesRequest.getDescription());
             existServices.get().setPricing(servicesRequest.getPricing() == 0 ? existServices.get().getPricing() : servicesRequest.getPricing());
             existServices.get().setUpdateAt(LocalDateTime.now());
             servicesRepository.save(existServices.get());

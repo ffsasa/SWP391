@@ -60,7 +60,7 @@ public class ThemeServiceImpl implements ThemeService {
             if (imgFile != null) {
                 String img = firebaseService.uploadImage(imgFile);
                 theme.setThemeName(themeName);
-                theme.setThemDescription(themDescription);
+                theme.setThemeDescription(themDescription);
                 theme.setThemeImgUrl(img);
                 theme.setActive(true);
                 theme.setCreateAt(LocalDateTime.now());
@@ -81,7 +81,7 @@ public class ThemeServiceImpl implements ThemeService {
             Optional<Theme> existTheme = themeRepository.findById(id);
             if (existTheme.isPresent()){
                 existTheme.get().setThemeName(themeRequest.getThemeName() == null ? existTheme.get().getThemeName() : themeRequest.getThemeName());
-                existTheme.get().setThemDescription(themeRequest.getThemDescription() == null ? existTheme.get().getThemDescription() : themeRequest.getThemDescription());
+                existTheme.get().setThemeDescription(themeRequest.getThemDescription() == null ? existTheme.get().getThemeDescription() : themeRequest.getThemDescription());
                 existTheme.get().setThemeImgUrl(themeRequest.getThemeImgUrl() == null ? existTheme.get().getThemeImgUrl() : themeRequest.getThemeImgUrl());
                 existTheme.get().setUpdateAt(LocalDateTime.now());
                 themeRepository.save(existTheme.get());
