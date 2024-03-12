@@ -19,8 +19,4 @@ public class SlotInVenueController {
     public ResponseEntity<ResponseObj> create(@RequestBody SlotInVenueRequest slotInVenueRequest){
         return slotinVenueService.create(slotInVenueRequest);
     }
-    @GetMapping("/get-all")
-    public ResponseEntity<ResponseObj> getAll(){
-        return slotinVenueService.getAll();
-    }
 }
