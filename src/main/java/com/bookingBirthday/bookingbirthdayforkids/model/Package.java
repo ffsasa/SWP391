@@ -21,6 +21,9 @@ import java.util.Set;
 public class Package extends BaseEntity{
     @NotBlank(message = "Package name cannot blank")
     private String packageName;
+    @Column(name = "package_description",columnDefinition = "TEXT")
+    @NotBlank(message = "Description cannot be blank")
+    private String packageDescription;
     @Column(name = "package_img_url",columnDefinition = "TEXT")
     private String packageImgUrl;
     @NotNull(message = "Pricing value cannot be null")
