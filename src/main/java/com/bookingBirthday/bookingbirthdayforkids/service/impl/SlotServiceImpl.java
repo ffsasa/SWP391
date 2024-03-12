@@ -49,6 +49,9 @@ public class SlotServiceImpl implements SlotService {
         Slot slot = new Slot() ;
         slot.setTimeStart(slotRequest.getTimeStart());
         slot.setTimeEnd(slotRequest.getTimeEnd());
+        if (!slot.isValidTimeRange()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(),"Invalid time range", null));
+        }
         slot.setActive(true);
         slot.setCreateAt(LocalDateTime.now());
         slot.setUpdateAt(LocalDateTime.now());

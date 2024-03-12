@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 public class PartyDated extends BaseEntity{
-    @JsonIgnore
+
     @DateTimeFormat(pattern = "yyyy-mm-dd")
-    private LocalDateTime Date;
+    private LocalDate Date;
 
     @OneToOne(mappedBy = "partyDated", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnore
