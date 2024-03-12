@@ -16,27 +16,27 @@ public class InquiryQuestionController {
     @Autowired
     InquiryQuestionService inquiryService;
 
-    @PostMapping("/api/create-question")
+    @PostMapping("/create-question")
     public ResponseEntity<ResponseObj> create(@RequestBody InquiryQuestionRequest inquiryRequest){
         return inquiryService.create(inquiryRequest);
     }
 
-    @GetMapping("/api/get-all-question")
+    @GetMapping("/get-all-question")
     public ResponseEntity<ResponseObj> getAll(){
         return inquiryService.getAll();
     }
 
-    @GetMapping("/api/get-question-by-id/{id}")
+    @GetMapping("/get-question-by-id/{id}")
     public ResponseEntity<ResponseObj> getById(@PathVariable Long id){
         return inquiryService.getById(id);
     }
 
-    @DeleteMapping("/api/delete-question/{id}")
+    @DeleteMapping("/delete-question/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
         return inquiryService.delete(id);
     }
 
-    @PutMapping("/api/update-question/{id}")
+    @PutMapping("/update-question/{id}")
     public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody InquiryQuestionRequest inquiryRequest){
         return inquiryService.update(id, inquiryRequest);
     }

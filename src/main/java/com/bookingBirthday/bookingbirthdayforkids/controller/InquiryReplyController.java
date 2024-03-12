@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.*;
 public class InquiryReplyController {
     @Autowired
     InquiryReplyService inquiryReplyService;
-    @PutMapping("/api/reply/{id}")
+    @PutMapping("/reply/{id}")
     public ResponseEntity<ResponseObj> reply(@PathVariable Long id, @RequestBody InquiryReplyRequest inquiryReplyRequest){
         return inquiryReplyService.reply(id, inquiryReplyRequest);
     }
-    @GetMapping("/api/get-all")
+    @GetMapping("/get-all")
     public ResponseEntity<ResponseObj> getAll(){
         return inquiryReplyService.getAll();
     }
