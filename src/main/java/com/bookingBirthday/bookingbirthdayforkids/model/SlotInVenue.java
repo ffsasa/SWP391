@@ -25,11 +25,8 @@ public class SlotInVenue extends BaseEntity{
     }
 
     @Transient
+    @JsonProperty("slotObject")
     private Slot slotObject;
-    @JsonProperty("slot")
-    public void setSlot(Slot slot) {
-        this.slotObject = slot;
-    }
 
     @ManyToOne
     @JoinColumn(name = "venue_id")
@@ -40,11 +37,6 @@ public class SlotInVenue extends BaseEntity{
     @JoinColumn(name = "slot_id")
     @JsonBackReference
     private Slot slot;
-
-    @Transient
-    @JsonProperty("slotObject")
-    private Slot fakeFieldName;
-    // Getter và setter cho fakeFieldName
 
     @OneToMany(mappedBy = "slotInVenue", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference

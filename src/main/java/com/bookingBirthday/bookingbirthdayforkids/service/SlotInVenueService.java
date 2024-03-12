@@ -6,6 +6,5 @@ import org.springframework.http.ResponseEntity;
 
 public interface SlotInVenueService {
     ResponseEntity<ResponseObj> create(SlotInVenueRequest slotInVenueRequest);
-    ResponseEntity<ResponseObj> getAll();
 
 }
