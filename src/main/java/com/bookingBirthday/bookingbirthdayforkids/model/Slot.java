@@ -41,4 +41,5 @@ public class Slot extends BaseEntity{
             throw new IllegalArgumentException("Invalid time format");
         }
     }
+    //
 }
