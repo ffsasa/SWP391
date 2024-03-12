@@ -2,10 +2,10 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.VenueRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
+import com.bookingBirthday.bookingbirthdayforkids.model.*;
 import com.bookingBirthday.bookingbirthdayforkids.model.Package;
-import com.bookingBirthday.bookingbirthdayforkids.model.Theme;
-import com.bookingBirthday.bookingbirthdayforkids.model.Venue;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PackageRepository;
+import com.bookingBirthday.bookingbirthdayforkids.repository.PartyDatedRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.ThemeRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.VenueRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.VenueService;
@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,9 @@ public class VenueServiceImpl implements VenueService {
     @Autowired
     ThemeRepository themeRepository;
 
+    @Autowired
+    PartyDatedRepository partyDatedRepository;
+
     @Override
     public ResponseEntity<ResponseObj> getAll() {
         try {
@@ -43,6 +47,32 @@ public class VenueServiceImpl implements VenueService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
+
+    @Override
+    public ResponseEntity<ResponseObj> checkSlotInVenue(LocalDate date) {
+        try {
+            List<Venue> venueList = venueRepository.findAll();
+            if(venueList.isEmpty()){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+            }
+            List<PartyDated> partyDatedList = partyDatedRepository.findAllByDate(date);
+
+            for(Venue venue : venueList){
+                List<SlotInVenue> slotInVenueList = venue.getSlotInVenueList();
+                for (SlotInVenue slotInVenue : slotInVenueList) {
+                    for (PartyDated partyDated : partyDatedList) {
+                        if (partyDated.getSlotInVenue().equals(slotInVenue)) {
+                            slotInVenue.setStatus(true);
+                        }
+                    }
+                }
+            }
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", venueList));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
 
     @Override
     public ResponseEntity<ResponseObj> getById(Long id) {

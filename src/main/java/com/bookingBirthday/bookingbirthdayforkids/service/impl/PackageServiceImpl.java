@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,6 +19,8 @@ import java.util.Optional;
 public class PackageServiceImpl implements PackageService {
     @Autowired
     PackageRepository packageRepository;
+    @Autowired
+    FirebaseService firebaseService;
     @Override
     public ResponseEntity<ResponseObj> getAll() {
         List<Package> packageList = packageRepository.findAllByIsActiveIsTrue();
@@ -41,16 +44,23 @@ public class PackageServiceImpl implements PackageService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> create(PackageRequest packageRequest) {
+    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, float pricing) {
         Package pack = new Package();
-        pack.setPackageName(packageRequest.getPackageName());
-        pack.setPackageImgUrl(packageRequest.getPackageImgUrl());
-        pack.setPricing(packageRequest.getPricing());
-        pack.setActive(true);
-        pack.setCreateAt(LocalDateTime.now());
-        pack.setUpdateAt(LocalDateTime.now());
-        packageRepository.save(pack);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(),"Create successful", pack));
+        try {
+            if (imgFile != null) {
+                String img = firebaseService.uploadImage(imgFile);
+                pack.setPackageName(packageName);
+                pack.setPricing(pricing);
+                pack.setPackageImgUrl(img);
+                pack.setActive(true);
+                pack.setCreateAt(LocalDateTime.now());
+                pack.setUpdateAt(LocalDateTime.now());
+                packageRepository.save(pack);
+            }
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Image is invalid", null));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Successful", pack));
     }
 
     @Override
@@ -58,7 +68,7 @@ public class PackageServiceImpl implements PackageService {
         Optional<Package> existPackage  = packageRepository.findById(id);
         if (existPackage.isPresent()){
             existPackage.get().setPackageName(packageRequest.getPackageName() == null ? existPackage.get().getPackageName() : packageRequest.getPackageName());
-            existPackage.get().setPackageImgUrl(packageRequest.getPackageImgUrl() == null ? existPackage.get().getPackageImgUrl() : packageRequest.getPackageImgUrl());
+//            existPackage.get().setPackageImgUrl(packageRequest.getPackageImgUrl() == null ? existPackage.get().getPackageImgUrl() : packageRequest.getPackageImgUrl());
             existPackage.get().setPricing(packageRequest.getPricing() == 0 ? existPackage.get().getPricing() : packageRequest.getPricing());
             existPackage.get().setUpdateAt(LocalDateTime.now());
             packageRepository.save(existPackage.get());

@@ -21,9 +21,10 @@ import java.util.Set;
 public class Theme extends BaseEntity{
     @NotBlank(message = "Theme name cannot be blank")
     private String themeName;
+    @Column(name = "theme_description",columnDefinition = "TEXT")
     @NotBlank(message = "Description cannot be blank")
     private String themDescription;
-    @Column(name = "avatar_url",columnDefinition = "TEXT")
+    @Column(name = "theme_img_url",columnDefinition = "TEXT")
     private String themeImgUrl;
 
     @ManyToMany(mappedBy = "themeSet")
