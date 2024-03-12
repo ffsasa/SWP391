@@ -17,11 +17,11 @@ public class SlotRequest {
 
     @NotNull(message = "TimeStart value cannot be null")
     @NotBlank(message = "TimeStart value cannot be blank")
-    @DateTimeFormat(pattern = "hh-mm-ss")
+    @DateTimeFormat(pattern = "HH:mm:ss")
     private String timeStart;
-
     @NotNull(message = "TimeEnd value cannot be null")
     @NotBlank(message = "TimeEnd value cannot be blank")
-    @DateTimeFormat(pattern = "hh-mm-ss")
+    @DateTimeFormat(pattern = "HH:mm:ss")
+
     private String timeEnd;
 }

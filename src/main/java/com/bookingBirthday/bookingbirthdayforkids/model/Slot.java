@@ -22,11 +22,11 @@ import java.util.List;
 public class Slot extends BaseEntity{
     @NotNull(message = "TimeStart value cannot be null")
     @NotBlank(message = "TimeStart value cannot be blank")
-    @DateTimeFormat(pattern = "hh-mm-ss")
+    @DateTimeFormat(pattern = "HH:mm:ss")
     private String timeStart;
     @NotNull(message = "TimeEnd value cannot be null")
     @NotBlank(message = "TimeEnd value cannot be blank")
-    @DateTimeFormat(pattern = "hh-mm-ss")
+    @DateTimeFormat(pattern = "HH:mm:ss")
     private String timeEnd;
     @OneToMany(mappedBy = "slot", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -34,8 +34,8 @@ public class Slot extends BaseEntity{
     private List<SlotInVenue> slotInVenueList;
     public boolean isValidTimeRange() {
         try {
-            LocalTime start = LocalTime.parse(this.timeStart, DateTimeFormatter.ofPattern("hh-mm-ss"));
-            LocalTime end = LocalTime.parse(this.timeEnd, DateTimeFormatter.ofPattern("hh-mm-ss"));
+            LocalTime start = LocalTime.parse(this.timeStart, DateTimeFormatter.ofPattern("HH:mm:ss"));
+            LocalTime end = LocalTime.parse(this.timeEnd, DateTimeFormatter.ofPattern("HH:mm:ss"));
             return start.isBefore(end);
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException("Invalid time format");
