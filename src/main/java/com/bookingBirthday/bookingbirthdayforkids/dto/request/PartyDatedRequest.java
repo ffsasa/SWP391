@@ -1,8 +1,9 @@
 package com.bookingBirthday.bookingbirthdayforkids.dto.request;
 
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -11,5 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class PartyDatedRequest {
     private Long slotInVenueId;
-    private LocalDateTime date;
+
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
+    private LocalDate Date;
 }
