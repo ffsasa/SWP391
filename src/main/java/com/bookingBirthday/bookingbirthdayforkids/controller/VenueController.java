@@ -11,6 +11,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("/api/venue")
 public class VenueController {
@@ -20,6 +22,11 @@ public class VenueController {
     @GetMapping("/get-all")
     public ResponseEntity<ResponseObj> getAll() {
         return venueService.getAll();
+    }
+
+    @GetMapping("/check-slot-in-venue")
+    public ResponseEntity<ResponseObj> checkSlotInVenue(@RequestParam String date) {
+        return venueService.checkSlotInVenue((LocalDate) LocalDate.parse(date));
     }
 
     @GetMapping("/get-id/{id}")

@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class PartyDated extends BaseEntity{
 
     @DateTimeFormat(pattern = "yyyy-mm-dd")
-    private LocalDate Date;
+    private LocalDate date;
 
     @OneToOne(mappedBy = "partyDated", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnore
