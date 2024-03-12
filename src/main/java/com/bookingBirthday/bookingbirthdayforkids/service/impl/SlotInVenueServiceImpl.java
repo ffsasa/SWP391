@@ -48,17 +48,4 @@ public class SlotInVenueServiceImpl implements SlotInVenueService {
         slotInVenueRepository.save(slotInVenue);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObj(HttpStatus.CREATED.toString(), "Create successful", slotInVenue));
     }
-
-    @Override
-    public ResponseEntity<ResponseObj> getAll() {
-        List<SlotInVenue> slotInVenueList = slotInVenueRepository.findAll();
-        if (slotInVenueList.isEmpty()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
-        }
-        slotInVenueList.forEach(slotInVenue -> {
-            Optional<Slot> slotObject = slotRepository.findById(slotInVenue.getSlot().getId());
-                slotInVenue.setFakeFieldName(slotObject.get());
-        });
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List", slotInVenueList));
-    }
 }
