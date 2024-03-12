@@ -11,7 +11,7 @@ public interface PackageService {
     public ResponseEntity<ResponseObj> getById(Long id);
 
     public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, String packageDescription, float pricing);
-    public ResponseEntity<ResponseObj> update(Long id, PackageRequest packageRequest);
+    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String packageName, String packageDescription, float pricing);
 
     public ResponseEntity<ResponseObj> delete(Long id);
 }

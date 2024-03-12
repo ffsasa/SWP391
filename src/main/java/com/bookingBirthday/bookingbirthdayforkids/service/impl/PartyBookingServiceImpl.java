@@ -214,6 +214,16 @@ public class PartyBookingServiceImpl implements PartyBookingService {
 
     @Override
     public ResponseEntity<ResponseObj> delete(Long id) {
-        return null;
+        Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
+        if (partyBooking.isPresent()){
+            partyBooking.get().setActive(false);
+            partyBooking.get().setDeleteAt(LocalDateTime.now());
+            partyBookingRepository.save(partyBooking.get());
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Delete successful", null));
+        }
+        else
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Party booking does not exist", null));
     }
+
+
 }

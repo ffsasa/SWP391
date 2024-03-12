@@ -3,6 +3,7 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.PaymentMethodRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.ServicesRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
+import com.bookingBirthday.bookingbirthdayforkids.model.PartyBooking;
 import com.bookingBirthday.bookingbirthdayforkids.model.PaymentMethod;
 import com.bookingBirthday.bookingbirthdayforkids.model.Services;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PaymentMethodRepository;
@@ -22,11 +23,14 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     PaymentMethodRepository paymentMethodRepository;
     @Override
     public ResponseEntity<ResponseObj> getAll(){
-        try{
+        try {
             List<PaymentMethod> paymentMethodList = paymentMethodRepository.findAll();
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), null, paymentMethodList));
-        }catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", null));
+            if (paymentMethodList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+            }
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", paymentMethodList));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
 
@@ -76,7 +80,9 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     public ResponseEntity<ResponseObj> delete(Long id) {
         Optional<PaymentMethod> paymentMethod = paymentMethodRepository.findById(id);
         if (paymentMethod.isPresent()){
-            paymentMethodRepository.delete(paymentMethod.get());
+            paymentMethod.get().setDeleteAt(LocalDateTime.now());
+            paymentMethod.get().setActive(false);
+            paymentMethodRepository.save(paymentMethod.get());
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Delete successful", null));
         }
         else

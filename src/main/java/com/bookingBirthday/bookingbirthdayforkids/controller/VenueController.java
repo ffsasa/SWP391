@@ -6,10 +6,12 @@ import com.bookingBirthday.bookingbirthdayforkids.service.VenueService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -35,19 +37,24 @@ public class VenueController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PostMapping("/create")
-    public ResponseEntity<?> create(@Valid @RequestBody VenueRequest venueRequest, BindingResult bindingResult){
-        if(bindingResult.hasErrors())
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST.toString());
-        return venueService.create(venueRequest);
+    @PostMapping(value = "/create-venue", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> create(@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
+                                    @RequestPart String venueName,
+                                    @RequestPart String venueDescription,
+                                    @RequestPart String location,
+                                    @RequestPart String capacity){
+        return venueService.create(fileImg, venueName, venueDescription, location, Integer.parseInt(capacity));
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id,@Valid @RequestBody VenueRequest venueRequest, BindingResult bindingResult){
-        if(bindingResult.hasErrors())
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST.toString());
-        return venueService.update(id, venueRequest);
+    @PostMapping(value = "/update-venue/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> update(@PathVariable Long id,
+                                    @RequestPart(name = "fileImg", required = false) MultipartFile fileImg,
+                                    @RequestPart String venueName,
+                                    @RequestPart String venueDescription,
+                                    @RequestPart String location,
+                                    @RequestPart String capacity){
+        return venueService.update(id, fileImg, venueName, venueDescription, location, Integer.parseInt(capacity));
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
