@@ -47,6 +47,4 @@ public class Payment extends BaseEntity {
     @JoinColumn(name = "partyBooking_id")
     @JsonBackReference
     private PartyBooking partyBooking;
-
-
 }

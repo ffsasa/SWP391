@@ -21,6 +21,7 @@ import java.util.Set;
 public class Venue extends BaseEntity{
     @NotBlank(message = "Venue name cannot be blank")
     private String venueName;
+    @Column(name = "venue_description",columnDefinition = "TEXT")
     @NotBlank(message = "Description cannot be blank")
     private String venueDescription;
     @Column(name = "venue_img_url",columnDefinition = "TEXT")
