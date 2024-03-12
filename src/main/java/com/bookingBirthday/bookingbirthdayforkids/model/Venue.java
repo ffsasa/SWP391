@@ -23,7 +23,7 @@ public class Venue extends BaseEntity{
     private String venueName;
     @NotBlank(message = "Description cannot be blank")
     private String venueDescription;
-    @Column(name = "avatar_url",columnDefinition = "TEXT")
+    @Column(name = "venue_img_url",columnDefinition = "TEXT")
     private String venueImgUrl;
     @NotBlank(message = "Location cannot be blank")
     private String location;
@@ -50,6 +50,7 @@ public class Venue extends BaseEntity{
 
     @OneToMany(mappedBy = "venue")
     @JsonManagedReference
+    @JsonIgnore
     private List<PartyBooking> partyBookingList;
 
     @OneToMany(mappedBy = "venue")
