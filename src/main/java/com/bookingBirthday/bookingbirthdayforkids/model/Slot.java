@@ -1,6 +1,5 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,6 +22,5 @@ public class Slot extends BaseEntity{
 
     @OneToMany(mappedBy = "slot", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
-    @JsonIgnore
     private List<SlotInVenue> slotInVenueList;
 }
