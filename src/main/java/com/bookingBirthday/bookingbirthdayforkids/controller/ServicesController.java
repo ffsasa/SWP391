@@ -7,9 +7,11 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.request.ServicesRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.service.ServicesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -31,9 +33,12 @@ public class ServicesController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PostMapping("/create-service")
-    public ResponseEntity<ResponseObj> create(@RequestBody ServicesRequest servicesRequest){
-        return  servicesService.create(servicesRequest);
+    @PostMapping(value = "/create-service", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> create(@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
+                                    @RequestPart String serviceName,
+                                    @RequestPart String description,
+                                    @RequestPart String pricing){
+        return servicesService.create(fileImg, serviceName, description,Float.parseFloat(pricing));
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
