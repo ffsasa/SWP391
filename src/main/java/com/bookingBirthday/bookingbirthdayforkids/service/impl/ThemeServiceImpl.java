@@ -28,11 +28,11 @@ public class ThemeServiceImpl implements ThemeService {
     public ResponseEntity<ResponseObj> getAll() {
         try {
             List<Theme> themeList = themeRepository.findAll();
-            if(themeList.isEmpty()){
+            if (themeList.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
             }
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", themeList));
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
@@ -41,19 +41,19 @@ public class ThemeServiceImpl implements ThemeService {
     public ResponseEntity<ResponseObj> getById(Long id) {
         try {
             Optional<Theme> theme = themeRepository.findById(id);
-            if(theme.isPresent()){
+            if (theme.isPresent()) {
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", theme));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This theme does not exist", null));
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
 
     @Override
     public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String themeName, String themDescription) {
-        if(themeRepository.existsByThemeName(themeName)){
-            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(),"Theme name has already exist", null));
+        if (themeRepository.existsByThemeName(themeName)) {
+            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(), "Theme name has already exist", null));
         }
         Theme theme = new Theme();
         try {
@@ -68,7 +68,7 @@ public class ThemeServiceImpl implements ThemeService {
                 themeRepository.save(theme);
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Image is invalid", null));
 
         }
@@ -76,31 +76,31 @@ public class ThemeServiceImpl implements ThemeService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> update(Long id, ThemeRequest themeRequest) {
+    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String themeName, String themDescription) {
+        Optional<Theme> theme = themeRepository.findById(id);
+        if (!theme.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This theme does not exist", null));
+        }
         try {
-            Optional<Theme> existTheme = themeRepository.findById(id);
-            if (existTheme.isPresent()){
-                existTheme.get().setThemeName(themeRequest.getThemeName() == null ? existTheme.get().getThemeName() : themeRequest.getThemeName());
-                existTheme.get().setThemeDescription(themeRequest.getThemDescription() == null ? existTheme.get().getThemeDescription() : themeRequest.getThemDescription());
-                existTheme.get().setThemeImgUrl(themeRequest.getThemeImgUrl() == null ? existTheme.get().getThemeImgUrl() : themeRequest.getThemeImgUrl());
-                existTheme.get().setUpdateAt(LocalDateTime.now());
-                themeRepository.save(existTheme.get());
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", existTheme));
-            }
-            else
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This theme does not exist", null));
 
-        }catch (Exception e){
+            theme.get().setThemeName(themeName == null ? theme.get().getThemeName() : themeName);
+            theme.get().setThemeDescription(themDescription == null ? theme.get().getThemeDescription() : themDescription);
+            String img = firebaseService.uploadImage(imgFile);
+            theme.get().setThemeImgUrl(img == null ? theme.get().getThemeImgUrl() : img);
+            theme.get().setUpdateAt(LocalDateTime.now());
+            themeRepository.save(theme.get());
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", theme));
+
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
 
     @Override
-    public ResponseEntity<ResponseObj> delete(Long id)
-    {
+    public ResponseEntity<ResponseObj> delete(Long id) {
         try {
             Optional<Theme> theme = themeRepository.findById(id);
-            if (theme.isPresent()){
+            if (theme.isPresent()) {
                 theme.get().setActive(false);
                 theme.get().setDeleteAt(LocalDateTime.now());
                 themeRepository.save(theme.get());
@@ -108,7 +108,7 @@ public class ThemeServiceImpl implements ThemeService {
             } else
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This theme does not exist", null));
 
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }

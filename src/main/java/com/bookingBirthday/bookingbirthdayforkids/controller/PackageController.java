@@ -41,11 +41,12 @@ public class PackageController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> update( @PathVariable Long id,@Valid @RequestBody PackageRequest packageRequest, BindingResult  bindingResult){
-        if(bindingResult.hasErrors())
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST.toString());
-        return packageService.update(id, packageRequest);
+    @PostMapping(value = "/update-package/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> update( @PathVariable Long id,@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
+                                     @RequestPart String packageName,
+                                     @RequestPart String packageDescription,
+                                     @RequestPart String pricing){
+        return packageService.update(id, fileImg, packageName, packageDescription, Float.parseFloat(pricing));
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")

@@ -41,26 +41,19 @@ public class ServicesController {
         return servicesService.create(fileImg, serviceName, description,Float.parseFloat(pricing));
     }
 
-<<<<<<< HEAD
-    @PutMapping("/update-service/{id}")
-    public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody ServicesRequest servicesRequest){
-        return servicesService.update(id, servicesRequest);
-    }
-=======
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
->>>>>>> main
     @DeleteMapping("/delete-service/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
         return servicesService.delete(id);
     }
 
-<<<<<<< HEAD
-
-=======
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PutMapping("/update-service/{id}")
-    public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody ServicesRequest servicesRequest){
-        return servicesService.update(id, servicesRequest);
+    @PostMapping(value = "/update-service/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> update(@PathVariable Long id,
+                                    @RequestPart(name = "fileImg", required = false) MultipartFile fileImg,
+                                    @RequestPart String serviceName,
+                                    @RequestPart String description,
+                                    @RequestPart String pricing){
+        return servicesService.update(id, fileImg, serviceName, description, Float.parseFloat(pricing));
     }
->>>>>>> main
 }

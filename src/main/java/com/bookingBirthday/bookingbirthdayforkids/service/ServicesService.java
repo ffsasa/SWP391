@@ -13,7 +13,7 @@ public interface ServicesService {
 
     public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String serviceName, String description, float pricing);
 
-    public ResponseEntity<ResponseObj> update(Long id, ServicesRequest servicesRequest);
+    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String serviceName, String description, float pricing);
 
     public ResponseEntity<ResponseObj> delete(Long id);
 }
