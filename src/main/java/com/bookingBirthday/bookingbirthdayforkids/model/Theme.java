@@ -23,7 +23,7 @@ public class Theme extends BaseEntity{
     private String themeName;
     @Column(name = "theme_description",columnDefinition = "TEXT")
     @NotBlank(message = "Description cannot be blank")
-    private String themDescription;
+    private String themeDescription;
     @Column(name = "theme_img_url",columnDefinition = "TEXT")
     private String themeImgUrl;
 

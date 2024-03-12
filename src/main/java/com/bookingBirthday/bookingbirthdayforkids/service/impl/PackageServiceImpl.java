@@ -44,7 +44,7 @@ public class PackageServiceImpl implements PackageService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, float pricing) {
+    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, String packageDescription, float pricing) {
         Package pack = new Package();
         try {
             if (imgFile != null) {
