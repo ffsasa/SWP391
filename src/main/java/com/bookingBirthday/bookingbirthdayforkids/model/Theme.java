@@ -23,6 +23,7 @@ public class Theme extends BaseEntity{
     private String themeName;
     @NotBlank(message = "Description cannot be blank")
     private String themDescription;
+    @Column(name = "avatar_url",columnDefinition = "TEXT")
     private String themeImgUrl;
 
     @ManyToMany(mappedBy = "themeSet")

@@ -29,12 +29,12 @@ public class PartyBookingRequest {
 
     @NotNull(message = "Theme ID cannot be null")
     private Long themeId;
-    @NotNull(message = "Venue ID cannot be null")
-    private Long venueId;
     @NotNull(message = "Package ID cannot be null")
     private Long packageId;
     @NotNull(message = "Slot in venue ID cannot be null")
     private Long slotInVenueId;
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
+    private LocalDate Date;
 
     private Map<String, Integer> dataUpgrade;
 }

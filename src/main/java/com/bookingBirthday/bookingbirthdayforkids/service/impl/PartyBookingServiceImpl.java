@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class PartyBookingServiceImpl implements PartyBookingService {
@@ -96,12 +95,13 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             partyBooking.setApackage(aPackage);
 
             PartyDated partyDated = new PartyDated();
+            partyDated.setDate(partyBookingRequest.getDate());
             partyDated.setSlotInVenue(slotInVenue.get());
             partyDated.setActive(true);
             partyDated.setCreateAt(LocalDateTime.now());
             partyDated.setUpdateAt(LocalDateTime.now());
             partyDatedRepository.save(partyDated);
-            //bỏ sau
+
             partyBooking.setVenue(venue);
             partyBooking.setPartyDated(partyDated);
             partyBookingRepository.save(partyBooking);
