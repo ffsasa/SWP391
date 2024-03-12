@@ -52,6 +52,7 @@ public class PackageServiceImpl implements PackageService {
                 pack.setPackageName(packageName);
                 pack.setPricing(pricing);
                 pack.setPackageImgUrl(img);
+                pack.setPackageDescription(packageDescription);
                 pack.setActive(true);
                 pack.setCreateAt(LocalDateTime.now());
                 pack.setUpdateAt(LocalDateTime.now());
