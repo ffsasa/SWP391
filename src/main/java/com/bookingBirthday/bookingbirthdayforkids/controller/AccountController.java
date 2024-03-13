@@ -1,9 +1,7 @@
 package com.bookingBirthday.bookingbirthdayforkids.controller;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.LoginRequest;
-import com.bookingBirthday.bookingbirthdayforkids.dto.response.AuthenticationResponse;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
-import com.bookingBirthday.bookingbirthdayforkids.model.Account;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.AccountRequest;
 import com.bookingBirthday.bookingbirthdayforkids.service.AccountService;
 import com.bookingBirthday.bookingbirthdayforkids.util.JavaMail;
@@ -15,8 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;

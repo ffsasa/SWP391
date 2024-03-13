@@ -1,11 +1,7 @@
 package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 
-import com.bookingBirthday.bookingbirthdayforkids.dto.request.ServicesRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
-import com.bookingBirthday.bookingbirthdayforkids.model.Account;
-import com.bookingBirthday.bookingbirthdayforkids.model.PartyBooking;
 import com.bookingBirthday.bookingbirthdayforkids.model.Services;
-import com.bookingBirthday.bookingbirthdayforkids.model.Theme;
 import com.bookingBirthday.bookingbirthdayforkids.repository.ServicesRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.ServicesService;
 import org.springframework.beans.factory.annotation.Autowired;

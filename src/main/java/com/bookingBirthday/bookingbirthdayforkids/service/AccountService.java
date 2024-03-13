@@ -2,9 +2,7 @@ package com.bookingBirthday.bookingbirthdayforkids.service;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.AccountRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.LoginRequest;
-import com.bookingBirthday.bookingbirthdayforkids.dto.response.AuthenticationResponse;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
-import com.bookingBirthday.bookingbirthdayforkids.model.Account;
 import com.google.firebase.auth.FirebaseAuthException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;

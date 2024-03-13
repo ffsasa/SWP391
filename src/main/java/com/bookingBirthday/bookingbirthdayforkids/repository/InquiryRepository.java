@@ -1,10 +1,7 @@
 package com.bookingBirthday.bookingbirthdayforkids.repository;
 
-import com.bookingBirthday.bookingbirthdayforkids.dto.request.InquiryQuestionRequest;
-import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.Inquiry;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
