@@ -4,14 +4,19 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.request.VenueRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.service.VenueService;
 import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/venue")
@@ -26,7 +31,12 @@ public class VenueController {
 
     @GetMapping("/check-slot-in-venue")
     public ResponseEntity<ResponseObj> checkSlotInVenue(@RequestParam String date) {
-        return venueService.checkSlotInVenue((LocalDate) LocalDate.parse(date));
+        try {
+            return venueService.checkSlotInVenue(LocalDate.parse(date));
+        } catch (Exception e) {
+            List<Object> errors = new ArrayList<>();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid date", errors));
+        }
     }
 
     @GetMapping("/get-id/{id}")
@@ -35,19 +45,24 @@ public class VenueController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PostMapping("/create")
-    public ResponseEntity<?> create(@Valid @RequestBody VenueRequest venueRequest, BindingResult bindingResult){
-        if(bindingResult.hasErrors())
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST.toString());
-        return venueService.create(venueRequest);
+    @PostMapping(value = "/create-venue", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> create(@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
+                                    @RequestPart String venueName,
+                                    @RequestPart String venueDescription,
+                                    @RequestPart String location,
+                                    @RequestPart String capacity){
+        return venueService.create(fileImg, venueName, venueDescription, location, Integer.parseInt(capacity));
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id,@Valid @RequestBody VenueRequest venueRequest, BindingResult bindingResult){
-        if(bindingResult.hasErrors())
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST.toString());
-        return venueService.update(id, venueRequest);
+    @PostMapping(value = "/update-venue/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> update(@PathVariable Long id,
+                                    @RequestPart(name = "fileImg", required = false) MultipartFile fileImg,
+                                    @RequestPart String venueName,
+                                    @RequestPart String venueDescription,
+                                    @RequestPart String location,
+                                    @RequestPart String capacity){
+        return venueService.update(id, fileImg, venueName, venueDescription, location, Integer.parseInt(capacity));
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")

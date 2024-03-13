@@ -3,7 +3,9 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.ServicesRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.Account;
+import com.bookingBirthday.bookingbirthdayforkids.model.PartyBooking;
 import com.bookingBirthday.bookingbirthdayforkids.model.Services;
+import com.bookingBirthday.bookingbirthdayforkids.model.Theme;
 import com.bookingBirthday.bookingbirthdayforkids.repository.ServicesRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.ServicesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +27,14 @@ public class ServicesServicesImpl implements ServicesService {
 
     @Override
     public ResponseEntity<ResponseObj> getAll(){
-        try{
+        try {
             List<Services> servicesList = servicesRepository.findAll();
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), null, servicesList));
-
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", null));
+            if (servicesList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+            }
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", servicesList));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
 
@@ -73,29 +77,35 @@ public class ServicesServicesImpl implements ServicesService {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", services));
     }
 
-    public ResponseEntity<ResponseObj> update(Long id, ServicesRequest servicesRequest){
-        Optional<Services> existServices = servicesRepository.findById(id);
-
-        if (existServices.isPresent()){
-            existServices.get().setServiceName(servicesRequest.getServiceName() == null ? existServices.get().getServiceName() : servicesRequest.getServiceName());
-            existServices.get().setServiceDescription(servicesRequest.getDescription() == null ? existServices.get().getServiceDescription(): servicesRequest.getDescription());
-            existServices.get().setPricing(servicesRequest.getPricing() == 0 ? existServices.get().getPricing() : servicesRequest.getPricing());
-            existServices.get().setUpdateAt(LocalDateTime.now());
-            servicesRepository.save(existServices.get());
-
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", existServices));
-
+    @Override
+    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String serviceName, String description, float pricing){
+        Optional<Services> services = servicesRepository.findById(id);
+        if (!services.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This service does not exist", null));
         }
-        else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Service does not exist", null));
+        try {
 
+            services.get().setServiceName(serviceName == null ? services.get().getServiceName() : serviceName);
+            services.get().setServiceDescription(description == null ? services.get().getServiceDescription() : description);
+            String img = firebaseService.uploadImage(imgFile);
+            services.get().setServiceImgUrl(img == null ? services.get().getServiceDescription() : img);
+            services.get().setPricing(pricing == 0 ? services.get().getPricing(): pricing);
+            services.get().setUpdateAt(LocalDateTime.now());
+            servicesRepository.save(services.get());
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", services));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
     }
 
     @Override
     public ResponseEntity<ResponseObj> delete(Long id) {
         Optional<Services> services = servicesRepository.findById(id);
         if (services.isPresent()){
-            servicesRepository.delete(services.get());
+            services.get().setDeleteAt(LocalDateTime.now());
+            services.get().setActive(false);
+            servicesRepository.save(services.get());
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Delete successful", null));
         }
         else

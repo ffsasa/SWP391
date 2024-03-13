@@ -2,9 +2,7 @@ package com.bookingBirthday.bookingbirthdayforkids.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -21,13 +19,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 public class Transaction extends BaseEntity {
-    @NotNull(message = "Status cannot null")
-    @JsonIgnore
-    private int status;
-
-    @DateTimeFormat(pattern = "yyyy-mm-dd")
-    @JsonIgnore
-    private LocalDateTime transactionDate;
+    @Enumerated(EnumType.STRING)
+    private StatusEnum status;
 
     @ManyToOne
     @JoinColumn(name = "payment_id")

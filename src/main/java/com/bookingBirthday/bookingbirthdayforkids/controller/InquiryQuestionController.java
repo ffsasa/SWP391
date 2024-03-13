@@ -9,7 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/inquiry")
+@RequestMapping("/api/inquiry")
 @CrossOrigin(origins = {"http://Localhost:3000", "https://localhost:8080"}, allowCredentials = "true")
 @PreAuthorize("hasAuthority('CUSTOMER')")
 public class InquiryQuestionController {
@@ -26,7 +26,7 @@ public class InquiryQuestionController {
         return inquiryService.getAll();
     }
 
-    @GetMapping("/get-question-byid/{id}")
+    @GetMapping("/get-question-by-id/{id}")
     public ResponseEntity<ResponseObj> getById(@PathVariable Long id){
         return inquiryService.getById(id);
     }

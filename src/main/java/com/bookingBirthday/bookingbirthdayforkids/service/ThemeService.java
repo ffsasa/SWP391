@@ -12,7 +12,7 @@ public interface ThemeService {
 
     public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String themeName, String themDescription);
 
-    public ResponseEntity<ResponseObj> update(Long id, ThemeRequest themeRequest);
+    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String themeName, String themDescription);
 
     public ResponseEntity<ResponseObj> delete(Long id);
 }

@@ -48,8 +48,12 @@ public class ServicesController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PutMapping("/update-service/{id}")
-    public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody ServicesRequest servicesRequest){
-        return servicesService.update(id, servicesRequest);
+    @PostMapping(value = "/update-service/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> update(@PathVariable Long id,
+                                    @RequestPart(name = "fileImg", required = false) MultipartFile fileImg,
+                                    @RequestPart String serviceName,
+                                    @RequestPart String description,
+                                    @RequestPart String pricing){
+        return servicesService.update(id, fileImg, serviceName, description, Float.parseFloat(pricing));
     }
 }
