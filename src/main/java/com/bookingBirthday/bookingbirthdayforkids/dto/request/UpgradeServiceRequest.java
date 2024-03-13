@@ -12,8 +12,6 @@ import lombok.*;
 public class UpgradeServiceRequest {
     @Min(value = 1, message = "Count value must be greater than or equal to 1")
     private int count;
-    @NotNull(message = "Party Booking ID cannot be null")
-    private Long bookingId;
     @NotNull(message = "Service ID cannot be null")
     private Long serviceId;
 }
