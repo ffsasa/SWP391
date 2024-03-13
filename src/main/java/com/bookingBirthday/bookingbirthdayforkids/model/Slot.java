@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.Duration;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -32,4 +33,14 @@ public class Slot extends BaseEntity {
     @JsonManagedReference
     @JsonIgnore
     private List<SlotInVenue> slotInVenueList;
+
+    public boolean isValidTimeRange() {
+        try {
+            LocalTime start = LocalTime.parse(this.timeStart, DateTimeFormatter.ofPattern("HH:mm:ss"));
+            LocalTime end = LocalTime.parse(this.timeEnd, DateTimeFormatter.ofPattern("HH:mm:ss"));
+            return start.isBefore(end);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid time format");
+        }
+    }
     }
