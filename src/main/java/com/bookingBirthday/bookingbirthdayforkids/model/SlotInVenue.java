@@ -18,11 +18,8 @@ import java.util.List;
 public class SlotInVenue extends BaseEntity{
 
     @Transient
-    private boolean status;
     @JsonProperty("status")
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
+    private boolean status;
 
     @Transient
     @JsonProperty("slotObject")

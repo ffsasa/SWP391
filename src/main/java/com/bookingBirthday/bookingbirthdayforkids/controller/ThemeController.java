@@ -1,15 +1,11 @@
 package com.bookingBirthday.bookingbirthdayforkids.controller;
 
-import com.bookingBirthday.bookingbirthdayforkids.dto.request.ThemeRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.service.ThemeService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
