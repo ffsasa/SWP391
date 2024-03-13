@@ -40,6 +40,23 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     PackageRepository packageRepository;
 
     @Override
+    public ResponseEntity<ResponseObj> getAllByUser() {
+        try {
+            Long userId = AuthenUtil.getCurrentUserId();
+            if(userId == null){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+            }
+            List<PartyBooking> partyBookingList = partyBookingRepository.findAllByIsActiveIsTrueAndAccountId(userId);
+            if (partyBookingList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+            }
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
     public ResponseEntity<ResponseObj> getAll() {
         try {
             List<PartyBooking> partyBookingList = partyBookingRepository.findAllByIsActiveIsTrue();
