@@ -23,8 +23,6 @@ public class PartyDatedServiceImpl implements PartyDatedService {
     PartyDatedRepository partyDatedRepository;
     @Autowired
     SlotInVenueRepository slotInVenueRepository;
-    @Autowired
-    VenueRepository venueRepository;
     @Override
     public ResponseEntity<ResponseObj> getAll() {
         List<PartyDated> partyDatedList = partyDatedRepository.findAllByIsActiveIsTrue();

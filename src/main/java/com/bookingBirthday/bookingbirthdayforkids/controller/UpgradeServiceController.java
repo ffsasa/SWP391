@@ -26,13 +26,6 @@ public class UpgradeServiceController {
         return upgradeServiceService.getById(id);
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<?> create(@Valid @RequestBody UpgradeServiceRequest upgradeServiceRequest, BindingResult bindingResult){
-        if(bindingResult.hasErrors())
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST.toString());
-        return upgradeServiceService.create(upgradeServiceRequest);
-    }
-
     @PutMapping("/update/{id}")
     public ResponseEntity<?> update(@PathVariable Long id,@Valid @RequestBody UpgradeServiceRequest upgradeServiceRequest, BindingResult bindingResult){
         if(bindingResult.hasErrors())

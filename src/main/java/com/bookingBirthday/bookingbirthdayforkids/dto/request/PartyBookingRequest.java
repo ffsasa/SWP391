@@ -8,7 +8,7 @@ import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-import java.util.Map;
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,5 +36,5 @@ public class PartyBookingRequest {
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDate Date;
 
-    private Map<String, Integer> dataUpgrade;
+    private List<UpgradeServiceRequest> dataUpgrade;
 }

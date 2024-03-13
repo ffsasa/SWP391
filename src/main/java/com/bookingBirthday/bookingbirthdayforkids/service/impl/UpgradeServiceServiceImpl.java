@@ -31,7 +31,7 @@ public class UpgradeServiceServiceImpl implements UpgradeServiceService {
     @Override
     public ResponseEntity<ResponseObj> getAll() {
         try {
-            List<UpgradeService> upgradeServiceList = upgradeServiceRepository.findAll();
+            List<UpgradeService> upgradeServiceList = upgradeServiceRepository.findAllByIsActiveIsTrue();
             if(upgradeServiceList.isEmpty()){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
             }
@@ -49,28 +49,6 @@ public class UpgradeServiceServiceImpl implements UpgradeServiceService {
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", theme));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This upgrade service does not exist", null));
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
-    }
-
-    @Override
-    public ResponseEntity<ResponseObj> create(UpgradeServiceRequest upgradeServiceRequest) {
-        try {
-            PartyBooking partyBooking = partyBookingRepository.findById(upgradeServiceRequest.getBookingId()).get();
-            Services services = servicesRepository.findById(upgradeServiceRequest.getServiceId()).get();
-
-            UpgradeService upgradeService = new UpgradeService();
-            upgradeService.setCount(upgradeServiceRequest.getCount());
-            upgradeService.setPricing(upgradeServiceRequest.getCount()*services.getPricing());
-            upgradeService.setActive(true);
-            upgradeService.setCreateAt(LocalDateTime.now());
-            upgradeService.setUpdateAt(LocalDateTime.now());
-            upgradeService.setPartyBooking(partyBooking);
-            upgradeService.setServices(services);
-
-            upgradeServiceRepository.save(upgradeService);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", upgradeService));
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
