@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/party-booking")
 public class PartyBookingController {
@@ -29,8 +32,10 @@ public class PartyBookingController {
 
     @PostMapping("/create")
     public ResponseEntity<?> create(@Valid @RequestBody PartyBookingRequest partyBookingRequest, BindingResult bindingResult){
-        if(bindingResult.hasErrors())
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST.toString());
+        if(bindingResult.hasErrors()) {
+            List<Object> errors = new ArrayList<>();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid input", errors));
+        }
         return partyBookingService.create(partyBookingRequest);
     }
 
