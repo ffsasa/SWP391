@@ -31,7 +31,7 @@ public class ThemeController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PostMapping(value = "/create-theme", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/create-theme", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> create(@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
                                     @RequestPart String themeName,
                                     @RequestPart String themDescription){
@@ -39,13 +39,13 @@ public class ThemeController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id,@Valid @RequestBody ThemeRequest themeRequest, BindingResult bindingResult){
-        if(bindingResult.hasErrors())
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST.toString());
-        return themeService.update(id, themeRequest);
+    @PostMapping(value = "/update-theme/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> update(@PathVariable Long id,
+                                    @RequestPart(name = "fileImg", required = false) MultipartFile fileImg,
+                                    @RequestPart String themeName,
+                                    @RequestPart String themDescription){
+        return themeService.update(id,fileImg, themeName, themDescription);
     }
-
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){

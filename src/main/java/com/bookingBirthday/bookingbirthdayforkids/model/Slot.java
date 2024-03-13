@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.Duration;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -19,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Builder
-public class Slot extends BaseEntity{
+public class Slot extends BaseEntity {
     @NotNull(message = "TimeStart value cannot be null")
     @NotBlank(message = "TimeStart value cannot be blank")
     @DateTimeFormat(pattern = "HH:mm:ss")
@@ -32,6 +33,7 @@ public class Slot extends BaseEntity{
     @JsonManagedReference
     @JsonIgnore
     private List<SlotInVenue> slotInVenueList;
+
     public boolean isValidTimeRange() {
         try {
             LocalTime start = LocalTime.parse(this.timeStart, DateTimeFormatter.ofPattern("HH:mm:ss"));
@@ -41,4 +43,4 @@ public class Slot extends BaseEntity{
             throw new IllegalArgumentException("Invalid time format");
         }
     }
-}
+    }

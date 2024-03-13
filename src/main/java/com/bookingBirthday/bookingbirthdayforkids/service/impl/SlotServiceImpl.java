@@ -13,7 +13,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,19 +48,50 @@ public class SlotServiceImpl implements SlotService {
     }
 
 
+
     @Override
     public ResponseEntity<ResponseObj> create(SlotRequest slotRequest){
-        Slot slot = new Slot() ;
+        if (!isMinimumTimeSlot(slotRequest.getTimeStart(), slotRequest.getTimeEnd())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(),"Minimum time slot is 2 hours", null));
+        }
+
+        List<Slot> existingSlots = slotRepository.findAll();
+        if (!existingSlots.isEmpty()) {
+            Slot lastSlot = existingSlots.get(existingSlots.size() - 1);
+            if (!isTimeGapValid(lastSlot.getTimeEnd(), slotRequest.getTimeStart())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(),"Time gap between slots must be at least 1 hour", null));
+            }
+        }
+
+        Slot slot = new Slot();
         slot.setTimeStart(slotRequest.getTimeStart());
         slot.setTimeEnd(slotRequest.getTimeEnd());
         if (!slot.isValidTimeRange()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(),"Invalid time range", null));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(),"Time Start do not higher than Time End", null));
         }
         slot.setActive(true);
         slot.setCreateAt(LocalDateTime.now());
         slot.setUpdateAt(LocalDateTime.now());
         slotRepository.save(slot);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(),"Create successful", slot));
+    }
+    private boolean isMinimumTimeSlot(String timeStart, String timeEnd) {
+        try {
+            LocalTime start = LocalTime.parse(timeStart, DateTimeFormatter.ofPattern("HH:mm:ss"));
+            LocalTime end = LocalTime.parse(timeEnd, DateTimeFormatter.ofPattern("HH:mm:ss"));
+            return Duration.between(start, end).toHours() >= 2;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+    }
+    private boolean isTimeGapValid(String endTimeOfFirstSlot, String startTimeOfSecondSlot) {
+        try {
+            LocalTime endOfFirstSlot = LocalTime.parse(endTimeOfFirstSlot, DateTimeFormatter.ofPattern("HH:mm:ss"));
+            LocalTime startOfSecondSlot = LocalTime.parse(startTimeOfSecondSlot, DateTimeFormatter.ofPattern("HH:mm:ss"));
+            return Duration.between(endOfFirstSlot, startOfSecondSlot).toHours() >= 1;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
     }
 
     @Override
