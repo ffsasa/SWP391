@@ -1,8 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 
-import com.bookingBirthday.bookingbirthdayforkids.dto.request.ThemeRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
-import com.bookingBirthday.bookingbirthdayforkids.model.Services;
 import com.bookingBirthday.bookingbirthdayforkids.model.Theme;
 import com.bookingBirthday.bookingbirthdayforkids.repository.ThemeRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.ThemeService;
