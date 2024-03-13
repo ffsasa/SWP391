@@ -47,7 +47,7 @@ public class VenueController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PostMapping(value = "/update-venue/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/update-venue/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> update(@PathVariable Long id,
                                     @RequestPart(name = "fileImg", required = false) MultipartFile fileImg,
                                     @RequestPart String venueName,

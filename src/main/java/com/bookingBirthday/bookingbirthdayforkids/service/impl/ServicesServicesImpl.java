@@ -28,7 +28,7 @@ public class ServicesServicesImpl implements ServicesService {
     @Override
     public ResponseEntity<ResponseObj> getAll(){
         try {
-            List<Services> servicesList = servicesRepository.findAll();
+            List<Services> servicesList = servicesRepository.findAllByIsActiveIsTrue();
             if (servicesList.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
             }

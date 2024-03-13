@@ -31,7 +31,7 @@ public class ThemeController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PostMapping(value = "/create-theme", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/create-theme", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> create(@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
                                     @RequestPart String themeName,
                                     @RequestPart String themDescription){
