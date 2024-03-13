@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Builder
-public class Slot extends BaseEntity{
+public class Slot extends BaseEntity {
     @NotNull(message = "TimeStart value cannot be null")
     @NotBlank(message = "TimeStart value cannot be blank")
     @DateTimeFormat(pattern = "HH:mm:ss")
@@ -32,13 +32,4 @@ public class Slot extends BaseEntity{
     @JsonManagedReference
     @JsonIgnore
     private List<SlotInVenue> slotInVenueList;
-    public boolean isValidTimeRange() {
-        try {
-            LocalTime start = LocalTime.parse(this.timeStart, DateTimeFormatter.ofPattern("HH:mm:ss"));
-            LocalTime end = LocalTime.parse(this.timeEnd, DateTimeFormatter.ofPattern("HH:mm:ss"));
-            return start.isBefore(end);
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Invalid time format");
-        }
     }
-}
