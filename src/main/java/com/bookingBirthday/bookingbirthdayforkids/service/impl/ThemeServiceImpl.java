@@ -27,7 +27,7 @@ public class ThemeServiceImpl implements ThemeService {
     @Override
     public ResponseEntity<ResponseObj> getAll() {
         try {
-            List<Theme> themeList = themeRepository.findAll();
+            List<Theme> themeList = themeRepository.findAllByIsActiveIsTrue();
             if (themeList.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
             }

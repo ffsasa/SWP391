@@ -43,7 +43,7 @@ public class VenueServiceImpl implements VenueService {
     @Override
     public ResponseEntity<ResponseObj> getAll() {
         try {
-            List<Venue> venueList = venueRepository.findAll();
+            List<Venue> venueList = venueRepository.findAllByIsActiveIsTrue();
             if(venueList.isEmpty()){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
             }
@@ -56,7 +56,7 @@ public class VenueServiceImpl implements VenueService {
     @Override
     public ResponseEntity<ResponseObj> checkSlotInVenue(LocalDate date) {
         try {
-            List<Venue> venueList = venueRepository.findAll();
+            List<Venue> venueList = venueRepository.findAllByIsActiveIsTrue();
             if(venueList.isEmpty()){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
             }
