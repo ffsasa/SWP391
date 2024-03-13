@@ -14,4 +14,5 @@ public interface PartyBookingService {
     public ResponseEntity<ResponseObj> update(Long id, PartyBookingRequest partyBookingRequest);
 
     public ResponseEntity<ResponseObj> delete(Long id);
+    public ResponseEntity<ResponseObj> getAllByUser();
 }

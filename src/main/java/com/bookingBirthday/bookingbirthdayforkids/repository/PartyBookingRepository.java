@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface PartyBookingRepository extends JpaRepository<PartyBooking, Long> {
     List<PartyBooking> findAllByIsActiveIsTrue();
+    List<PartyBooking> findAllByIsActiveIsTrueAndAccountId(Long id);
 }
