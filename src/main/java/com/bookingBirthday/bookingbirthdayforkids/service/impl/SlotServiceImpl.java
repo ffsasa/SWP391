@@ -1,11 +1,8 @@
 package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 
-import com.bookingBirthday.bookingbirthdayforkids.dto.request.PartyDatedRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.SlotRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
-import com.bookingBirthday.bookingbirthdayforkids.model.PartyDated;
 import com.bookingBirthday.bookingbirthdayforkids.model.Slot;
-import com.bookingBirthday.bookingbirthdayforkids.repository.PartyDatedRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.SlotRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.SlotService;
 import org.springframework.beans.factory.annotation.Autowired;

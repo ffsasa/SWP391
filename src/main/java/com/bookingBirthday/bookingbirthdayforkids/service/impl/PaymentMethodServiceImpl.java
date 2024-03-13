@@ -1,11 +1,8 @@
 package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.PaymentMethodRequest;
-import com.bookingBirthday.bookingbirthdayforkids.dto.request.ServicesRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
-import com.bookingBirthday.bookingbirthdayforkids.model.PartyBooking;
 import com.bookingBirthday.bookingbirthdayforkids.model.PaymentMethod;
-import com.bookingBirthday.bookingbirthdayforkids.model.Services;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PaymentMethodRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.PaymentMethodService;
 import org.springframework.beans.factory.annotation.Autowired;
