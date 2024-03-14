@@ -131,8 +131,7 @@ public class VenueServiceImpl implements VenueService {
             venue.get().setVenueDescription(venueDescription == null ? venue.get().getVenueDescription() : venueDescription);
             venue.get().setLocation(location == null ? venue.get().getLocation() : location);
             venue.get().setCapacity(capacity == 0 ? venue.get().getCapacity() : capacity);
-            String img = firebaseService.uploadImage(imgFile);
-            venue.get().setVenueImgUrl(img == null ? venue.get().getVenueImgUrl() : img);
+            venue.get().setVenueImgUrl(imgFile == null ? venue.get().getVenueImgUrl() : firebaseService.uploadImage(imgFile));
             venue.get().setUpdateAt(LocalDateTime.now());
             venueRepository.save(venue.get());
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", venue));
