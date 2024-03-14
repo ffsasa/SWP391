@@ -83,8 +83,7 @@ public class ServicesServicesImpl implements ServicesService {
 
             services.get().setServiceName(serviceName == null ? services.get().getServiceName() : serviceName);
             services.get().setServiceDescription(description == null ? services.get().getServiceDescription() : description);
-            String img = firebaseService.uploadImage(imgFile);
-            services.get().setServiceImgUrl(img == null ? services.get().getServiceDescription() : img);
+            services.get().setServiceImgUrl(imgFile == null ? services.get().getServiceDescription() : firebaseService.uploadImage(imgFile));
             services.get().setPricing(pricing == 0 ? services.get().getPricing(): pricing);
             services.get().setUpdateAt(LocalDateTime.now());
             servicesRepository.save(services.get());

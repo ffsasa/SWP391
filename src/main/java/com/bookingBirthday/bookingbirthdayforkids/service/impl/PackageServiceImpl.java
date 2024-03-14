@@ -73,8 +73,7 @@ public class PackageServiceImpl implements PackageService {
 
             aPackage.get().setPackageName(packageName == null ? aPackage.get().getPackageName() : packageName);
             aPackage.get().setPackageDescription(packageDescription == null ? aPackage.get().getPackageDescription() : packageDescription);
-            String img = firebaseService.uploadImage(imgFile);
-            aPackage.get().setPackageImgUrl(img == null ? aPackage.get().getPackageImgUrl() : img);
+            aPackage.get().setPackageImgUrl(imgFile == null ? aPackage.get().getPackageImgUrl() : firebaseService.uploadImage(imgFile));
             aPackage.get().setPricing(pricing == 0 ? aPackage.get().getPricing() : pricing);
             aPackage.get().setUpdateAt(LocalDateTime.now());
             packageRepository.save(aPackage.get());

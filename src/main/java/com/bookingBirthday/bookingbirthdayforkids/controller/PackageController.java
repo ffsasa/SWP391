@@ -35,7 +35,7 @@ public class PackageController {
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PutMapping(value = "/update-package/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> update( @PathVariable Long id,@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
+    public ResponseEntity<?> update( @PathVariable Long id,@RequestPart(name = "fileImg", required = false) MultipartFile fileImg,
                                      @RequestPart String packageName,
                                      @RequestPart String packageDescription,
                                      @RequestPart String pricing){
