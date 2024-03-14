@@ -50,6 +50,11 @@ public class VenueController {
         return venueService.getThemeByVenue(id);
     }
 
+    @GetMapping("/get-slot-in-venue-by-venue/{id}")
+    public ResponseEntity<ResponseObj> getSlotInVenueByVenue(@PathVariable Long id){
+        return venueService.getSlotInVenueById(id);
+    }
+
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PostMapping(value = "/create-venue", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> create(@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
