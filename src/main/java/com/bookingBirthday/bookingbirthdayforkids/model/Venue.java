@@ -33,11 +33,6 @@ public class Venue extends BaseEntity{
     @Min(value = 1, message = "Capacity value must be greater than or equal to 1")
     private int capacity;
 
-    @Transient
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonProperty("slot_not_added")
-    private List<Slot> slotNotAddedList;
-
     @ManyToMany
     @JsonIgnore
     @JoinTable(

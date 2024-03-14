@@ -26,4 +26,6 @@ public interface VenueService {
     public ResponseEntity<ResponseObj> getPackageByVenue(Long venueId);
 
     public ResponseEntity<ResponseObj> getThemeByVenue(Long venueId);
+
+    public ResponseEntity<ResponseObj> getSlotInVenueById(Long id);
 }

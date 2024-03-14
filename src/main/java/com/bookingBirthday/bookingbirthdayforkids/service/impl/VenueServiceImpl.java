@@ -3,10 +3,7 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.*;
 import com.bookingBirthday.bookingbirthdayforkids.model.Package;
-import com.bookingBirthday.bookingbirthdayforkids.repository.PackageRepository;
-import com.bookingBirthday.bookingbirthdayforkids.repository.PartyDatedRepository;
-import com.bookingBirthday.bookingbirthdayforkids.repository.ThemeRepository;
-import com.bookingBirthday.bookingbirthdayforkids.repository.VenueRepository;
+import com.bookingBirthday.bookingbirthdayforkids.repository.*;
 import com.bookingBirthday.bookingbirthdayforkids.service.VenueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -38,6 +36,9 @@ public class VenueServiceImpl implements VenueService {
     @Autowired
     FirebaseService firebaseService;
 
+    @Autowired
+    SlotRepository slotRepository;
+
     @Override
     public ResponseEntity<ResponseObj> getAll() {
         try {
@@ -47,6 +48,32 @@ public class VenueServiceImpl implements VenueService {
             }
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", venueList));
         } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+
+    @Override
+    public ResponseEntity<ResponseObj> getSlotInVenueById(Long id) {
+        try {
+            Optional<Venue> venue = venueRepository.findById(id);
+            if (venue.isPresent()) {
+                List<SlotInVenue> slotInVenueList = venue.get().getSlotInVenueList();
+                List<Slot> slotList = slotRepository.findAll();
+                List<Slot> slotListAdded = slotInVenueList.stream().map(slotInVenue -> slotInVenue.getSlot()).toList();
+                List<Slot> slotNotAdd = new ArrayList<>();
+                for (Slot slot : slotList) {
+                    if (!slotListAdded.contains(slot)) {
+                        slotNotAdd.add(slot);
+                    }
+                }
+                List<List> result = new ArrayList<>();
+                result.add(slotInVenueList);
+                result.add(slotNotAdd);
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", result));
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
