@@ -83,8 +83,7 @@ public class ThemeServiceImpl implements ThemeService {
 
             theme.get().setThemeName(themeName == null ? theme.get().getThemeName() : themeName);
             theme.get().setThemeDescription(themDescription == null ? theme.get().getThemeDescription() : themDescription);
-            String img = firebaseService.uploadImage(imgFile);
-            theme.get().setThemeImgUrl(img == null ? theme.get().getThemeImgUrl() : img);
+            theme.get().setThemeImgUrl(imgFile == null ? theme.get().getThemeImgUrl() : firebaseService.uploadImage(imgFile));
             theme.get().setUpdateAt(LocalDateTime.now());
             themeRepository.save(theme.get());
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", theme));
