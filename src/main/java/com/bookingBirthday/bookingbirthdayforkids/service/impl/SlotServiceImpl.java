@@ -48,8 +48,15 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     public ResponseEntity<ResponseObj> create(SlotRequest slotRequest){
+        Slot slot = new Slot();
+        if (isInvalidTimeRange(slotRequest.getTimeStart(), slotRequest.getTimeEnd())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(),"Time start must be earlier than time end", null));
+        }
         if (!isMinimumTimeSlot(slotRequest.getTimeStart(), slotRequest.getTimeEnd())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(),"Minimum time slot is 2 hours", null));
+        }
+        if (isInvalidTimePeriod(slotRequest.getTimeStart(), slotRequest.getTimeEnd())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(),"Cannot create slot between 00:00:00 and 07:59:59", null));
         }
 
         List<Slot> existingSlots = slotRepository.findAll();
@@ -60,17 +67,22 @@ public class SlotServiceImpl implements SlotService {
             }
         }
 
-        Slot slot = new Slot();
         slot.setTimeStart(slotRequest.getTimeStart());
         slot.setTimeEnd(slotRequest.getTimeEnd());
-        if (!slot.isValidTimeRange()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(),"Time Start do not higher than Time End", null));
-        }
         slot.setActive(true);
         slot.setCreateAt(LocalDateTime.now());
         slot.setUpdateAt(LocalDateTime.now());
         slotRepository.save(slot);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(),"Create successful", slot));
+    }
+    private boolean isInvalidTimeRange(String timeStart, String timeEnd) {
+        try {
+            LocalTime start = LocalTime.parse(timeStart, DateTimeFormatter.ofPattern("HH:mm:ss"));
+            LocalTime end = LocalTime.parse(timeEnd, DateTimeFormatter.ofPattern("HH:mm:ss"));
+            return start.isAfter(end);
+        } catch (DateTimeParseException e) {
+            return true; // If parsing fails, consider it invalid
+        }
     }
     private boolean isMinimumTimeSlot(String timeStart, String timeEnd) {
         try {
@@ -88,6 +100,20 @@ public class SlotServiceImpl implements SlotService {
             return Duration.between(endOfFirstSlot, startOfSecondSlot).toHours() >= 1;
         } catch (DateTimeParseException e) {
             return false;
+        }
+    }
+
+    private boolean isInvalidTimePeriod(String timeStart, String timeEnd) {
+        try {
+            LocalTime start = LocalTime.parse(timeStart, DateTimeFormatter.ofPattern("HH:mm:ss"));
+            LocalTime end = LocalTime.parse(timeEnd, DateTimeFormatter.ofPattern("HH:mm:ss"));
+            if ((start.isAfter(LocalTime.of(00, 00, 00)) && start.isBefore(LocalTime.of(8, 00, 00))) ||
+                    (end.isAfter(LocalTime.of(00, 00, 00)) && end.isBefore(LocalTime.of(8, 00, 00)))) {
+                return true;
+            }
+            return false;
+        } catch (DateTimeParseException e) {
+            return true; // If parsing fails, consider it invalid
         }
     }
 
