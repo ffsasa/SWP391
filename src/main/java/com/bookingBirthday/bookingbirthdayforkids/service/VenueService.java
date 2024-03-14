@@ -22,4 +22,8 @@ public interface VenueService {
     public ResponseEntity<ResponseObj> addTheme(Long venueId, Long themeId);
 
     public ResponseEntity<ResponseObj> addPackage(Long venueId, Long packageId);
+
+    public ResponseEntity<ResponseObj> getPackageByVenue(Long venueId);
+
+    public ResponseEntity<ResponseObj> getThemeByVenue(Long venueId);
 }
