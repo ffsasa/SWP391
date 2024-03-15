@@ -93,10 +93,12 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = reviewRepository.findById(id).get();
         Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
         if(partyBooking.isPresent()) {
-            review.setAccountReply(account);
+            if(!review.getAccount().getId().equals(account.getId()))
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to update this review", null));
             review.setReviewMessage(reviewRequest.getReviewMessage());
+            review.setRating(reviewRequest.getRating() == 0 ? review.getRating() : reviewRequest.getRating());
             reviewRepository.save(review);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObj(HttpStatus.CREATED.toString(), "Review Successful", review));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Review Successful", review));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Review fail", null));
     }
