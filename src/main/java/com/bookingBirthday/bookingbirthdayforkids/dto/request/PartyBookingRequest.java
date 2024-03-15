@@ -28,9 +28,9 @@ public class PartyBookingRequest {
     private String phone;
 
     @NotNull(message = "Theme ID cannot be null")
-    private Long themeId;
+    private Long themeInVenueId;
     @NotNull(message = "Package ID cannot be null")
-    private Long packageId;
+    private Long packageInVenueId;
     @NotNull(message = "Slot in venue ID cannot be null")
     private Long slotInVenueId;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
