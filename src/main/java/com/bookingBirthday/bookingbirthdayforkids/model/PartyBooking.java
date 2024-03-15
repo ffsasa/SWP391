@@ -34,19 +34,15 @@ public class PartyBooking extends BaseEntity{
     private StatusEnum status;
 
     @ManyToOne
-    @JoinColumn(name = "theme_id")
+    @JoinColumn(name = "themeInVenue_id")
     @JsonBackReference
-    private Theme theme;
+    private ThemeInVenue themeInVenue;
+
 
     @ManyToOne
-    @JoinColumn(name = "venue_id")
+    @JoinColumn(name = "packageInVenue_id")
     @JsonBackReference
-    private Venue venue;
-
-    @ManyToOne
-    @JoinColumn(name = "package_id")
-    @JsonBackReference
-    private Package apackage;
+    private PackageInVenue packageInVenue;
 
     @ManyToOne
     @JoinColumn(name = "account_id")

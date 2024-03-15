@@ -1,6 +1,5 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -10,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -26,11 +24,7 @@ public class Theme extends BaseEntity{
     @Column(name = "theme_img_url",columnDefinition = "TEXT")
     private String themeImgUrl;
 
-    @ManyToMany(mappedBy = "themeSet")
-    @JsonIgnore
-    Set<Venue> venueSet;
-
     @OneToMany(mappedBy = "theme", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<PartyBooking> partyBookingList;
+    private List<ThemeInVenue> themeInVenueList;
 }
