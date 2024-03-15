@@ -82,15 +82,15 @@ public class VenueServiceImpl implements VenueService {
 
     @Override
     public ResponseEntity<ResponseObj> getThemeByVenue(Long venueId) {
-////        try{
-////            Optional<Venue> venue = venueRepository.findById(venueId);
-////            if(!venue.isPresent()){
-////                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This theme does not exist", null));
-////            }
-////            else{
-////                Set<Theme> listThemes = venue.get().getThemeSet();
-////                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok",listThemes));
-////            }
+//        try{
+//            Optional<Venue> venue = venueRepository.findById(venueId);
+//            if(!venue.isPresent()){
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This theme does not exist", null));
+//            }
+//            else{
+//                Set<Theme> listThemes = venue.get().getThemeSet();
+//                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok",listThemes));
+//            }
 //        }catch (Exception e){
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
 //        }
