@@ -22,10 +22,6 @@ public class UpgradeServiceServiceImpl implements UpgradeServiceService {
 
     @Autowired
     UpgradeServiceRepository upgradeServiceRepository;
-    @Autowired
-    PartyBookingRepository partyBookingRepository;
-    @Autowired
-    ServicesRepository servicesRepository;
 
     @Override
     public ResponseEntity<ResponseObj> getAll() {
@@ -66,7 +62,6 @@ public class UpgradeServiceServiceImpl implements UpgradeServiceService {
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", existUpgradeService));
             } else
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This upgrade service does not exist", null));
-
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
@@ -83,7 +78,6 @@ public class UpgradeServiceServiceImpl implements UpgradeServiceService {
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Delete successful", null));
             } else
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This upgrade service does not exist", null));
-
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
