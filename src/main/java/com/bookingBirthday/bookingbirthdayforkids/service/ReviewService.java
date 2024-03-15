@@ -11,4 +11,8 @@ public interface ReviewService {
 
     public ResponseEntity<ResponseObj> reply(Long bookingId, Long id, ReplyReviewRequest replyReviewRequest);
 
+    public ResponseEntity<ResponseObj> update(Long bookingId, Long id, ReviewRequest reviewRequest);
+
+    public ResponseEntity<ResponseObj> delete(Long id);
+
 }
