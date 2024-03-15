@@ -1,9 +1,11 @@
 package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 
+import com.bookingBirthday.bookingbirthdayforkids.dto.request.PackageServiceRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.Package;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PackageRepository;
-import com.bookingBirthday.bookingbirthdayforkids.service.PackageService;
+import com.bookingBirthday.bookingbirthdayforkids.model.PackageService;
+import com.bookingBirthday.bookingbirthdayforkids.repository.ServicesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +17,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class PackageServiceImpl implements PackageService {
+public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayforkids.service.PackageService {
     @Autowired
     PackageRepository packageRepository;
+
+    @Autowired
+    ServicesRepository servicesRepository;
     @Autowired
     FirebaseService firebaseService;
     @Override
@@ -43,13 +48,24 @@ public class PackageServiceImpl implements PackageService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, String packageDescription, float pricing) {
+    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, String packageDescription, List<PackageServiceRequest> packageServiceRequestList) {
         Package pack = new Package();
+        float packPricing = 0;
+        List<PackageServiceRequest> packageServiceRequests = packageServiceRequestList;
+        for (PackageServiceRequest packageServiceRequest : packageServiceRequests) {
+                PackageService packageService = new PackageService();
+                packageService.setCount(packageServiceRequest.getCount());
+                packageService.setPricing(packageServiceRequest.getCount()*servicesRepository.findById(packageServiceRequest.getServiceId()).get().getPricing());
+                packageService.setActive(true);
+                packageService.setCreateAt(LocalDateTime.now());
+                packageService.setUpdateAt(LocalDateTime.now());
+                packPricing += packageService.getPricing();
+            }
         try {
             if (imgFile != null) {
                 String img = firebaseService.uploadImage(imgFile);
                 pack.setPackageName(packageName);
-                pack.setPricing(pricing);
+                pack.setPricing(packPricing);
                 pack.setPackageImgUrl(img);
                 pack.setPackageDescription(packageDescription);
                 pack.setActive(true);
@@ -62,6 +78,8 @@ public class PackageServiceImpl implements PackageService {
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Successful", pack));
     }
+
+
 
     @Override
     public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String packageName, String packageDescription, float pricing) {

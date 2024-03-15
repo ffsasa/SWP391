@@ -25,18 +25,6 @@ public class PackageServiceController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PostMapping("/create")
-    public ResponseEntity<ResponseObj> create(@RequestBody PackageServiceRequest packageServiceRequest){
-        return packageServiceService.create(packageServiceRequest);
-    }
-
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PutMapping("/update/{id}")
-    public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody PackageServiceRequest packageServiceRequest){
-        return packageServiceService.update(id, packageServiceRequest);
-    }
-
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
         return packageServiceService.delete(id);

@@ -9,9 +9,6 @@ public interface PackageServiceService {
 
     public ResponseEntity<ResponseObj> getById(Long id);
 
-    public ResponseEntity<ResponseObj> create(PackageServiceRequest packageServiceRequest);
-
-    public ResponseEntity<ResponseObj> update(Long id, PackageServiceRequest packageServiceRequestRequest);
 
     public ResponseEntity<ResponseObj> delete(Long id);
 }
