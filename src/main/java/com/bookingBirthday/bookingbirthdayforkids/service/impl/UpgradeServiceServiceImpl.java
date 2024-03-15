@@ -50,24 +50,6 @@ public class UpgradeServiceServiceImpl implements UpgradeServiceService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> update(Long id, UpgradeServiceRequest upgradeServiceRequest) {
-        try {
-            Optional<UpgradeService> existUpgradeService = upgradeServiceRepository.findById(id);
-            if (existUpgradeService.isPresent()) {
-                Services services = existUpgradeService.get().getServices();
-                existUpgradeService.get().setCount(upgradeServiceRequest.getCount() == 0 ? existUpgradeService.get().getCount() : upgradeServiceRequest.getCount());
-                existUpgradeService.get().setPricing(upgradeServiceRequest.getCount() == 0 ? existUpgradeService.get().getPricing() : upgradeServiceRequest.getCount() * services.getPricing());
-                existUpgradeService.get().setUpdateAt(LocalDateTime.now());
-                upgradeServiceRepository.save(existUpgradeService.get());
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", existUpgradeService));
-            } else
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This upgrade service does not exist", null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
-    }
-
-    @Override
     public ResponseEntity<ResponseObj> delete(Long id) {
         try {
             Optional<UpgradeService> upgradeService = upgradeServiceRepository.findById(id);

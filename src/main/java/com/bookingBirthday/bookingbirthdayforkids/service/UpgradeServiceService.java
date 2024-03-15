@@ -9,7 +9,5 @@ public interface UpgradeServiceService {
 
     public ResponseEntity<ResponseObj> getById(Long id);
 
-    public ResponseEntity<ResponseObj> update(Long id, UpgradeServiceRequest upgradeServiceRequest);
-
     public ResponseEntity<ResponseObj> delete(Long id);
 }
