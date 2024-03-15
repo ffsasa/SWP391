@@ -137,53 +137,53 @@ public class VenueServiceImpl implements VenueService {
         }
     }
 
-//    @Override
-//    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String venueName, String venueDescription, String location, int capacity) {
-//        if (venueRepository.existsByVenueName(venueName)) {
-//            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(), "Venue name has already exist", null));
-//        }
-//        Venue venue = new Venue();
-//        try {
-//            if (imgFile != null) {
-//                String img = firebaseService.uploadImage(imgFile);
-//                venue.setVenueName(venueName);
-//                venue.setVenueDescription(venueDescription);
-//                venue.setVenueImgUrl(img);
-//                venue.setLocation(location);
-//                venue.setCapacity(capacity);
-//                venue.setActive(true);
-//                venue.setCreateAt(LocalDateTime.now());
-//                venue.setUpdateAt(LocalDateTime.now());
-//                venueRepository.save(venue);
-//            }
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Image is invalid", null));
-//        }
-//        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", venue));
-//    }
-//
-//
-//    @Override
-//    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String venueName, String venueDescription, String location, int capacity) {
-//        Optional<Venue> venue = venueRepository.findById(id);
-//        if (!venue.isPresent()) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
-//        }
-//        try {
-//
-//            venue.get().setVenueName(venueName == null ? venue.get().getVenueName() : venueName);
-//            venue.get().setVenueDescription(venueDescription == null ? venue.get().getVenueDescription() : venueDescription);
-//            venue.get().setLocation(location == null ? venue.get().getLocation() : location);
-//            venue.get().setCapacity(capacity == 0 ? venue.get().getCapacity() : capacity);
-//            venue.get().setVenueImgUrl(imgFile == null ? venue.get().getVenueImgUrl() : firebaseService.uploadImage(imgFile));
-//            venue.get().setUpdateAt(LocalDateTime.now());
-//            venueRepository.save(venue.get());
-//            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", venue));
-//
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-//        }
-//    }
+    @Override
+    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String venueName, String venueDescription, String location, int capacity) {
+        if (venueRepository.existsByVenueName(venueName)) {
+            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(), "Venue name has already exist", null));
+        }
+        Venue venue = new Venue();
+        try {
+            if (imgFile != null) {
+                String img = firebaseService.uploadImage(imgFile);
+                venue.setVenueName(venueName);
+                venue.setVenueDescription(venueDescription);
+                venue.setVenueImgUrl(img);
+                venue.setLocation(location);
+                venue.setCapacity(capacity);
+                venue.setActive(true);
+                venue.setCreateAt(LocalDateTime.now());
+                venue.setUpdateAt(LocalDateTime.now());
+                venueRepository.save(venue);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Image is invalid", null));
+        }
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", venue));
+    }
+
+
+    @Override
+    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String venueName, String venueDescription, String location, int capacity) {
+        Optional<Venue> venue = venueRepository.findById(id);
+        if (!venue.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
+        }
+        try {
+
+            venue.get().setVenueName(venueName == null ? venue.get().getVenueName() : venueName);
+            venue.get().setVenueDescription(venueDescription == null ? venue.get().getVenueDescription() : venueDescription);
+            venue.get().setLocation(location == null ? venue.get().getLocation() : location);
+            venue.get().setCapacity(capacity == 0 ? venue.get().getCapacity() : capacity);
+            venue.get().setVenueImgUrl(imgFile == null ? venue.get().getVenueImgUrl() : firebaseService.uploadImage(imgFile));
+            venue.get().setUpdateAt(LocalDateTime.now());
+            venueRepository.save(venue.get());
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", venue));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
 
     @Override
     public ResponseEntity<ResponseObj> delete(Long id) {
