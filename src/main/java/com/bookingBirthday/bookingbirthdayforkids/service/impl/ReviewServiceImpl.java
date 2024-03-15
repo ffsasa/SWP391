@@ -6,6 +6,7 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.Account;
 import com.bookingBirthday.bookingbirthdayforkids.model.PartyBooking;
 import com.bookingBirthday.bookingbirthdayforkids.model.Review;
+import com.bookingBirthday.bookingbirthdayforkids.model.Venue;
 import com.bookingBirthday.bookingbirthdayforkids.repository.AccountRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PartyBookingRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.ReviewRepository;
@@ -80,5 +81,39 @@ public class ReviewServiceImpl implements ReviewService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "There are no reviews yet", null));
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List", reviewList));
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> update(Long bookingId, Long id, ReviewRequest reviewRequest) {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if(userId == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+        }
+        Account account = accountRepository.findById(userId).get();
+        Review review = reviewRepository.findById(id).get();
+        Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
+        if(partyBooking.isPresent()) {
+            review.setAccountReply(account);
+            review.setReviewMessage(reviewRequest.getReviewMessage());
+            reviewRepository.save(review);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObj(HttpStatus.CREATED.toString(), "Review Successful", review));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Review fail", null));
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> delete(Long id) {
+        try {
+            Optional<Review> review = reviewRepository.findById(id);
+            if (review.isPresent()) {
+                review.get().setActive(false);
+                review.get().setDeleteAt(LocalDateTime.now());
+                reviewRepository.save(review.get());
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Delete successful", null));
+            } else
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This review does not exist", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
     }
 }

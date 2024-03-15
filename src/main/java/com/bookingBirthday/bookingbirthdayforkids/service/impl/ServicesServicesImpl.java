@@ -1,6 +1,7 @@
 package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
+import com.bookingBirthday.bookingbirthdayforkids.model.Review;
 import com.bookingBirthday.bookingbirthdayforkids.model.Services;
 import com.bookingBirthday.bookingbirthdayforkids.repository.ServicesRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.ServicesService;
@@ -96,15 +97,18 @@ public class ServicesServicesImpl implements ServicesService {
 
     @Override
     public ResponseEntity<ResponseObj> delete(Long id) {
-        Optional<Services> services = servicesRepository.findById(id);
-        if (services.isPresent()){
-            services.get().setDeleteAt(LocalDateTime.now());
-            services.get().setActive(false);
-            servicesRepository.save(services.get());
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Delete successful", null));
+        try {
+            Optional<Services> services = servicesRepository.findById(id);
+            if (services.isPresent()) {
+                services.get().setActive(false);
+                services.get().setDeleteAt(LocalDateTime.now());
+                servicesRepository.save(services.get());
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Delete successful", null));
+            } else
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This services does not exist", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
-        else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Service does not exist", null));
     }
 
 }
