@@ -3,6 +3,7 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.Package;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PackageRepository;
+import com.bookingBirthday.bookingbirthdayforkids.repository.PackageServiceRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.PackageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,8 @@ import java.util.Optional;
 public class PackageServiceImpl implements PackageService {
     @Autowired
     PackageRepository packageRepository;
+    @Autowired
+    PackageServiceRepository packageServiceRepository;
     @Autowired
     FirebaseService firebaseService;
     @Override
@@ -41,7 +44,6 @@ public class PackageServiceImpl implements PackageService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
-
     @Override
     public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, String packageDescription, float pricing) {
         Package pack = new Package();
@@ -62,6 +64,27 @@ public class PackageServiceImpl implements PackageService {
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Successful", pack));
     }
+
+//    @Override
+//    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, String packageDescription, float pricing) {
+//        Package pack = new Package();
+//        try {
+//            if (imgFile != null) {
+//                String img = firebaseService.uploadImage(imgFile);
+//                pack.setPackageName(packageName);
+//                pack.setPricing(pricing);
+//                pack.setPackageImgUrl(img);
+//                pack.setPackageDescription(packageDescription);
+//                pack.setActive(true);
+//                pack.setCreateAt(LocalDateTime.now());
+//                pack.setUpdateAt(LocalDateTime.now());
+//                packageRepository.save(pack);
+//            }
+//        } catch (Exception e){
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Image is invalid", null));
+//        }
+//        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Successful", pack));
+//    }
 
     @Override
     public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String packageName, String packageDescription, float pricing) {
