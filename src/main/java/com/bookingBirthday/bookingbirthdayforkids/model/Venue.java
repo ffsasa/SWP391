@@ -1,9 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -13,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -33,28 +29,14 @@ public class Venue extends BaseEntity{
     @Min(value = 1, message = "Capacity value must be greater than or equal to 1")
     private int capacity;
 
-    @ManyToMany
-    @JsonIgnore
-    @JoinTable(
-            name = "theme_venue",
-            joinColumns = @JoinColumn(name = "venue_id"),
-            inverseJoinColumns = @JoinColumn(name = "theme_id")
-    )
-    Set<Theme> themeSet;
-
-    @ManyToMany
-    @JsonIgnore
-    @JoinTable(
-            name = "package_venue",
-            joinColumns = @JoinColumn(name = "venue_id"),
-            inverseJoinColumns = @JoinColumn(name = "package_id")
-    )
-    Set<Package> packageSet;
 
     @OneToMany(mappedBy = "venue")
     @JsonManagedReference
-    @JsonIgnore
-    private List<PartyBooking> partyBookingList;
+    private List<PackageInVenue> packageInVenueList;
+
+    @OneToMany(mappedBy = "venue")
+    @JsonManagedReference
+    private List<ThemeInVenue> themeInVenueList;
 
     @OneToMany(mappedBy = "venue")
     @JsonManagedReference

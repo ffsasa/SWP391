@@ -80,34 +80,34 @@ public class VenueServiceImpl implements VenueService {
 
     @Override
     public ResponseEntity<ResponseObj> getPackageByVenue(Long venueId) {
-        try{
-            Optional<Venue> venue = venueRepository.findById(venueId);
-            if(!venue.isPresent()){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This venue does not exist", null));
-            }
-            else{
-                Set<Package> listPackage = venue.get().getPackageSet();
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok",listPackage));
-            }
-        }catch (Exception e){
+//        try{
+//            Optional<Venue> venue = venueRepository.findById(venueId);
+//            if(!venue.isPresent()){
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This venue does not exist", null));
+//            }
+//            else{
+//                Set<Package> listPackage = venue.get().getPackageSet();
+//                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok",listPackage));
+//            }
+//        }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
+//        }
     }
 
     @Override
     public ResponseEntity<ResponseObj> getThemeByVenue(Long venueId) {
-        try{
-            Optional<Venue> venue = venueRepository.findById(venueId);
-            if(!venue.isPresent()){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This theme does not exist", null));
-            }
-            else{
-                Set<Theme> listThemes = venue.get().getThemeSet();
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok",listThemes));
-            }
-        }catch (Exception e){
+////        try{
+////            Optional<Venue> venue = venueRepository.findById(venueId);
+////            if(!venue.isPresent()){
+////                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This theme does not exist", null));
+////            }
+////            else{
+////                Set<Theme> listThemes = venue.get().getThemeSet();
+////                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok",listThemes));
+////            }
+//        }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
+//        }
     }
 
     @Override
@@ -220,37 +220,37 @@ public class VenueServiceImpl implements VenueService {
 
     @Override
     public ResponseEntity<ResponseObj> addTheme(Long venueId, Long themeId) {
-        try {
-            Theme theme = themeRepository.findById(themeId).get();
-            Optional<Venue> venue = venueRepository.findById(venueId);
-            if(venue.isPresent()){
-                Set<Theme> themeSet = venueRepository.findById(venueId).get().getThemeSet();
-                themeSet.add(theme);
-                venue.get().setThemeSet(themeSet);
-                venueRepository.save(venue.get());
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", null));
-            } else
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
-        } catch (Exception e){
+//        try {
+//            Theme theme = themeRepository.findById(themeId).get();
+//            Optional<Venue> venue = venueRepository.findById(venueId);
+//            if(venue.isPresent()){
+//                Set<Theme> themeSet = venueRepository.findById(venueId).get().getThemeSet();
+//                themeSet.add(theme);
+//                venue.get().setThemeSet(themeSet);
+//                venueRepository.save(venue.get());
+//                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", null));
+//            } else
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
+//        } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
+//        }
     }
 
     @Override
     public ResponseEntity<ResponseObj> addPackage(Long venueId, Long packageId) {
-        try {
-            Package aPackage = packageRepository.findById(packageId).get();
-            Optional<Venue> venue = venueRepository.findById(venueId);
-            if (venue.isPresent()) {
-                Set<Package> packageSet = venueRepository.findById(venueId).get().getPackageSet();
-                packageSet.add(aPackage);
-                venue.get().setPackageSet(packageSet);
-                venueRepository.save(venue.get());
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", null));
-            } else
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
-        } catch (Exception e) {
+//        try {
+//            Package aPackage = packageRepository.findById(packageId).get();
+//            Optional<Venue> venue = venueRepository.findById(venueId);
+//            if (venue.isPresent()) {
+//                Set<Package> packageSet = venueRepository.findById(venueId).get().getPackageSet();
+//                packageSet.add(aPackage);
+//                venue.get().setPackageSet(packageSet);
+//                venueRepository.save(venue.get());
+//                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", null));
+//            } else
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
+//        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
+//        }
     }
 }

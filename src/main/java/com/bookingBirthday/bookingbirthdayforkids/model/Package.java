@@ -1,6 +1,5 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -9,7 +8,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -33,11 +31,8 @@ public class Package extends BaseEntity{
     @JsonManagedReference
     private List<PackageService> packageServiceList;
 
-    @OneToMany(mappedBy = "apackage", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<PartyBooking> partyBookingList;
 
-    @ManyToMany(mappedBy = "packageSet")
-    @JsonIgnore
-    Set<Venue> venueSet;
+   @OneToMany(mappedBy = "apackage",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+   @JsonManagedReference
+   private List<PackageInVenue> packageInVenueList;
 }
