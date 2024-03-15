@@ -13,10 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class VenueServiceImpl implements VenueService {
@@ -35,6 +33,12 @@ public class VenueServiceImpl implements VenueService {
 
     @Autowired
     FirebaseService firebaseService;
+
+    @Autowired
+    ThemeInVenueRepository themeInVenueRepository;
+
+    @Autowired
+    PackageInVenueRepository packageInVenueRepository;
 
     @Override
     public ResponseEntity<ResponseObj> getAll() {
@@ -65,35 +69,33 @@ public class VenueServiceImpl implements VenueService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getPackageByVenue(Long venueId) {
-//        try{
-//            Optional<Venue> venue = venueRepository.findById(venueId);
-//            if(!venue.isPresent()){
-//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This venue does not exist", null));
-//            }
-//            else{
-//                Set<Package> listPackage = venue.get().getPackageSet();
-//                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok",listPackage));
-//            }
-//        }catch (Exception e){
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-//        }
+    public ResponseEntity<ResponseObj> getPackageInVenueByVenue(Long venueId) {
+        try {
+            Optional<Venue> venue = venueRepository.findById(venueId);
+            if (venue.isPresent()) {
+                List<PackageInVenue> packageInVenuesList = venue.get().getPackageInVenueList();
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", packageInVenuesList));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This venue does not exist", null));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getThemeByVenue(Long venueId) {
-//        try{
-//            Optional<Venue> venue = venueRepository.findById(venueId);
-//            if(!venue.isPresent()){
-//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This theme does not exist", null));
-//            }
-//            else{
-//                Set<Theme> listThemes = venue.get().getThemeSet();
-//                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok",listThemes));
-//            }
-//        }catch (Exception e){
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-//        }
+    public ResponseEntity<ResponseObj> getThemeInVenueByVenue(Long venueId) {
+        try {
+            Optional<Venue> venue = venueRepository.findById(venueId);
+            if (venue.isPresent()) {
+                List<ThemeInVenue> themeInVenueList = venue.get().getThemeInVenueList();
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", themeInVenueList));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This theme does not exist", null));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
     }
 
     @Override
@@ -122,7 +124,6 @@ public class VenueServiceImpl implements VenueService {
         }
     }
 
-
     @Override
     public ResponseEntity<ResponseObj> getById(Long id) {
         try {
@@ -136,53 +137,53 @@ public class VenueServiceImpl implements VenueService {
         }
     }
 
-    @Override
-    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String venueName, String venueDescription, String location, int capacity) {
-        if (venueRepository.existsByVenueName(venueName)) {
-            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(), "Venue name has already exist", null));
-        }
-        Venue venue = new Venue();
-        try {
-            if (imgFile != null) {
-                String img = firebaseService.uploadImage(imgFile);
-                venue.setVenueName(venueName);
-                venue.setVenueDescription(venueDescription);
-                venue.setVenueImgUrl(img);
-                venue.setLocation(location);
-                venue.setCapacity(capacity);
-                venue.setActive(true);
-                venue.setCreateAt(LocalDateTime.now());
-                venue.setUpdateAt(LocalDateTime.now());
-                venueRepository.save(venue);
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Image is invalid", null));
-        }
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", venue));
-    }
-
-
-    @Override
-    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String venueName, String venueDescription, String location, int capacity) {
-        Optional<Venue> venue = venueRepository.findById(id);
-        if (!venue.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
-        }
-        try {
-
-            venue.get().setVenueName(venueName == null ? venue.get().getVenueName() : venueName);
-            venue.get().setVenueDescription(venueDescription == null ? venue.get().getVenueDescription() : venueDescription);
-            venue.get().setLocation(location == null ? venue.get().getLocation() : location);
-            venue.get().setCapacity(capacity == 0 ? venue.get().getCapacity() : capacity);
-            venue.get().setVenueImgUrl(imgFile == null ? venue.get().getVenueImgUrl() : firebaseService.uploadImage(imgFile));
-            venue.get().setUpdateAt(LocalDateTime.now());
-            venueRepository.save(venue.get());
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", venue));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
-    }
+//    @Override
+//    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String venueName, String venueDescription, String location, int capacity) {
+//        if (venueRepository.existsByVenueName(venueName)) {
+//            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(), "Venue name has already exist", null));
+//        }
+//        Venue venue = new Venue();
+//        try {
+//            if (imgFile != null) {
+//                String img = firebaseService.uploadImage(imgFile);
+//                venue.setVenueName(venueName);
+//                venue.setVenueDescription(venueDescription);
+//                venue.setVenueImgUrl(img);
+//                venue.setLocation(location);
+//                venue.setCapacity(capacity);
+//                venue.setActive(true);
+//                venue.setCreateAt(LocalDateTime.now());
+//                venue.setUpdateAt(LocalDateTime.now());
+//                venueRepository.save(venue);
+//            }
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Image is invalid", null));
+//        }
+//        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", venue));
+//    }
+//
+//
+//    @Override
+//    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String venueName, String venueDescription, String location, int capacity) {
+//        Optional<Venue> venue = venueRepository.findById(id);
+//        if (!venue.isPresent()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
+//        }
+//        try {
+//
+//            venue.get().setVenueName(venueName == null ? venue.get().getVenueName() : venueName);
+//            venue.get().setVenueDescription(venueDescription == null ? venue.get().getVenueDescription() : venueDescription);
+//            venue.get().setLocation(location == null ? venue.get().getLocation() : location);
+//            venue.get().setCapacity(capacity == 0 ? venue.get().getCapacity() : capacity);
+//            venue.get().setVenueImgUrl(imgFile == null ? venue.get().getVenueImgUrl() : firebaseService.uploadImage(imgFile));
+//            venue.get().setUpdateAt(LocalDateTime.now());
+//            venueRepository.save(venue.get());
+//            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", venue));
+//
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+//        }
+//    }
 
     @Override
     public ResponseEntity<ResponseObj> delete(Long id) {

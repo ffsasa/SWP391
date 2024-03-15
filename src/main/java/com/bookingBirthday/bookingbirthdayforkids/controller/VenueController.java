@@ -42,12 +42,12 @@ public class VenueController {
 
     @GetMapping("/get-package-by-venue/{id}")
     public ResponseEntity<ResponseObj> getPackageByVenue(@PathVariable Long id){
-        return venueService.getPackageByVenue(id);
+        return venueService.getPackageInVenueByVenue(id);
     }
 
     @GetMapping("/get-theme-by-venue/{id}")
     public ResponseEntity<ResponseObj> getThemeByVenue(@PathVariable Long id){
-        return venueService.getThemeByVenue(id);
+        return venueService.getThemeInVenueByVenue(id);
     }
 
     @GetMapping("/get-slot-in-venue-by-venue/{id}")
