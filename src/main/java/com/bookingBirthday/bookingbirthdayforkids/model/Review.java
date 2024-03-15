@@ -22,21 +22,21 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 public class Review extends BaseEntity{
-    @NotBlank(message = "Message cannot be blank")
     private String reviewMessage;
-    @NotBlank(message = "Reply message cannot be blank")
     private String replyMessage;
     @Min(value = 1, message = "Rating must be at least 1")
     @Max(value = 5, message = "Rating must be at most 5")
     private float rating;
-    @DateTimeFormat(pattern = "yyyy-mm-dd")
-    @JsonIgnore
-    private LocalDateTime reviewDate;
 
     @ManyToOne
     @JoinColumn(name = "account_id")
     @JsonBackReference
     private Account account;
+
+    @ManyToOne
+    @JoinColumn(name = "account_id_reply")
+    @JsonBackReference
+    private Account accountReply;
 
     @ManyToOne
     @JoinColumn(name = "partyBooking_id")
