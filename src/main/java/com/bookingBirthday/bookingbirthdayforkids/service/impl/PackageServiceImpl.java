@@ -5,6 +5,7 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.Package;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PackageRepository;
 import com.bookingBirthday.bookingbirthdayforkids.model.PackageService;
+import com.bookingBirthday.bookingbirthdayforkids.repository.PackageServiceRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.ServicesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,8 @@ import java.util.Optional;
 public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayforkids.service.PackageService {
     @Autowired
     PackageRepository packageRepository;
-
+    @Autowired
+    PackageServiceRepository packageServiceRepository;
     @Autowired
     ServicesRepository servicesRepository;
     @Autowired
@@ -51,21 +53,10 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
     public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, String packageDescription, List<PackageServiceRequest> packageServiceRequestList) {
         Package pack = new Package();
         float packPricing = 0;
-        List<PackageServiceRequest> packageServiceRequests = packageServiceRequestList;
-        for (PackageServiceRequest packageServiceRequest : packageServiceRequests) {
-                PackageService packageService = new PackageService();
-                packageService.setCount(packageServiceRequest.getCount());
-                packageService.setPricing(packageServiceRequest.getCount()*servicesRepository.findById(packageServiceRequest.getServiceId()).get().getPricing());
-                packageService.setActive(true);
-                packageService.setCreateAt(LocalDateTime.now());
-                packageService.setUpdateAt(LocalDateTime.now());
-                packPricing += packageService.getPricing();
-            }
         try {
             if (imgFile != null) {
                 String img = firebaseService.uploadImage(imgFile);
                 pack.setPackageName(packageName);
-                pack.setPricing(packPricing);
                 pack.setPackageImgUrl(img);
                 pack.setPackageDescription(packageDescription);
                 pack.setActive(true);
@@ -76,6 +67,21 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Image is invalid", null));
         }
+        List<PackageServiceRequest> packageServiceRequests = packageServiceRequestList;
+        for (PackageServiceRequest packageServiceRequest : packageServiceRequests) {
+                PackageService packageService = new PackageService();
+                packageService.setCount(packageServiceRequest.getCount());
+                packageService.setPricing(packageServiceRequest.getCount()*servicesRepository.findById(packageServiceRequest.getServiceId()).get().getPricing());
+                packageService.setActive(true);
+                packageService.setCreateAt(LocalDateTime.now());
+                packageService.setUpdateAt(LocalDateTime.now());
+                packPricing += packageService.getPricing();
+                packageService.setApackage(pack);
+                packageService.setServices(servicesRepository.findById(packageServiceRequest.getServiceId()).get());
+                packageServiceRepository.save(packageService);
+            }
+        pack.setPricing(packPricing);
+        packageRepository.save(pack);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Successful", pack));
     }
 
