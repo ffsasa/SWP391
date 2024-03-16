@@ -77,6 +77,9 @@ public class VenueServiceImpl implements VenueService {
             Optional<Venue> venue = venueRepository.findById(venueId);
             if (venue.isPresent()) {
                 List<PackageInVenue> packageInVenuesList = venue.get().getPackageInVenueList();
+                for(PackageInVenue packageInVenue : packageInVenuesList){
+                    packageInVenue.setPackageObject(packageInVenue.getApackage());
+                }
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", packageInVenuesList));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This venue does not exist", null));
@@ -92,6 +95,9 @@ public class VenueServiceImpl implements VenueService {
             Optional<Venue> venue = venueRepository.findById(venueId);
             if (venue.isPresent()) {
                 List<ThemeInVenue> themeInVenueList = venue.get().getThemeInVenueList();
+                for(ThemeInVenue themeInVenue : themeInVenueList){
+                    themeInVenue.setThemeObject(themeInVenue.getTheme());
+                }
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", themeInVenueList));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This theme does not exist", null));
