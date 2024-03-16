@@ -2,6 +2,7 @@ package com.bookingBirthday.bookingbirthdayforkids.controller;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.service.VenueService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -36,23 +37,28 @@ public class VenueController {
     }
 
     @GetMapping("/get-id/{id}")
-    public ResponseEntity<ResponseObj> getById(@PathVariable Long id){
+    public ResponseEntity<ResponseObj> getById(@PathVariable Long id) {
         return venueService.getById(id);
     }
 
     @GetMapping("/get-package-by-venue/{id}")
-    public ResponseEntity<ResponseObj> getPackageByVenue(@PathVariable Long id){
+    public ResponseEntity<ResponseObj> getPackageByVenue(@PathVariable Long id) {
         return venueService.getPackageInVenueByVenue(id);
     }
 
     @GetMapping("/get-theme-by-venue/{id}")
-    public ResponseEntity<ResponseObj> getThemeByVenue(@PathVariable Long id){
+    public ResponseEntity<ResponseObj> getThemeByVenue(@PathVariable Long id) {
         return venueService.getThemeInVenueByVenue(id);
     }
 
     @GetMapping("/get-slot-in-venue-by-venue/{id}")
-    public ResponseEntity<ResponseObj> getSlotInVenueByVenue(@PathVariable Long id){
+    public ResponseEntity<ResponseObj> getSlotInVenueByVenue(@PathVariable Long id) {
         return venueService.getSlotInVenueById(id);
+    }
+
+    @GetMapping("/get-slot-not-add-in-venue/{id}")
+    public ResponseEntity<ResponseObj> getSlotNotAddInVenue(@PathVariable Long id) {
+        return venueService.getAllSlotHaveNotAddByVenue(id);
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
@@ -61,8 +67,13 @@ public class VenueController {
                                     @RequestPart String venueName,
                                     @RequestPart String venueDescription,
                                     @RequestPart String location,
-                                    @RequestPart String capacity){
-        return venueService.create(fileImg, venueName, venueDescription, location, Integer.parseInt(capacity));
+                                    @RequestPart String capacity) {
+        try {
+            int parsedCapacity = Integer.parseInt(capacity);
+            return venueService.create(fileImg, venueName, venueDescription, location, parsedCapacity);
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid capacity", null));
+        }
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
@@ -72,23 +83,28 @@ public class VenueController {
                                     @RequestPart String venueName,
                                     @RequestPart String venueDescription,
                                     @RequestPart String location,
-                                    @RequestPart String capacity){
-        return venueService.update(id, fileImg, venueName, venueDescription, location, Integer.parseInt(capacity));
+                                    @RequestPart String capacity) {
+        try {
+            int parsedCapacity = Integer.parseInt(capacity);
+            return venueService.update(id, fileImg, venueName, venueDescription, location, parsedCapacity);
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid capacity", null));
+        }
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
+    public ResponseEntity<ResponseObj> delete(@PathVariable Long id) {
         return venueService.delete(id);
     }
 
     @PostMapping("/add-theme")
-    public ResponseEntity<ResponseObj> addTheme(@RequestParam Long venueId, @RequestParam Long themeId){
+    public ResponseEntity<ResponseObj> addTheme(@RequestParam Long venueId, @RequestParam Long themeId) {
         return venueService.addTheme(venueId, themeId);
     }
 
     @PostMapping("/add-package")
-    public ResponseEntity<ResponseObj> addPackage(@RequestParam Long venueId, @RequestParam Long packageId){
+    public ResponseEntity<ResponseObj> addPackage(@RequestParam Long venueId, @RequestParam Long packageId) {
         return venueService.addPackage(venueId, packageId);
     }
 }
