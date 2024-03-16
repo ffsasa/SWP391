@@ -1,12 +1,15 @@
 package com.bookingBirthday.bookingbirthdayforkids.exception;
 
+import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,5 +37,18 @@ public class GlobalExceptionHandler {
             return new ResponseEntity<>(String.format("Error: '%s' is not a valid ID. Please enter a number.", ex.getValue()), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(String.format("The '%s' parameter must be of type '%s', but the value '%s' is provided.", ex.getName(), ex.getRequiredType().getSimpleName(), ex.getValue()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<ResponseObj> handleMissingRequestPart(MissingServletRequestPartException ex) {
+        String partName = ex.getRequestPartName();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), partName + " is required and must not be null.", null));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ResponseObj> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Error: Malformed JSON. Please provide valid JSON data.", null));
     }
 }

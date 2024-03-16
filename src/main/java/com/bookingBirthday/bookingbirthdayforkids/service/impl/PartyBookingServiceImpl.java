@@ -7,6 +7,7 @@ import com.bookingBirthday.bookingbirthdayforkids.model.*;
 import com.bookingBirthday.bookingbirthdayforkids.repository.*;
 import com.bookingBirthday.bookingbirthdayforkids.service.PartyBookingService;
 import com.bookingBirthday.bookingbirthdayforkids.util.AuthenUtil;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +48,9 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             if (partyBookingList.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
             }
+            for (PartyBooking partyBooking : partyBookingList) {
+                partyBooking.getPartyDated().setSlotObject(partyBooking.getPartyDated().getSlotInVenue().getSlot());
+            }
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
@@ -60,6 +64,9 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             if (partyBookingList.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
             }
+            for (PartyBooking partyBooking : partyBookingList) {
+                partyBooking.getPartyDated().setSlotObject(partyBooking.getPartyDated().getSlotInVenue().getSlot());
+            }
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
@@ -71,7 +78,9 @@ public class PartyBookingServiceImpl implements PartyBookingService {
         try {
             Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
             if (partyBooking.isPresent()) {
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBooking));
+                PartyBooking partyBookingResult = partyBooking.get();
+                partyBookingResult.getPartyDated().setSlotObject(partyBookingResult.getPartyDated().getSlotInVenue().getSlot());
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingResult));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This party booking does not exist", null));
         } catch (Exception e) {
@@ -90,8 +99,8 @@ public class PartyBookingServiceImpl implements PartyBookingService {
 
             Optional<ThemeInVenue> themeInVenue = themeInVenueRepository.findById(partyBookingRequest.getThemeInVenueId());
             Optional<PackageInVenue> packageInVenue = packageInVenueRepository.findById(partyBookingRequest.getPackageInVenueId());
-            Optional<SlotInVenue> aSlotInVenue = slotInVenueRepository.findById(partyBookingRequest.getSlotInVenueId());
-            if (aSlotInVenue.isEmpty()) {
+            Optional<SlotInVenue> slotInVenue = slotInVenueRepository.findById(partyBookingRequest.getSlotInVenueId());
+            if (slotInVenue.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in venue does not exist", null));
             }
             if (themeInVenue.isEmpty()) {
@@ -100,8 +109,6 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             if (packageInVenue.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package in venue does not exist", null));
             }
-
-            Venue venue = aSlotInVenue.get().getVenue();
 
             PartyBooking partyBooking = new PartyBooking();
             partyBooking.setKidName(partyBookingRequest.getKidName());
@@ -118,7 +125,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             //PartyDated
             PartyDated partyDate = new PartyDated();
             partyDate.setDate(partyBookingRequest.getDate());
-            partyDate.setSlotInVenue(aSlotInVenue.get());
+            partyDate.setSlotInVenue(slotInVenue.get());
             partyDate.setActive(true);
             partyDate.setCreateAt(LocalDateTime.now());
             partyDate.setUpdateAt(LocalDateTime.now());
@@ -130,13 +137,19 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             List<UpgradeServiceRequest> dataUpgrade = partyBookingRequest.getDataUpgrade();
             for (UpgradeServiceRequest data : dataUpgrade) {
                 UpgradeService upgradeService = new UpgradeService();
+                Optional<Services> optionalService = servicesRepository.findById(data.getServiceId());
+                if (optionalService.isPresent()) {
+                    Services service = optionalService.get();
+                    upgradeService.setPricing(data.getCount() * service.getPricing());
+                    upgradeService.setServices(service);
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Service does not exist", null));
+                }
                 upgradeService.setCount(data.getCount());
-                upgradeService.setPricing(data.getCount() * servicesRepository.findById(data.getServiceId()).get().getPricing());
                 upgradeService.setActive(true);
                 upgradeService.setCreateAt(LocalDateTime.now());
                 upgradeService.setUpdateAt(LocalDateTime.now());
                 upgradeService.setPartyBooking(partyBooking);
-                upgradeService.setServices(servicesRepository.findById(data.getServiceId()).get());
                 upgradeServiceRepository.save(upgradeService);
             }
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", partyBooking));
@@ -162,16 +175,43 @@ public class PartyBookingServiceImpl implements PartyBookingService {
 
                 Optional<PartyDated> existPartyDated = partyDatedRepository.findPartyDatedByPartyBookingId(id);
                 if (partyBookingRequest.getDate() != null || partyBookingRequest.getSlotInVenueId() != null) {
+                    Optional<SlotInVenue> optionalSlotInVenue = slotInVenueRepository.findById(partyBookingRequest.getSlotInVenueId());
+                    if (optionalSlotInVenue.isPresent()) {
+                        SlotInVenue slotInVenue = optionalSlotInVenue.get();
+                        existPartyDated.get().setSlotInVenue(slotInVenue);
+                    } else {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in venue does not exist", null));
+                    }
                     existPartyDated.get().setDate(partyBookingRequest.getDate());
-                    existPartyDated.get().setSlotInVenue(slotInVenueRepository.findById(partyBookingRequest.getSlotInVenueId()).get());
                     existPartyDated.get().setActive(true);
                     existPartyDated.get().setCreateAt(LocalDateTime.now());
                     existPartyDated.get().setUpdateAt(LocalDateTime.now());
                     partyDatedRepository.save(existPartyDated.get());
                 }
 
-                existPartyBooking.get().setThemeInVenue(partyBookingRequest.getThemeInVenueId() == null ? existPartyBooking.get().getThemeInVenue() : themeInVenueRepository.findById(partyBookingRequest.getThemeInVenueId()).get());
-                existPartyBooking.get().setPackageInVenue(partyBookingRequest.getPackageInVenueId() == null ? existPartyBooking.get().getPackageInVenue() : packageInVenueRepository.findById(partyBookingRequest.getPackageInVenueId()).get());
+                if (partyBookingRequest.getThemeInVenueId() != null) {
+                    Optional<ThemeInVenue> optionalThemeInVenue = themeInVenueRepository.findById(partyBookingRequest.getThemeInVenueId());
+                    if (optionalThemeInVenue.isPresent()) {
+                        ThemeInVenue themeInVenue = optionalThemeInVenue.get();
+                        existPartyBooking.get().setThemeInVenue(themeInVenue);
+                    } else {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Theme in venue does not exist", null));
+                    }
+                } else {
+                    existPartyBooking.get().setThemeInVenue(existPartyBooking.get().getThemeInVenue());
+                }
+
+                if (partyBookingRequest.getPackageInVenueId() != null) {
+                    Optional<PackageInVenue> optionalPackageInVenue = packageInVenueRepository.findById(partyBookingRequest.getPackageInVenueId());
+                    if (optionalPackageInVenue.isPresent()) {
+                        PackageInVenue packageInVenue = optionalPackageInVenue.get();
+                        existPartyBooking.get().setPackageInVenue(packageInVenue);
+                    } else {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package in venue does not exist", null));
+                    }
+                } else {
+                    existPartyBooking.get().setPackageInVenue(existPartyBooking.get().getPackageInVenue());
+                }
 
                 existPartyBooking.get().setKidName(partyBookingRequest.getKidName() == null ? existPartyBooking.get().getKidName() : partyBookingRequest.getKidName());
                 existPartyBooking.get().setKidDOB(partyBookingRequest.getKidDOB() == null ? existPartyBooking.get().getKidDOB() : partyBookingRequest.getKidDOB());
