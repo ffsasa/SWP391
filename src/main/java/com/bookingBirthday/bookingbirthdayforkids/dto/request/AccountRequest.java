@@ -1,5 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.dto.request;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +19,7 @@ public class AccountRequest {
     @NotBlank(message = "FullName can not blank")
     private String fullName;
     @NotBlank(message = "Email can not blank")
+    @Email(message = "Wrong Email format")
     private String email;
     @NotBlank(message = "Phone can not blank")
     private String phone;
