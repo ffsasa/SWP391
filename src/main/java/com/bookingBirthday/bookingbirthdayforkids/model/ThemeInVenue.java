@@ -3,10 +3,8 @@ package com.bookingBirthday.bookingbirthdayforkids.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
@@ -18,6 +16,11 @@ import java.util.List;
 @Entity
 @Builder
 public class ThemeInVenue extends BaseEntity {
+
+    @Transient
+    @JsonProperty("themeObject")
+    private Theme themeObject;
+
     @ManyToOne
     @JoinColumn(name = "venue_id")
     @JsonBackReference
@@ -28,9 +31,8 @@ public class ThemeInVenue extends BaseEntity {
     @JsonBackReference
     private Theme theme;
 
-    @OneToMany(mappedBy = "themeInVenue")
+    @OneToMany(mappedBy = "themeInVenue", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     @JsonIgnore
     private List<PartyBooking> partyBookingList;
-
 }
