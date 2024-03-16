@@ -3,6 +3,9 @@ package com.bookingBirthday.bookingbirthdayforkids.controller;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.PackageServiceRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.service.PackageService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,10 +34,12 @@ public class PackageController {
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PostMapping(value = "/create-package", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> create(@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
-                                    @RequestPart String packageName,
-                                    @RequestPart String packageDescription,
-                                    @RequestPart List<PackageServiceRequest> packageServiceRequest) {
-        return packageService.create(fileImg, packageName, packageDescription, packageServiceRequest);
+                                    @RequestPart(name = "packageName") String packageName,
+                                    @RequestPart(name = "packageDescription") String packageDescription,
+                                    @RequestPart(name = "packageServiceRequests") String packageServiceRequestsStr) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<PackageServiceRequest> packageServiceRequests = objectMapper.readValue(packageServiceRequestsStr, new TypeReference<List<PackageServiceRequest>>(){});
+        return packageService.create(fileImg, packageName, packageDescription, packageServiceRequests);
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
