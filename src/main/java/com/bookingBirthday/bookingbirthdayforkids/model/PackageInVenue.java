@@ -3,10 +3,8 @@ package com.bookingBirthday.bookingbirthdayforkids.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
@@ -32,4 +30,8 @@ public class PackageInVenue extends BaseEntity{
     @JsonManagedReference
     @JsonIgnore
     private List<PartyBooking> partyBookingList;
+
+    @Transient
+    @JsonProperty("packageObject")
+    private Package packageObject;
 }

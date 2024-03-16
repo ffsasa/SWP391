@@ -60,6 +60,9 @@ public class VenueServiceImpl implements VenueService {
             Optional<Venue> venue = venueRepository.findById(id);
             if (venue.isPresent()) {
                 List<SlotInVenue> slotInVenueList = venue.get().getSlotInVenueList();
+                for (SlotInVenue slotInVenue : slotInVenueList) {
+                    slotInVenue.setSlotObject(slotInVenue.getSlot());
+                }
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", slotInVenueList));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));

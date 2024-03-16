@@ -1,5 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -34,5 +35,6 @@ public class Package extends BaseEntity{
 
    @OneToMany(mappedBy = "apackage",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
    @JsonManagedReference
+   @JsonIgnore
    private List<PackageInVenue> packageInVenueList;
 }
