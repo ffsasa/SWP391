@@ -142,7 +142,8 @@ public class VenueServiceImpl implements VenueService {
         try {
             LocalDate localDateValidate = LocalDate.now().plusDays(1);
             if (date.isBefore(localDateValidate)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "The date has expired", null));
+                List<SlotInVenue> slotInVenueList = new ArrayList<>();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "The date has expired", slotInVenueList));
             }
             List<Venue> venueList = venueRepository.findAllByIsActiveIsTrue();
             if (venueList.isEmpty()) {
