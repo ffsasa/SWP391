@@ -1,5 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.exception;
 
+import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,7 +17,6 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    //Lỗi nhập entity:NotNull, Sai form email
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<List<String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         List<String> errors = new ArrayList<>();
@@ -27,12 +27,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    //Lỗi nhập Id
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<String> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+    public ResponseEntity<ResponseObj> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
         if ("id".equals(ex.getName()) && ex.getRequiredType() != null && Number.class.isAssignableFrom(ex.getRequiredType())) {
-            return new ResponseEntity<>(String.format("Error: '%s' is not a valid ID. Please enter a number.", ex.getValue()), HttpStatus.BAD_REQUEST);
+            Object value = ex.getValue();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), value.toString() + " is not a valid ID. Please enter a number", null));
         }
-        return new ResponseEntity<>(String.format("The '%s' parameter must be of type '%s', but the value '%s' is provided.", ex.getName(), ex.getRequiredType().getSimpleName(), ex.getValue()), HttpStatus.BAD_REQUEST);
+        return null;
     }
 }
