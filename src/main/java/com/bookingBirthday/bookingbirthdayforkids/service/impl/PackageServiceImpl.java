@@ -80,7 +80,8 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
                 packageService.setServices(servicesRepository.findById(packageServiceRequest.getServiceId()).get());
                 packageServiceRepository.save(packageService);
             }
-        pack.setPricing(packPricing*percent);
+        float newPricing = packPricing * percent;
+        pack.setPricing(packPricing - newPricing);
         packageRepository.save(pack);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Successful", pack));
     }
