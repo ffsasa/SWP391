@@ -3,6 +3,7 @@ package com.bookingBirthday.bookingbirthdayforkids.controller;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.InquiryReplyRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.service.InquiryReplyService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,7 +16,7 @@ public class InquiryReplyController {
     @Autowired
     InquiryReplyService inquiryReplyService;
     @PutMapping("/reply/{id}")
-    public ResponseEntity<ResponseObj> reply(@PathVariable Long id, @RequestBody InquiryReplyRequest inquiryReplyRequest){
+    public ResponseEntity<ResponseObj> reply(@Valid @PathVariable Long id, @RequestBody InquiryReplyRequest inquiryReplyRequest){
         return inquiryReplyService.reply(id, inquiryReplyRequest);
     }
     @GetMapping("/get-all")

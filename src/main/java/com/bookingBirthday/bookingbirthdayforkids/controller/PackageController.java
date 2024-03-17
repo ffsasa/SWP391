@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,10 +37,19 @@ public class PackageController {
     public ResponseEntity<?> create(@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
                                     @RequestPart(name = "packageName") String packageName,
                                     @RequestPart(name = "packageDescription") String packageDescription,
+                                    @RequestPart(name = "percent") String percent,
                                     @RequestPart(name = "packageServiceRequests") String packageServiceRequestsStr) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
-        List<PackageServiceRequest> packageServiceRequests = objectMapper.readValue(packageServiceRequestsStr, new TypeReference<List<PackageServiceRequest>>(){});
-        return packageService.create(fileImg, packageName, packageDescription, packageServiceRequests);
+        try {
+            float parsePercent = Float.parseFloat(percent);
+            if(parsePercent > 1 || parsePercent < 0)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Percent ranges from 0-1", null));
+            List<PackageServiceRequest> packageServiceRequests = objectMapper.readValue(packageServiceRequestsStr, new TypeReference<List<PackageServiceRequest>>(){});
+            return packageService.create(fileImg, packageName, packageDescription, parsePercent,packageServiceRequests);
+        }catch (NumberFormatException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid percent", null));
+        }
+
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")

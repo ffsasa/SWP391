@@ -95,7 +95,7 @@ public class AccountController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody AccountRequest accountRequest){
+    public ResponseEntity<ResponseObj> update(@PathVariable Long id, @Valid @RequestBody AccountRequest accountRequest){
         return accountService.updateAccount(id, accountRequest);
     }
 //

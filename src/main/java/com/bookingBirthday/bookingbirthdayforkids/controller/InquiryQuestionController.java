@@ -3,6 +3,7 @@ package com.bookingBirthday.bookingbirthdayforkids.controller;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.InquiryQuestionRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.service.InquiryQuestionService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,7 +18,7 @@ public class InquiryQuestionController {
     InquiryQuestionService inquiryService;
 
     @PostMapping("/create-question")
-    public ResponseEntity<ResponseObj> create(@RequestBody InquiryQuestionRequest inquiryRequest){
+    public ResponseEntity<ResponseObj> create(@Valid @RequestBody InquiryQuestionRequest inquiryRequest){
         return inquiryService.create(inquiryRequest);
     }
 

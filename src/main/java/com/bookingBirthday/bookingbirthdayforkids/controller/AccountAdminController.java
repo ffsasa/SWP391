@@ -37,14 +37,7 @@ public class AccountAdminController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/register")
-    public ResponseEntity<?> create(@Valid @RequestBody AccountRequest accountRequest, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            List<String> errorMessages = new ArrayList<>();
-            for (FieldError error : bindingResult.getFieldErrors()) {
-                errorMessages.add(error.getDefaultMessage());
-            }
-            return new ResponseEntity<>(errorMessages, HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> create(@Valid @RequestBody AccountRequest accountRequest) {
         return accountAdminService.create(accountRequest);
     }
     @GetMapping("/information")

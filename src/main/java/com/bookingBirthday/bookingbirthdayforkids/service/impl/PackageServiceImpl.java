@@ -50,7 +50,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
     }
 
     @Override
-    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, String packageDescription, List<PackageServiceRequest> packageServiceRequestList) {
+    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, String packageDescription, float percent,List<PackageServiceRequest> packageServiceRequestList) {
         Package pack = new Package();
         float packPricing = 0;
         try {
@@ -71,7 +71,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         for (PackageServiceRequest packageServiceRequest : packageServiceRequests) {
                 PackageService packageService = new PackageService();
                 packageService.setCount(packageServiceRequest.getCount());
-                packageService.setPricing(packageServiceRequest.getCount()*servicesRepository.findById(packageServiceRequest.getServiceId()).get().getPricing());
+                packageService.setPricing((packageServiceRequest.getCount()*servicesRepository.findById(packageServiceRequest.getServiceId()).get().getPricing()));
                 packageService.setActive(true);
                 packageService.setCreateAt(LocalDateTime.now());
                 packageService.setUpdateAt(LocalDateTime.now());
@@ -80,7 +80,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
                 packageService.setServices(servicesRepository.findById(packageServiceRequest.getServiceId()).get());
                 packageServiceRepository.save(packageService);
             }
-        pack.setPricing(packPricing);
+        pack.setPricing(packPricing*percent);
         packageRepository.save(pack);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Successful", pack));
     }
