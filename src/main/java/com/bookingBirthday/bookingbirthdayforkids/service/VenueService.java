@@ -27,5 +27,7 @@ public interface VenueService {
 
     public ResponseEntity<ResponseObj> getThemeInVenueByVenue(Long venueId);
 
-    public ResponseEntity<ResponseObj> getSlotInVenueById(Long id);
+    public ResponseEntity<ResponseObj> getSlotInVenueById(Long venueId);
+
+    public ResponseEntity<ResponseObj> getAllSlotHaveNotAddByVenue(Long venueId);
 }

@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +40,9 @@ public class VenueServiceImpl implements VenueService {
 
     @Autowired
     PackageInVenueRepository packageInVenueRepository;
+
+    @Autowired
+    SlotRepository slotRepository;
 
     @Override
     public ResponseEntity<ResponseObj> getAll() {
@@ -99,6 +103,32 @@ public class VenueServiceImpl implements VenueService {
                     themeInVenue.setThemeObject(themeInVenue.getTheme());
                 }
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", themeInVenueList));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This theme does not exist", null));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> getAllSlotHaveNotAddByVenue(Long venueId) {
+        try {
+            Optional<Venue> venue = venueRepository.findById(venueId);
+            if (venue.isPresent()) {
+                List<SlotInVenue> slotInVenueList = venue.get().getSlotInVenueList();
+                List<Slot> slotAddedList = new ArrayList<>();
+                for(SlotInVenue slotInVenue : slotInVenueList){
+                    slotAddedList.add(slotInVenue.getSlot());
+                }
+                List<Slot> slotList = slotRepository.findAll();
+                List<Slot> slotNotAddList = new ArrayList<>();
+                for(Slot slot : slotList){
+                    if(!slotAddedList.contains(slot)){
+                        slotNotAddList.add(slot);
+                    }
+                }
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", slotNotAddList));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This theme does not exist", null));
             }
@@ -215,7 +245,10 @@ public class VenueServiceImpl implements VenueService {
         try {
             Optional<Theme> theme = themeRepository.findById(themeId);
             Optional<Venue> venue = venueRepository.findById(venueId);
-            if (venue.isPresent() && theme.isPresent()) {
+            if (!theme.isPresent()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This theme does not exist", null));
+            }
+            if (venue.isPresent()) {
                 ThemeInVenue themeInVenue = new ThemeInVenue();
                 themeInVenue.setTheme(theme.get());
                 themeInVenue.setVenue(venue.get());
@@ -236,7 +269,10 @@ public class VenueServiceImpl implements VenueService {
         try {
             Optional<Package> aPackage = packageRepository.findById(packageId);
             Optional<Venue> venue = venueRepository.findById(venueId);
-            if (venue.isPresent() && aPackage.isPresent()) {
+            if (!aPackage.isPresent()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This package does not exist", null));
+            }
+            if (venue.isPresent()) {
                 PackageInVenue packageInVenue = new PackageInVenue();
                 packageInVenue.setApackage(aPackage.get());
                 packageInVenue.setVenue(venue.get());
