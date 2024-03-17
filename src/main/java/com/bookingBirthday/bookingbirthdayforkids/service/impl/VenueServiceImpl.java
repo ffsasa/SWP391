@@ -146,10 +146,40 @@ public class VenueServiceImpl implements VenueService {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "The date has expired", slotInVenueList));
             }
             List<Venue> venueList = venueRepository.findAllByIsActiveIsTrue();
-            if (venueList.isEmpty()) {
+            if (venueList.isEmpty())
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
-            }
+
             List<PartyDated> partyDatedList = partyDatedRepository.findAllByDate(date);
+            if (partyDatedList.isEmpty())
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List party dated is empty", venueList));
+
+            for (Venue venue : venueList) {
+                List<SlotInVenue> slotInVenueList = venue.getSlotInVenueList();
+                for (SlotInVenue slotInVenue : slotInVenueList) {
+                    slotInVenue.setSlotObject(slotInVenue.getSlot());
+                    for (PartyDated partyDated : partyDatedList) {
+                        if (partyDated.getSlotInVenue().equals(slotInVenue)) {
+                            slotInVenue.setStatus(true);
+                        }
+                    }
+                }
+            }
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", venueList));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> checkSlotInVenueForHost(LocalDate date) {
+        try {
+            List<Venue> venueList = venueRepository.findAllByIsActiveIsTrue();
+            if (venueList.isEmpty())
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List venue is empty", null));
+
+            List<PartyDated> partyDatedList = partyDatedRepository.findAllByDate(date);
+            if (partyDatedList.isEmpty())
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List party dated is empty", venueList));
 
             for (Venue venue : venueList) {
                 List<SlotInVenue> slotInVenueList = venue.getSlotInVenueList();
@@ -261,7 +291,7 @@ public class VenueServiceImpl implements VenueService {
                 themeInVenue.setCreateAt(LocalDateTime.now());
                 themeInVenue.setUpdateAt(LocalDateTime.now());
                 themeInVenueRepository.save(themeInVenue);
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", null));
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", null));
             } else
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
         } catch (Exception e) {
@@ -285,7 +315,7 @@ public class VenueServiceImpl implements VenueService {
                 packageInVenue.setCreateAt(LocalDateTime.now());
                 packageInVenue.setUpdateAt(LocalDateTime.now());
                 packageInVenueRepository.save(packageInVenue);
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", null));
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", null));
             } else
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
         } catch (Exception e) {

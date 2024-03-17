@@ -30,4 +30,6 @@ public interface VenueService {
     public ResponseEntity<ResponseObj> getSlotInVenueById(Long venueId);
 
     public ResponseEntity<ResponseObj> getAllSlotHaveNotAddByVenue(Long venueId);
+
+    public ResponseEntity<ResponseObj> checkSlotInVenueForHost(LocalDate date);
 }
