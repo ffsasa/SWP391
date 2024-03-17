@@ -36,6 +36,17 @@ public class VenueController {
         }
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    @GetMapping("/check-slot-in-venue-for-host")
+    public ResponseEntity<ResponseObj> checkSlotInVenueForHost(@RequestParam String date) {
+        try {
+            return venueService.checkSlotInVenueForHost(LocalDate.parse(date));
+        } catch (Exception e) {
+            List<Object> errors = new ArrayList<>();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid date", errors));
+        }
+    }
++
     @GetMapping("/get-id/{id}")
     public ResponseEntity<ResponseObj> getById(@PathVariable Long id) {
         return venueService.getById(id);
