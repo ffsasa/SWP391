@@ -3,6 +3,7 @@ package com.bookingBirthday.bookingbirthdayforkids.controller;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.service.ServicesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,7 +33,12 @@ public class ServicesController {
                                     @RequestPart String serviceName,
                                     @RequestPart String description,
                                     @RequestPart String pricing){
-        return servicesService.create(fileImg, serviceName, description,Float.parseFloat(pricing));
+        try {
+            float parsedPricing = Float.parseFloat(pricing);
+            return servicesService.create( fileImg, serviceName, description, parsedPricing);
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid pricing", null));
+        }
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
@@ -48,6 +54,11 @@ public class ServicesController {
                                     @RequestPart String serviceName,
                                     @RequestPart String description,
                                     @RequestPart String pricing){
-        return servicesService.update(id, fileImg, serviceName, description, Float.parseFloat(pricing));
+        try {
+            float parsedPricing = Float.parseFloat(pricing);
+            return servicesService.update(id, fileImg, serviceName, description, parsedPricing);
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid pricing", null));
+        }
     }
 }
