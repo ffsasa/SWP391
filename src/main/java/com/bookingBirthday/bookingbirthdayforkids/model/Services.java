@@ -1,6 +1,7 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -36,6 +37,7 @@ public class Services extends BaseEntity{
 
     @OneToMany(mappedBy = "services", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
+    @JsonIgnore
     private List<UpgradeService> upgradeServiceList;
 
 }
