@@ -51,6 +51,9 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
 
     @Override
     public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, String packageDescription, float percent,List<PackageServiceRequest> packageServiceRequestList) {
+        if (packageRepository.existsByPackageName(packageName)) {
+            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(), "Package name has already exist", null));
+        }
         Package pack = new Package();
         float packPricing = 0;
         try {

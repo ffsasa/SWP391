@@ -116,11 +116,20 @@ public class SlotServiceImpl implements SlotService {
             return true; // If parsing fails, consider it invalid
         }
     }
-
     @Override
     public ResponseEntity<ResponseObj> update(Long id, SlotRequest slotRequest) {
         Optional<Slot> existSlot  = slotRepository.findById(id);
         if (existSlot.isPresent()){
+            if (isInvalidTimeRange(slotRequest.getTimeStart(), slotRequest.getTimeEnd())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(),"Time start must be earlier than time end", null));
+            }
+            if (!isMinimumTimeSlot(slotRequest.getTimeStart(), slotRequest.getTimeEnd())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(),"Minimum time slot is 2 hours", null));
+            }
+            if (isInvalidTimePeriod(slotRequest.getTimeStart(), slotRequest.getTimeEnd())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(),"Cannot create slot between 00:00:00 and 07:59:59", null));
+            }
+
             existSlot.get().setTimeStart(slotRequest.getTimeStart() == null ? existSlot.get().getTimeStart() : slotRequest.getTimeStart());
             existSlot.get().setTimeEnd(slotRequest.getTimeEnd() == null ? existSlot.get().getTimeEnd() : slotRequest.getTimeEnd());
             existSlot.get().setUpdateAt(LocalDateTime.now());
@@ -129,8 +138,22 @@ public class SlotServiceImpl implements SlotService {
         }
         else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Slot does not exist", null));
-
     }
+
+//    @Override
+//    public ResponseEntity<ResponseObj> update(Long id, SlotRequest slotRequest) {
+//        Optional<Slot> existSlot  = slotRepository.findById(id);
+//        if (existSlot.isPresent()){
+//            existSlot.get().setTimeStart(slotRequest.getTimeStart() == null ? existSlot.get().getTimeStart() : slotRequest.getTimeStart());
+//            existSlot.get().setTimeEnd(slotRequest.getTimeEnd() == null ? existSlot.get().getTimeEnd() : slotRequest.getTimeEnd());
+//            existSlot.get().setUpdateAt(LocalDateTime.now());
+//            slotRepository.save(existSlot.get());
+//            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", existSlot));
+//        }
+//        else
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Slot does not exist", null));
+//
+//    }
 
     @Override
     public ResponseEntity<ResponseObj> delete(Long id) {
