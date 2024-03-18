@@ -92,8 +92,11 @@ public class PartyDatedServiceImpl implements PartyDatedService {
     @Override
     public ResponseEntity<ResponseObj> getPartyBookingByPartyDateId(Long id) {
         Optional<PartyDated> partyDated = partyDatedRepository.findById(id);
-        if (partyDated.isPresent())
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), null, partyDated.get().getPartyBooking()));
+        if (partyDated.isPresent()){
+            PartyBooking partyBooking = partyDated.get().getPartyBooking();
+            partyBooking.getPartyDated().setSlotObject(partyBooking.getPartyDated().getSlotInVenue().getSlot());
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBooking));
+        }
         else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "PartyDated does not exist", null));
     }
