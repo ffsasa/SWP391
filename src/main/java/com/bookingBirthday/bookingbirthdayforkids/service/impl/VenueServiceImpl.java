@@ -188,6 +188,7 @@ public class VenueServiceImpl implements VenueService {
                     for (PartyDated partyDated : partyDatedList) {
                         if (partyDated.getSlotInVenue().equals(slotInVenue)) {
                             slotInVenue.setStatus(true);
+                            slotInVenue.setPartyDatedByDate(partyDated);
                         }
                     }
                 }

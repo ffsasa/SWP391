@@ -22,6 +22,10 @@ public class SlotInVenue extends BaseEntity{
     private boolean status;
 
     @Transient
+    @JsonProperty("partyDatedByDate")
+    private PartyDated partyDatedByDate;
+
+    @Transient
     @JsonProperty("slotObject")
     private Slot slotObject;
 
