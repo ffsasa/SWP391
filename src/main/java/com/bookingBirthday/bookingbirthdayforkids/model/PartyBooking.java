@@ -2,6 +2,7 @@ package com.bookingBirthday.bookingbirthdayforkids.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -64,4 +65,16 @@ public class PartyBooking extends BaseEntity{
     @OneToMany(mappedBy = "partyBooking", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Review> reviewList;
+
+    @Transient
+    @JsonProperty("accountObject")
+    private Account accountObject;
+
+    @Transient
+    @JsonProperty("themeInVenueObject")
+    private ThemeInVenue themeInVenueObject;
+
+    @Transient
+    @JsonProperty("packageInVenueObject")
+    private PackageInVenue packageInVenueObject;
 }

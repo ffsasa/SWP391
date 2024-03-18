@@ -44,7 +44,7 @@ public class Account extends BaseEntity implements UserDetails {
     @JsonIgnore
     private List<Inquiry> inquiryList;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "account",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     @JsonIgnore
     private List<PartyBooking> partyBookingList;
