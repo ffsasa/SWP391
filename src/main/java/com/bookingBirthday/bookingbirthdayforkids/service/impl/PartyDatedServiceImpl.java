@@ -3,6 +3,7 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.PartyDatedRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.*;
+import com.bookingBirthday.bookingbirthdayforkids.repository.PartyBookingRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PartyDatedRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.SlotInVenueRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.PartyDatedService;
@@ -21,6 +22,8 @@ public class PartyDatedServiceImpl implements PartyDatedService {
     PartyDatedRepository partyDatedRepository;
     @Autowired
     SlotInVenueRepository slotInVenueRepository;
+    @Autowired
+    PartyBookingRepository partyBookingRepository;
     @Override
     public ResponseEntity<ResponseObj> getAll() {
         List<PartyDated> partyDatedList = partyDatedRepository.findAllByIsActiveIsTrue();
@@ -82,6 +85,15 @@ public class PartyDatedServiceImpl implements PartyDatedService {
             partyDatedRepository.save(partyDated.get());
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Delete successful", null));
         }
+        else
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "PartyDated does not exist", null));
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> getPartyBookingByPartyDateId(Long id) {
+        Optional<PartyDated> partyDated = partyDatedRepository.findById(id);
+        if (partyDated.isPresent())
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), null, partyDated.get().getPartyBooking()));
         else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "PartyDated does not exist", null));
     }
