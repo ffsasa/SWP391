@@ -66,6 +66,11 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             }
             for (PartyBooking partyBooking : partyBookingList) {
                 partyBooking.getPartyDated().setSlotObject(partyBooking.getPartyDated().getSlotInVenue().getSlot());
+                partyBooking.setAccountObject(partyBooking.getAccount());
+                partyBooking.setThemeInVenueObject(partyBooking.getThemeInVenue());
+                partyBooking.setPackageInVenueObject(partyBooking.getPackageInVenue());
+                partyBooking.getThemeInVenueObject().setThemeObject(partyBooking.getThemeInVenue().getTheme());
+                partyBooking.getPackageInVenueObject().setPackageObject(partyBooking.getPackageInVenue().getApackage());
             }
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
         } catch (Exception e) {
