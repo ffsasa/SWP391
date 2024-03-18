@@ -23,6 +23,11 @@ public class PartyDatedController {
         return partyDatedService.getById(id);
     }
 
+    @GetMapping("/get-party-booking/{id}")
+    public ResponseEntity<ResponseObj> getPartyBookingByPartyDateId(@PathVariable Long id){
+        return partyDatedService.getPartyBookingByPartyDateId(id);
+    }
+
     @PostMapping("/create")
     public ResponseEntity<ResponseObj> create(@RequestBody PartyDatedRequest partyDatedRequest){
         return partyDatedService.create(partyDatedRequest);
