@@ -20,12 +20,9 @@ public class BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private boolean isActive;
-    @JsonIgnore
     @CreatedDate
     private LocalDateTime createAt;
-    @JsonIgnore
     @LastModifiedDate
     private LocalDateTime updateAt;
-    @JsonIgnore
     private LocalDateTime deleteAt;
 }
