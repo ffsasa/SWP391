@@ -2,8 +2,11 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.SlotRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
-import com.bookingBirthday.bookingbirthdayforkids.model.Slot;
+import com.bookingBirthday.bookingbirthdayforkids.model.*;
+import com.bookingBirthday.bookingbirthdayforkids.model.Package;
+import com.bookingBirthday.bookingbirthdayforkids.repository.SlotInVenueRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.SlotRepository;
+import com.bookingBirthday.bookingbirthdayforkids.repository.VenueRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.SlotService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +25,10 @@ import java.util.Optional;
 public class SlotServiceImpl implements SlotService {
     @Autowired
     SlotRepository slotRepository;
+    @Autowired
+    VenueRepository venueRepository;
+    @Autowired
+    SlotInVenueRepository slotInVenueRepository;
     @Override
     public ResponseEntity<ResponseObj> getAll() {
         List<Slot> slotList = slotRepository.findAllByIsActiveIsTrue();
@@ -166,5 +173,24 @@ public class SlotServiceImpl implements SlotService {
         }
         else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "slot does not exist", null));
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> addSlotInVenueBySlotId(Long slotId, List<Long> venueIdList) {
+        Slot slot = slotRepository.findById(slotId).get();
+        SlotInVenue slotInVenue = new SlotInVenue();
+
+        List<Long> addSlotInVenueBySlotId = venueIdList;
+        for (Long addVenue : addSlotInVenueBySlotId){
+            slotInVenue = new SlotInVenue();
+            Venue venue = venueRepository.findById(addVenue.longValue()).get();
+            slotInVenue.setVenue(venue);
+            slotInVenue.setSlot(slot);
+            slotInVenue.setActive(true);
+            slotInVenue.setCreateAt(LocalDateTime.now());
+            slotInVenue.setUpdateAt(LocalDateTime.now());
+            slotInVenueRepository.save(slotInVenue);
+        }
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", slotInVenue));
     }
 }

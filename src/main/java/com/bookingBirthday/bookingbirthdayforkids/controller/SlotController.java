@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/slot")
 public class SlotController {
@@ -40,5 +42,10 @@ public class SlotController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
         return slotService.delete(id);
+    }
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    @PostMapping(value = "/add-slot-in-venue-by-slot-id/{id}")
+    public ResponseEntity<?> addSlotInVenueBySlotId(@RequestParam Long slotId, @RequestBody List<Long> venueIdList){
+        return slotService.addSlotInVenueBySlotId(slotId, venueIdList);
     }
 }
