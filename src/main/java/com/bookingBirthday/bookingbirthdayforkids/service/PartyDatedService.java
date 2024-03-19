@@ -9,8 +9,6 @@ public interface PartyDatedService {
 
     public ResponseEntity<ResponseObj> getById(Long id);
 
-    public ResponseEntity<ResponseObj> create(PartyDatedRequest partyDatedRequest);
-
     public ResponseEntity<ResponseObj> update(Long id, PartyDatedRequest partyDatedRequest);
 
     public ResponseEntity<ResponseObj> delete(Long id);
