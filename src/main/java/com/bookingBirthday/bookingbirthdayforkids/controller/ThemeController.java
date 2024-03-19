@@ -9,6 +9,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/theme")
 public class ThemeController {
@@ -41,6 +43,12 @@ public class ThemeController {
                                     @RequestPart String themeName,
                                     @RequestPart String themDescription){
         return themeService.update(id,fileImg, themeName, themDescription);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    @PutMapping(value = "/add-theme-in-venue-by-them-id/{id}")
+    public ResponseEntity<?> addThemeInVenueByThemeId(@RequestParam Long themeId, @RequestBody List<Long> venueIdList){
+        return themeService.addThemeInVenueByThemeId(themeId, venueIdList);
     }
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @DeleteMapping("/delete/{id}")
