@@ -28,11 +28,6 @@ public class PartyDatedController {
         return partyDatedService.getPartyBookingByPartyDateId(id);
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<ResponseObj> create(@RequestBody PartyDatedRequest partyDatedRequest){
-        return partyDatedService.create(partyDatedRequest);
-    }
-
     @PutMapping("/update/{id}")
     public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody PartyDatedRequest partyDatedRequest){
         return partyDatedService.update(id, partyDatedRequest);

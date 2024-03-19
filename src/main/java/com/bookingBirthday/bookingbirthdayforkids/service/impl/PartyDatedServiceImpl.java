@@ -45,21 +45,6 @@ public class PartyDatedServiceImpl implements PartyDatedService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
-
-    @Override
-    public ResponseEntity<ResponseObj> create(PartyDatedRequest partyDatedRequest){
-        PartyDated partyDated = new PartyDated();
-        SlotInVenue slotInVenue = slotInVenueRepository.findById(partyDatedRequest.getSlotInVenueId()).get();
-        partyDated.setSlotInVenue(slotInVenue);
-        partyDated.setDate(partyDatedRequest.getDate());
-        partyDated.setActive(true);
-        partyDated.setCreateAt(LocalDateTime.now());
-        partyDated.setUpdateAt(LocalDateTime.now());
-
-        partyDatedRepository.save(partyDated);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(),"Create successful", partyDated));
-    }
-
     @Override
     public ResponseEntity<ResponseObj> update(Long id, PartyDatedRequest partyDatedRequest) {
         SlotInVenue slotInVenue = slotInVenueRepository.findById(partyDatedRequest.getSlotInVenueId()).get();
