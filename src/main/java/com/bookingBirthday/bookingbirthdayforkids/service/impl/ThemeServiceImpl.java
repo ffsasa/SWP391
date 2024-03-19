@@ -1,8 +1,13 @@
 package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 
+import com.bookingBirthday.bookingbirthdayforkids.dto.request.PackageServiceRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.Theme;
+import com.bookingBirthday.bookingbirthdayforkids.model.ThemeInVenue;
+import com.bookingBirthday.bookingbirthdayforkids.model.Venue;
+import com.bookingBirthday.bookingbirthdayforkids.repository.ThemeInVenueRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.ThemeRepository;
+import com.bookingBirthday.bookingbirthdayforkids.repository.VenueRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.ThemeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +26,10 @@ public class ThemeServiceImpl implements ThemeService {
     ThemeRepository themeRepository;
     @Autowired
     FirebaseService firebaseService;
+    @Autowired
+    VenueRepository venueRepository;
+    @Autowired
+    ThemeInVenueRepository themeInVenueRepository;
 
     @Override
     public ResponseEntity<ResponseObj> getAll() {
@@ -71,6 +80,27 @@ public class ThemeServiceImpl implements ThemeService {
 
         }
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", theme));
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> addThemeInVenueByThemeId(Long themeId, List<Long> venueIdList){
+        Theme theme = themeRepository.findById(themeId).get();
+        ThemeInVenue themeInVenue = new ThemeInVenue();
+
+        List<Long> addThemeInVenueByThemeId = venueIdList;
+        for (Long addVenue : addThemeInVenueByThemeId){
+            themeInVenue = new ThemeInVenue();
+            Venue venue = venueRepository.findById(addVenue.longValue()).get();
+            themeInVenue.setVenue(venue);
+            themeInVenue.setTheme(theme);
+            themeInVenue.setActive(true);
+            themeInVenue.setCreateAt(LocalDateTime.now());
+            themeInVenue.setUpdateAt(LocalDateTime.now());
+            themeInVenueRepository.save(themeInVenue);
+        }
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", themeInVenue));
+
+
     }
 
     @Override

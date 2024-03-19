@@ -115,6 +115,9 @@ public class AccountServiceImpl implements AccountService {
                 )
         );
         Account account = (Account) authentication.getPrincipal();
+        if(account.isActive() == false){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Your account has been locked", null));
+        }
         if(!role.equals(account.getRole())){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "You are not permisson", null));
         }
