@@ -46,7 +46,7 @@ public class ThemeController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PutMapping(value = "/add-theme-in-venue-by-them-id/{id}")
+    @PostMapping(value = "/add-theme-in-venue-by-them-id/{id}")
     public ResponseEntity<?> addThemeInVenueByThemeId(@RequestParam Long themeId, @RequestBody List<Long> venueIdList){
         return themeService.addThemeInVenueByThemeId(themeId, venueIdList);
     }

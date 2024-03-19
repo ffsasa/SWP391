@@ -2,11 +2,9 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.PackageServiceRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
+import com.bookingBirthday.bookingbirthdayforkids.model.*;
 import com.bookingBirthday.bookingbirthdayforkids.model.Package;
-import com.bookingBirthday.bookingbirthdayforkids.repository.PackageRepository;
-import com.bookingBirthday.bookingbirthdayforkids.model.PackageService;
-import com.bookingBirthday.bookingbirthdayforkids.repository.PackageServiceRepository;
-import com.bookingBirthday.bookingbirthdayforkids.repository.ServicesRepository;
+import com.bookingBirthday.bookingbirthdayforkids.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +25,10 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
     ServicesRepository servicesRepository;
     @Autowired
     FirebaseService firebaseService;
+    @Autowired
+    VenueRepository venueRepository;
+    @Autowired
+    PackageInVenueRepository packageInVenueRepository;
     @Override
     public ResponseEntity<ResponseObj> getAll() {
         List<Package> packageList = packageRepository.findAllByIsActiveIsTrue();
@@ -123,6 +125,25 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         }
         else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Package does not exist", null));
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> addPackageInVenueByPackageId(Long packageId, List<Long> venueIdList) {
+        Package aPackage = packageRepository.findById(packageId).get();
+        PackageInVenue packageInVenue = new PackageInVenue();
+
+        List<Long> addPackageInVenueByPackageId = venueIdList;
+        for (Long addVenue : addPackageInVenueByPackageId){
+            packageInVenue = new PackageInVenue();
+            Venue venue = venueRepository.findById(addVenue.longValue()).get();
+            packageInVenue.setVenue(venue);
+            packageInVenue.setApackage(aPackage);
+            packageInVenue.setActive(true);
+            packageInVenue.setCreateAt(LocalDateTime.now());
+            packageInVenue.setUpdateAt(LocalDateTime.now());
+            packageInVenueRepository.save(packageInVenue);
+        }
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", packageInVenue));
     }
 }
 
