@@ -1,6 +1,7 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -30,20 +31,17 @@ public class Payment extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "account_id")
-    @JsonBackReference
     private Account account;
 
     @ManyToOne
     @JoinColumn(name = "paymentMethod_id")
-    @JsonBackReference
     private PaymentMethod paymentMethod;
 
-    @OneToMany(mappedBy = "payment", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Transaction> transactionList;
 
     @ManyToOne
     @JoinColumn(name = "partyBooking_id")
-    @JsonBackReference
     private PartyBooking partyBooking;
 }

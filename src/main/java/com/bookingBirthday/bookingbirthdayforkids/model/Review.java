@@ -30,16 +30,13 @@ public class Review extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "account_id")
-    @JsonBackReference
     private Account account;
 
     @ManyToOne
     @JoinColumn(name = "account_id_reply")
-    @JsonBackReference
     private Account accountReply;
 
     @ManyToOne
     @JoinColumn(name = "partyBooking_id")
-    @JsonBackReference
     private PartyBooking partyBooking;
 }

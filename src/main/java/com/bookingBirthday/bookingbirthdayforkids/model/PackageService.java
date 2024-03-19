@@ -1,6 +1,7 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -21,11 +22,11 @@ public class PackageService extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "package_id")
-    @JsonBackReference
+    @JsonIgnore
     private Package apackage;
 
     @ManyToOne
     @JoinColumn(name = "service_id")
-    @JsonBackReference
+    @JsonIgnore
     private Services services;
 }

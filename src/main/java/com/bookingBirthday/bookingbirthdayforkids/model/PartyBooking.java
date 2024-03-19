@@ -1,6 +1,7 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -36,45 +37,30 @@ public class PartyBooking extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "themeInVenue_id")
-    @JsonBackReference
     private ThemeInVenue themeInVenue;
 
 
     @ManyToOne
     @JoinColumn(name = "packageInVenue_id")
-    @JsonBackReference
     private PackageInVenue packageInVenue;
 
     @ManyToOne
     @JoinColumn(name = "account_id")
-    @JsonBackReference
     private Account account;
 
-    @OneToMany(mappedBy = "partyBooking", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "partyBooking", cascade = CascadeType.ALL)
     private List<UpgradeService> upgradeServices;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "partyDated_id", referencedColumnName = "id")
     private PartyDated partyDated;
 
-    @OneToMany(mappedBy = "partyBooking", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "partyBooking", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Payment> paymentList;
 
-    @OneToMany(mappedBy = "partyBooking", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "partyBooking", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Review> reviewList;
 
-    @Transient
-    @JsonProperty("accountObject")
-    private Account accountObject;
-
-    @Transient
-    @JsonProperty("themeInVenueObject")
-    private ThemeInVenue themeInVenueObject;
-
-    @Transient
-    @JsonProperty("packageInVenueObject")
-    private PackageInVenue packageInVenueObject;
 }

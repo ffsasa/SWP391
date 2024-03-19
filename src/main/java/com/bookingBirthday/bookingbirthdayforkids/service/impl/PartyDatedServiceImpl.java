@@ -79,7 +79,6 @@ public class PartyDatedServiceImpl implements PartyDatedService {
         Optional<PartyDated> partyDated = partyDatedRepository.findById(id);
         if (partyDated.isPresent()){
             PartyBooking partyBooking = partyDated.get().getPartyBooking();
-            partyBooking.getPartyDated().setSlotObject(partyBooking.getPartyDated().getSlotInVenue().getSlot());
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBooking));
         }
         else

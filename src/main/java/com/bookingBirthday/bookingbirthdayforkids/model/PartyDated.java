@@ -19,16 +19,12 @@ public class PartyDated extends BaseEntity{
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDate date;
 
-    @Transient
-    @JsonProperty("slotObject")
-    private Slot slotObject;
-
-    @OneToOne(mappedBy = "partyDated", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "partyDated", cascade = CascadeType.ALL)
     @JsonIgnore
     private PartyBooking partyBooking;
 
     @ManyToOne
     @JoinColumn(name = "slotInVenue_id")
-    @JsonBackReference
+    @JsonIgnore
     private SlotInVenue slotInVenue;
 }

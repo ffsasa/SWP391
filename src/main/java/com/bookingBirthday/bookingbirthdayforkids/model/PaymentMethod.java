@@ -1,5 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -21,7 +22,7 @@ public class PaymentMethod extends BaseEntity {
     private String methodName;
     private String methodDescription;
 
-    @OneToMany(mappedBy = "paymentMethod", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "paymentMethod", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Payment> paymentList;
 }

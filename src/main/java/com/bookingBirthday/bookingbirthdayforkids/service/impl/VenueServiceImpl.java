@@ -64,9 +64,6 @@ public class VenueServiceImpl implements VenueService {
             Optional<Venue> venue = venueRepository.findById(id);
             if (venue.isPresent()) {
                 List<SlotInVenue> slotInVenueList = venue.get().getSlotInVenueList();
-                for (SlotInVenue slotInVenue : slotInVenueList) {
-                    slotInVenue.setSlotObject(slotInVenue.getSlot());
-                }
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", slotInVenueList));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
@@ -81,9 +78,6 @@ public class VenueServiceImpl implements VenueService {
             Optional<Venue> venue = venueRepository.findById(venueId);
             if (venue.isPresent()) {
                 List<PackageInVenue> packageInVenuesList = venue.get().getPackageInVenueList();
-                for(PackageInVenue packageInVenue : packageInVenuesList){
-                    packageInVenue.setPackageObject(packageInVenue.getApackage());
-                }
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", packageInVenuesList));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This venue does not exist", null));
@@ -99,9 +93,6 @@ public class VenueServiceImpl implements VenueService {
             Optional<Venue> venue = venueRepository.findById(venueId);
             if (venue.isPresent()) {
                 List<ThemeInVenue> themeInVenueList = venue.get().getThemeInVenueList();
-                for(ThemeInVenue themeInVenue : themeInVenueList){
-                    themeInVenue.setThemeObject(themeInVenue.getTheme());
-                }
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", themeInVenueList));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This theme does not exist", null));
@@ -149,12 +140,11 @@ public class VenueServiceImpl implements VenueService {
             if (venueList.isEmpty())
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
 
-            List<PartyDated> partyDatedList = partyDatedRepository.findAllByDate(date);
+            List<PartyDated> partyDatedList = partyDatedRepository.findByDate(date);
 
             for (Venue venue : venueList) {
                 List<SlotInVenue> slotInVenueList = venue.getSlotInVenueList();
                 for (SlotInVenue slotInVenue : slotInVenueList) {
-                    slotInVenue.setSlotObject(slotInVenue.getSlot());
                     for (PartyDated partyDated : partyDatedList) {
                         if (partyDated.getSlotInVenue().equals(slotInVenue)) {
                             slotInVenue.setStatus(true);
@@ -175,16 +165,15 @@ public class VenueServiceImpl implements VenueService {
             if (venueList.isEmpty())
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List venue is empty", null));
 
-            List<PartyDated> partyDatedList = partyDatedRepository.findAllByDate(date);
+            List<PartyDated> partyDatedList = partyDatedRepository.findByDate(date);
 
             for (Venue venue : venueList) {
                 List<SlotInVenue> slotInVenueList = venue.getSlotInVenueList();
                 for (SlotInVenue slotInVenue : slotInVenueList) {
-                    slotInVenue.setSlotObject(slotInVenue.getSlot());
                     for (PartyDated partyDated : partyDatedList) {
                         if (partyDated.getSlotInVenue().equals(slotInVenue)) {
+                            slotInVenue.setPartyDatedObject(partyDated);
                             slotInVenue.setStatus(true);
-                            slotInVenue.setPartyDatedByDate(partyDated);
                         }
                     }
                 }

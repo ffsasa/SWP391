@@ -17,22 +17,17 @@ import java.util.List;
 @Builder
 public class ThemeInVenue extends BaseEntity {
 
-    @Transient
-    @JsonProperty("themeObject")
-    private Theme themeObject;
 
     @ManyToOne
     @JoinColumn(name = "venue_id")
-    @JsonBackReference
+    @JsonIgnore
     private Venue venue;
 
     @ManyToOne
     @JoinColumn(name = "theme_id")
-    @JsonBackReference
     private Theme theme;
 
-    @OneToMany(mappedBy = "themeInVenue", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "themeInVenue", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<PartyBooking> partyBookingList;
 }

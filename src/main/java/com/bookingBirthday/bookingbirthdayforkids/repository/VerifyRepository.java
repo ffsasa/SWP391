@@ -9,7 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface VerifyRepository extends JpaRepository<Verify, Long> {
-    Optional<Verify> findByCode(String code);
-    void deleteByCode(String code);
-    void deleteAllByAccount(Account account);
+    Verify findByToken(String token);
 }
