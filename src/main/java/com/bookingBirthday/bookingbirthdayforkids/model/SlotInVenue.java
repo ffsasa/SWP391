@@ -22,25 +22,19 @@ public class SlotInVenue extends BaseEntity{
     private boolean status;
 
     @Transient
-    @JsonProperty("partyDatedByDate")
-    private PartyDated partyDatedByDate;
-
-    @Transient
-    @JsonProperty("slotObject")
-    private Slot slotObject;
+    @JsonProperty("partyDated")
+    private PartyDated partyDatedObject;
 
     @ManyToOne
     @JoinColumn(name = "venue_id")
-    @JsonBackReference
+    @JsonIgnore
     private Venue venue;
 
     @ManyToOne
     @JoinColumn(name = "slot_id")
-    @JsonBackReference
     private Slot slot;
 
-    @OneToMany(mappedBy = "slotInVenue", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "slotInVenue", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<PartyDated> partyDatedList;
 }

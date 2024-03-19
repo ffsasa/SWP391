@@ -36,26 +36,21 @@ public class Account extends BaseEntity implements UserDetails {
 
     @ManyToOne
     @JoinColumn(name = "role_id")
-    @JsonBackReference
     private Role role;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    @JsonManagedReference
     @JsonIgnore
     private List<Inquiry> inquiryList;
 
-    @OneToMany(mappedBy = "account",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<PartyBooking> partyBookingList;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    @JsonManagedReference
     @JsonIgnore
     private List<Review> reviewList;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    @JsonManagedReference
     @JsonIgnore
     private List<Payment> paymentList;
 

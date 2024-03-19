@@ -28,8 +28,7 @@ public class Slot extends BaseEntity {
     @NotBlank(message = "TimeEnd value cannot be blank")
     @DateTimeFormat(pattern = "HH:mm:ss")
     private String timeEnd;
-    @OneToMany(mappedBy = "slot", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<SlotInVenue> slotInVenueList;
     }

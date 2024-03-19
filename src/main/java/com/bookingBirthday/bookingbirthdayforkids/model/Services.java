@@ -31,12 +31,11 @@ public class Services extends BaseEntity{
     @Min(value = 0, message = "Pricing value must be greater than or equal to 0")
     private float pricing;
 
-    @OneToMany(mappedBy = "services", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "services", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<PackageService> packageServiceList;
 
-    @OneToMany(mappedBy = "services", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "services", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<UpgradeService> upgradeServiceList;
 

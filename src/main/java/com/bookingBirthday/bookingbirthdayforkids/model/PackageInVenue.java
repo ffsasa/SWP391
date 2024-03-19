@@ -18,20 +18,15 @@ import java.util.List;
 public class PackageInVenue extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "venue_id")
-    @JsonBackReference
+    @JsonIgnore
     private Venue venue;
 
     @ManyToOne
     @JoinColumn(name = "package_id")
-    @JsonBackReference
     private Package apackage;
 
     @OneToMany(mappedBy = "packageInVenue")
-    @JsonManagedReference
     @JsonIgnore
     private List<PartyBooking> partyBookingList;
 
-    @Transient
-    @JsonProperty("packageObject")
-    private Package packageObject;
 }

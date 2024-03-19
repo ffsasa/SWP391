@@ -20,12 +20,10 @@ public class Inquiry extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "account_id")
-    @JsonBackReference
     private Account account;
 
     @ManyToOne
     @JoinColumn(name = "accountReply_id")
-    @JsonBackReference
     private Account accountReply;
 
     public void setReplyAndStatus(String reply, InquiryStatus newStatus) {

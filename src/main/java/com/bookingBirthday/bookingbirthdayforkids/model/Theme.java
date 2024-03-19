@@ -25,8 +25,7 @@ public class Theme extends BaseEntity{
     @Column(name = "theme_img_url",columnDefinition = "TEXT")
     private String themeImgUrl;
 
-    @OneToMany(mappedBy = "theme", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "theme", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<ThemeInVenue> themeInVenueList;
 }

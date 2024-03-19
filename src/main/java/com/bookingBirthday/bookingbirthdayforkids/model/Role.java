@@ -20,6 +20,5 @@ public class Role extends BaseEntity{
 
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
     @JsonIgnore
-    @JsonManagedReference
     private List<Account> accountList;
 }

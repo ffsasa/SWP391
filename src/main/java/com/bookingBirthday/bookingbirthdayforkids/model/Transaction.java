@@ -18,6 +18,5 @@ public class Transaction extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "payment_id")
-    @JsonBackReference
     private Payment payment;
 }

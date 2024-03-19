@@ -48,9 +48,6 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             if (partyBookingList.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
             }
-            for (PartyBooking partyBooking : partyBookingList) {
-                partyBooking.getPartyDated().setSlotObject(partyBooking.getPartyDated().getSlotInVenue().getSlot());
-            }
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
@@ -64,14 +61,6 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             if (partyBookingList.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
             }
-            for (PartyBooking partyBooking : partyBookingList) {
-                partyBooking.getPartyDated().setSlotObject(partyBooking.getPartyDated().getSlotInVenue().getSlot());
-                partyBooking.setAccountObject(partyBooking.getAccount());
-                partyBooking.setThemeInVenueObject(partyBooking.getThemeInVenue());
-                partyBooking.setPackageInVenueObject(partyBooking.getPackageInVenue());
-                partyBooking.getThemeInVenueObject().setThemeObject(partyBooking.getThemeInVenue().getTheme());
-                partyBooking.getPackageInVenueObject().setPackageObject(partyBooking.getPackageInVenue().getApackage());
-            }
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
@@ -83,9 +72,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
         try {
             Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
             if (partyBooking.isPresent()) {
-                PartyBooking partyBookingResult = partyBooking.get();
-                partyBookingResult.getPartyDated().setSlotObject(partyBookingResult.getPartyDated().getSlotInVenue().getSlot());
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingResult));
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBooking));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This party booking does not exist", null));
         } catch (Exception e) {
