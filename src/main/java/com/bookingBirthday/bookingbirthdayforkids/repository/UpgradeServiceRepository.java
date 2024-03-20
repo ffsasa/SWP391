@@ -13,4 +13,6 @@ import java.util.Optional;
 public interface UpgradeServiceRepository extends JpaRepository<UpgradeService, Long> {
     Optional<UpgradeService> findByPartyBookingAndServices(PartyBooking partyBooking, Services services);
     List<UpgradeService> findAllByIsActiveIsTrue();
+
+    List<UpgradeService> findAllByPartyBookingId(Long id);
 }

@@ -25,6 +25,5 @@ public class PartyDated extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "slotInVenue_id")
-    @JsonIgnore
     private SlotInVenue slotInVenue;
 }
