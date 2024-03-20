@@ -176,14 +176,14 @@ public class SlotServiceImpl implements SlotService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> addSlotInVenueBySlotId(Long slotId, List<Long> venueIdList) {
-        Slot slot = slotRepository.findById(slotId).get();
+    public ResponseEntity<ResponseObj> addSlotInVenueByVenueId(Long venueId, List<Long> slotId) {
+        Venue venue = venueRepository.findById(venueId).get();
         SlotInVenue slotInVenue = new SlotInVenue();
 
-        List<Long> addSlotInVenueBySlotId = venueIdList;
-        for (Long addVenue : addSlotInVenueBySlotId){
+        List<Long> addSlotInVenueByVenueId = slotId;
+        for (Long addSlot : addSlotInVenueByVenueId){
             slotInVenue = new SlotInVenue();
-            Venue venue = venueRepository.findById(addVenue.longValue()).get();
+            Slot slot = slotRepository.findById(addSlot.longValue()).get();
             slotInVenue.setVenue(venue);
             slotInVenue.setSlot(slot);
             slotInVenue.setActive(true);
