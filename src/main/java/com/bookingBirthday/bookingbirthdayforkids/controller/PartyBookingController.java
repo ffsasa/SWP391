@@ -23,6 +23,13 @@ public class PartyBookingController {
     public ResponseEntity<ResponseObj> getAll() {
         return partyBookingService.getAll();
     }
+
+    @GetMapping("/get-all-party-booking-for-host")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    public ResponseEntity<ResponseObj> getAllForHost() {
+        return partyBookingService.getAllForHost();
+    }
+
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @GetMapping("/get-all-by-user")
     public ResponseEntity<ResponseObj> getAllByUser() {

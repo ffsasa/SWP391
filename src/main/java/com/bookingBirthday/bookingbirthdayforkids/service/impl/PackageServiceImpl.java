@@ -131,6 +131,14 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
     public ResponseEntity<ResponseObj> delete(Long id) {
         Optional<Package> pack = packageRepository.findById(id);
         if (pack.isPresent()){
+            pack.get().getPackageInVenueList().forEach(packageInVenue -> {packageInVenue.setDeleteAt(LocalDateTime.now());
+                packageInVenue.setActive(false);
+                packageInVenueRepository.save(packageInVenue);});
+
+            pack.get().getPackageServiceList().forEach(packageService -> {packageService.setDeleteAt(LocalDateTime.now());
+                packageService.setActive(false);
+                packageServiceRepository.save(packageService);});
+
             pack.get().setActive(false);
             pack.get().setDeleteAt(LocalDateTime.now());
             packageRepository.save(pack.get());

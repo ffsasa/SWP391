@@ -9,6 +9,8 @@ import java.time.LocalDate;
 public interface VenueService {
     public ResponseEntity<ResponseObj> getAll();
 
+    public ResponseEntity<ResponseObj> getAllForHost();
+
     public ResponseEntity<ResponseObj> checkSlotInVenue(LocalDate date);
 
     public ResponseEntity<ResponseObj> getById(Long id);

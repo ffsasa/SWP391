@@ -23,6 +23,12 @@ public class ThemeController {
         return themeService.getAll();
     }
 
+    @GetMapping("/get-all-theme-for-host")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    public ResponseEntity<ResponseObj> getAllForHost() {
+        return themeService.getAllForHost();
+    }
+
     @GetMapping("/get-id/{id}")
     public ResponseEntity<ResponseObj> getById(@PathVariable Long id){
         return themeService.getById(id);
