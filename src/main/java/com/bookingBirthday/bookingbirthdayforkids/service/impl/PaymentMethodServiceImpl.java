@@ -17,6 +17,7 @@ import java.util.Optional;
 @Service
 public class PaymentMethodServiceImpl implements PaymentMethodService {
     @Autowired
+
     PaymentMethodRepository paymentMethodRepository;
     @Override
     public ResponseEntity<ResponseObj> getAll(){
