@@ -39,6 +39,9 @@ public class PartyBooking extends BaseEntity{
     @JoinColumn(name = "themeInVenue_id")
     private ThemeInVenue themeInVenue;
 
+    @Transient
+    @JsonProperty("slotInVenueObject")
+    private SlotInVenue slotInVenueObject;
 
     @ManyToOne
     @JoinColumn(name = "packageInVenue_id")
@@ -53,6 +56,7 @@ public class PartyBooking extends BaseEntity{
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "partyDated_id", referencedColumnName = "id")
+    @JsonIgnore
     private PartyDated partyDated;
 
     @OneToMany(mappedBy = "partyBooking", cascade = CascadeType.ALL)
