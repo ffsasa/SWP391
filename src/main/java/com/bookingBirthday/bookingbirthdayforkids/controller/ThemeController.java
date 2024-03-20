@@ -46,9 +46,9 @@ public class ThemeController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PutMapping(value = "/add-theme-in-venue-by-them-id/{id}")
-    public ResponseEntity<?> addThemeInVenueByThemeId(@RequestParam Long themeId, @RequestBody List<Long> venueIdList){
-        return themeService.addThemeInVenueByThemeId(themeId, venueIdList);
+    @PostMapping(value = "/add-theme-in-venue-by-venue-id")
+    public ResponseEntity<?> addThemeInVenueByVenueId(@RequestParam Long venueId, @RequestBody List<Long> themeIdList){
+        return themeService.addThemeInVenueByVenueId(venueId, themeIdList);
     }
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @DeleteMapping("/delete/{id}")

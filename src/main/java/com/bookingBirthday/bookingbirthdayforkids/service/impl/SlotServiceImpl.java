@@ -180,8 +180,7 @@ public class SlotServiceImpl implements SlotService {
         Venue venue = venueRepository.findById(venueId).get();
         SlotInVenue slotInVenue = new SlotInVenue();
 
-        List<Long> addSlotInVenueByVenueId = slotId;
-        for (Long addSlot : addSlotInVenueByVenueId){
+        for (Long addSlot : slotId){
             slotInVenue = new SlotInVenue();
             Slot slot = slotRepository.findById(addSlot.longValue()).get();
             slotInVenue.setVenue(venue);

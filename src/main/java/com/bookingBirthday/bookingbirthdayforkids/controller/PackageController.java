@@ -68,8 +68,8 @@ public class PackageController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PutMapping(value = "/add-package-in-venue-by-package-id/{id}")
-    public ResponseEntity<?> addPackageInVenueByPackageId(@RequestParam Long packageId, @RequestBody List<Long> venueIdList) {
-        return packageService.addPackageInVenueByPackageId(packageId, venueIdList);
+    @PostMapping(value = "/add-package-in-venue-by-venue-id")
+    public ResponseEntity<?> addPackageInVenueByVenueId(@RequestParam Long venueId, @RequestBody List<Long> packageIdList) {
+        return packageService.addPackageInVenueByVenueId(venueId, packageIdList);
     }
 }
