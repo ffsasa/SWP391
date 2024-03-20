@@ -2,6 +2,8 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.PackageServiceRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
+import com.bookingBirthday.bookingbirthdayforkids.model.Package;
+import com.bookingBirthday.bookingbirthdayforkids.model.PackageInVenue;
 import com.bookingBirthday.bookingbirthdayforkids.model.Theme;
 import com.bookingBirthday.bookingbirthdayforkids.model.ThemeInVenue;
 import com.bookingBirthday.bookingbirthdayforkids.model.Venue;
@@ -83,14 +85,13 @@ public class ThemeServiceImpl implements ThemeService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> addThemeInVenueByThemeId(Long themeId, List<Long> venueIdList){
-        Theme theme = themeRepository.findById(themeId).get();
+    public ResponseEntity<ResponseObj> addThemeInVenueByVenueId(Long venueId, List<Long> themeIdList){
+        Venue venue = venueRepository.findById(venueId).get();
         ThemeInVenue themeInVenue = new ThemeInVenue();
 
-        List<Long> addThemeInVenueByThemeId = venueIdList;
-        for (Long addVenue : addThemeInVenueByThemeId){
+        for (Long addtheme : themeIdList){
             themeInVenue = new ThemeInVenue();
-            Venue venue = venueRepository.findById(addVenue.longValue()).get();
+            Theme theme = themeRepository.findById(addtheme.longValue()).get();
             themeInVenue.setVenue(venue);
             themeInVenue.setTheme(theme);
             themeInVenue.setActive(true);

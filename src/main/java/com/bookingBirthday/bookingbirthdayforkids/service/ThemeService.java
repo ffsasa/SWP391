@@ -16,5 +16,6 @@ public interface ThemeService {
     public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String themeName, String themDescription);
 
     public ResponseEntity<ResponseObj> delete(Long id);
-    public ResponseEntity<ResponseObj> addThemeInVenueByThemeId(Long themeId, List<Long> venueIdList);
+    public ResponseEntity<ResponseObj> addThemeInVenueByVenueId(Long venueId, List<Long> themeIdList);
+
 }

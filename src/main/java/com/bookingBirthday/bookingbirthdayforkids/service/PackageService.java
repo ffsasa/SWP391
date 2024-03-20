@@ -16,6 +16,6 @@ public interface PackageService {
     public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String packageName, String packageDescription, float pricing);
 
     public ResponseEntity<ResponseObj> delete(Long id);
-    public ResponseEntity<ResponseObj> addPackageInVenueByPackageId(Long packageId, List<Long> venueIdList);
+    public ResponseEntity<ResponseObj> addPackageInVenueByVenueId(Long venueId, List<Long> packageIdList);
 
 }

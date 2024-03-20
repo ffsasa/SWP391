@@ -128,14 +128,13 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
     }
 
     @Override
-    public ResponseEntity<ResponseObj> addPackageInVenueByPackageId(Long packageId, List<Long> venueIdList) {
-        Package aPackage = packageRepository.findById(packageId).get();
+    public ResponseEntity<ResponseObj> addPackageInVenueByVenueId(Long venueId, List<Long> packageIdList) {
+        Venue venue = venueRepository.findById(venueId).get();
         PackageInVenue packageInVenue = new PackageInVenue();
 
-        List<Long> addPackageInVenueByPackageId = venueIdList;
-        for (Long addVenue : addPackageInVenueByPackageId){
+        for (Long addPackage : packageIdList){
             packageInVenue = new PackageInVenue();
-            Venue venue = venueRepository.findById(addVenue.longValue()).get();
+            Package aPackage = packageRepository.findById(addPackage.longValue()).get();
             packageInVenue.setVenue(venue);
             packageInVenue.setApackage(aPackage);
             packageInVenue.setActive(true);
