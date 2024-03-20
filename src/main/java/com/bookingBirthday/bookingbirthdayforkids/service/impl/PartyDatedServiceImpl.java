@@ -83,7 +83,7 @@ public class PartyDatedServiceImpl implements PartyDatedService {
         if (partyDated.isPresent()){
             PartyBooking partyBooking = partyDated.get().getPartyBooking();
             float Upricing = 0;
-            List<UpgradeService> upgradeService = upgradeServiceRepository.findAllByPartyBookingId(id);
+            List<UpgradeService> upgradeService = upgradeServiceRepository.findAllByPartyBookingId(partyBooking.getId());
             for (UpgradeService upgradeService1 : upgradeService){
                 Upricing = Upricing + upgradeService1.getPricing();
             }
