@@ -13,6 +13,8 @@ public interface VenueService {
 
     public ResponseEntity<ResponseObj> getById(Long id);
 
+    public ResponseEntity<ResponseObj> activeVenue(Long id);
+
     public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String venueName, String venueDescription, String location, int capacity);
 
     public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String venueName, String venueDescription, String location, int capacity);

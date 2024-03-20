@@ -211,7 +211,7 @@ public class VenueServiceImpl implements VenueService {
                 venue.setVenueImgUrl(img);
                 venue.setLocation(location);
                 venue.setCapacity(capacity);
-                venue.setActive(true);
+                venue.setActive(false);
                 venue.setCreateAt(LocalDateTime.now());
                 venue.setUpdateAt(LocalDateTime.now());
                 venueRepository.save(venue);
@@ -220,6 +220,21 @@ public class VenueServiceImpl implements VenueService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Image is invalid", null));
         }
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", venue));
+    }
+
+    public ResponseEntity<ResponseObj> activeVenue(Long id){
+        Optional<Venue> venue = venueRepository.findById(id);
+        if (!venue.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
+        }
+        try {
+            venue.get().setActive(true);
+            venueRepository.save(venue.get());
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Set venue active successful", venue));
+
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
     }
 
 
