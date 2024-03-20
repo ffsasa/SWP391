@@ -19,6 +19,12 @@ public class PackageServiceController {
         return packageServiceService.getAll();
     }
 
+    @GetMapping("/get-all-for-host")
+    public ResponseEntity<ResponseObj> getAllForHost(){
+        return packageServiceService.getAllForHost();
+    }
+
+
     @GetMapping("/get-id/{id}")
     public ResponseEntity<ResponseObj> getById(@PathVariable Long id){
         return packageServiceService.getById(id);

@@ -43,6 +43,19 @@ public class ThemeInVenueServiceImpl implements ThemeInVenueService {
     }
 
     @Override
+    public ResponseEntity<ResponseObj> getAll_ForHost(){
+        try {
+            List<ThemeInVenue> themeInVenueList = themeInVenueRepository.findAll();
+            if (themeInVenueList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+            }
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", themeInVenueList));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
     public ResponseEntity<ResponseObj> getById(Long id) {
         try {
             Optional<ThemeInVenue> themeInVenue = themeInVenueRepository.findById(id);;

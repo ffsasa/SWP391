@@ -20,6 +20,9 @@ public class ThemeInVenueController {
         return themeInVenueService.getAll();
     }
 
+    @GetMapping("/get-all-theme-in-venue-for-host")
+    public ResponseEntity<ResponseObj> getAllForHost(){return themeInVenueService.getAll_ForHost();}
+
 
     @GetMapping("/get-theme-in-venue-id/{id}")
     public ResponseEntity<ResponseObj> getById(@PathVariable Long id){
