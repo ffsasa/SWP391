@@ -22,6 +22,11 @@ public class ServicesController {
         return servicesService.getAll();
     }
 
+    @GetMapping("/getAll-service-for-host")
+    public ResponseEntity<ResponseObj> getAllForHost(){
+        return servicesService.getAllForHost();
+    }
+
     @GetMapping("/getId-service/{id}")
     public ResponseEntity<ResponseObj> getByid(@PathVariable Long id){
         return servicesService.getById(id);

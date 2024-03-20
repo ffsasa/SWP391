@@ -37,6 +37,14 @@ public class PackageServiceServiceImpl implements PackageServiceService {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageServiceList));
     }
 
+    public ResponseEntity<ResponseObj> getAllForHost(){
+        List<PackageService> packageServiceList = packageServiceRepository.findAll();
+        if (packageServiceList.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageServiceList));
+    }
+
     @Override
     public ResponseEntity<ResponseObj> getById(Long id) {
         try {

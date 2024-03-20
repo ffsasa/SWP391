@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 public interface PartyDatedService {
     public ResponseEntity<ResponseObj> getAll();
 
+    public ResponseEntity<ResponseObj> getAllForHost();
+
     public ResponseEntity<ResponseObj> getById(Long id);
 
     public ResponseEntity<ResponseObj> update(Long id, PartyDatedRequest partyDatedRequest);

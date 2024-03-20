@@ -21,6 +21,11 @@ public class SlotController {
         return slotService.getAll();
     }
 
+    @GetMapping("/get-all-for-host")
+    public ResponseEntity<ResponseObj> getAllForHost(){
+        return slotService.getAllForHost();
+    }
+
     @GetMapping("/get-id/{id}")
     public ResponseEntity<ResponseObj> getById(@PathVariable Long id){
         return slotService.getById(id);

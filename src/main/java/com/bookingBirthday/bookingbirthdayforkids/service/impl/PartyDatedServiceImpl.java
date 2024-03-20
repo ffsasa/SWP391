@@ -36,6 +36,15 @@ public class PartyDatedServiceImpl implements PartyDatedService {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.OK.toString(), "OK", partyDatedList));
     }
 
+    public ResponseEntity<ResponseObj> getAllForHost(){
+        List<PartyDated> partyDatedList = partyDatedRepository.findAll();
+        if (partyDatedList.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.OK.toString(), "OK", partyDatedList));
+    }
+
+
     @Override
     public ResponseEntity<ResponseObj> getById(Long id) {
         try {

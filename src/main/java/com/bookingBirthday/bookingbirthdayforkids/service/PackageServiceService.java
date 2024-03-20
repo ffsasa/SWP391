@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 public interface PackageServiceService {
     public ResponseEntity<ResponseObj> getAll();
 
+    public ResponseEntity<ResponseObj> getAllForHost();
+
     public ResponseEntity<ResponseObj> getById(Long id);
 
 

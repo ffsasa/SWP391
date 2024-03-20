@@ -39,6 +39,15 @@ public class SlotServiceImpl implements SlotService {
     }
 
     @Override
+    public ResponseEntity<ResponseObj> getAllForHost(){
+        List<Slot> slotList = slotRepository.findAll();
+        if (slotList.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.OK.toString(), "OK", slotList));
+    }
+
+    @Override
     public ResponseEntity<ResponseObj> getById(Long id) {
         try {
             Optional<Slot> slotList = slotRepository.findById(id);

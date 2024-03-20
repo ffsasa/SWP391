@@ -9,6 +9,9 @@ import java.util.List;
 public interface SlotService {
     public ResponseEntity<ResponseObj> getAll();
 
+    public ResponseEntity<ResponseObj> getAllForHost();
+
+
     public ResponseEntity<ResponseObj> getById(Long id);
 
     public ResponseEntity<ResponseObj> create(SlotRequest slotRequest);

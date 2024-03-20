@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 public interface PackageInVenueService {
     public ResponseEntity<ResponseObj> getAll();
 
+    public ResponseEntity<ResponseObj> getAllForHost();
+
     public ResponseEntity<ResponseObj> getById(Long id);
 
     ResponseEntity<ResponseObj> update(Long id, PackageInVenueRequest packageInVenueRequest);

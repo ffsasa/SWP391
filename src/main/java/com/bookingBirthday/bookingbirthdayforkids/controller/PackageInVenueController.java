@@ -25,6 +25,11 @@ public class PackageInVenueController {
         return packageInVenueService.getAll();
     }
 
+    @GetMapping("/get-all-package-in-venue-for-host")
+    public ResponseEntity<ResponseObj> getAllForHost() {
+        return packageInVenueService.getAllForHost();
+    }
+
 
     @GetMapping("/get-package-in-venue-id/{id}")
     public ResponseEntity<ResponseObj> getById(@PathVariable Long id){
