@@ -16,5 +16,5 @@ public interface SlotService {
     public ResponseEntity<ResponseObj> update(Long id, SlotRequest slotRequest);
 
     public ResponseEntity<ResponseObj> delete(Long id);
-    public ResponseEntity<ResponseObj> addSlotInVenueBySlotId(Long slotId, List<Long> venueIdList);
+    public ResponseEntity<ResponseObj> addSlotInVenueByVenueId(Long venueId, List<Long> slotId);
 }
