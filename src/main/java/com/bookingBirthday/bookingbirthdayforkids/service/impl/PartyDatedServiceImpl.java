@@ -6,6 +6,7 @@ import com.bookingBirthday.bookingbirthdayforkids.model.*;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PartyBookingRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PartyDatedRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.SlotInVenueRepository;
+import com.bookingBirthday.bookingbirthdayforkids.repository.UpgradeServiceRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.PartyDatedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,8 @@ public class PartyDatedServiceImpl implements PartyDatedService {
     SlotInVenueRepository slotInVenueRepository;
     @Autowired
     PartyBookingRepository partyBookingRepository;
+    @Autowired
+    UpgradeServiceRepository upgradeServiceRepository;
     @Override
     public ResponseEntity<ResponseObj> getAll() {
         List<PartyDated> partyDatedList = partyDatedRepository.findAllByIsActiveIsTrue();
@@ -79,6 +82,12 @@ public class PartyDatedServiceImpl implements PartyDatedService {
         Optional<PartyDated> partyDated = partyDatedRepository.findById(id);
         if (partyDated.isPresent()){
             PartyBooking partyBooking = partyDated.get().getPartyBooking();
+            float Upricing = 0;
+            List<UpgradeService> upgradeService = upgradeServiceRepository.findAllByPartyBookingId(id);
+            for (UpgradeService upgradeService1 : upgradeService){
+                Upricing = Upricing + upgradeService1.getPricing();
+            }
+            partyBooking.setPricingTotal(partyBooking.getPackageInVenue().getApackage().getPricing()+Upricing);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBooking));
         }
         else

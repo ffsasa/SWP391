@@ -63,4 +63,7 @@ public class PartyBooking extends BaseEntity{
     @JsonIgnore
     private List<Review> reviewList;
 
+    @Transient
+    @JsonProperty("pricingTotal")
+    private float pricingTotal;
 }
