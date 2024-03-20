@@ -20,6 +20,7 @@ public class PackageServiceController {
     }
 
     @GetMapping("/get-all-for-host")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     public ResponseEntity<ResponseObj> getAllForHost(){
         return packageServiceService.getAllForHost();
     }

@@ -26,6 +26,12 @@ public class VenueController {
         return venueService.getAll();
     }
 
+    @GetMapping("/get-all-venue-for-host")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    public ResponseEntity<ResponseObj> getAllForHost() {
+        return venueService.getAllForHost();
+    }
+
     @GetMapping("/check-slot-in-venue")
     public ResponseEntity<ResponseObj> checkSlotInVenue(@RequestParam String date) {
         try {
@@ -36,8 +42,8 @@ public class VenueController {
         }
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @GetMapping("/check-slot-in-venue-for-host")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     public ResponseEntity<ResponseObj> checkSlotInVenueForHost(@RequestParam String date) {
         try {
             return venueService.checkSlotInVenueForHost(LocalDate.parse(date));

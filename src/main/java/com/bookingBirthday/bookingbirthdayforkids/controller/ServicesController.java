@@ -23,6 +23,7 @@ public class ServicesController {
     }
 
     @GetMapping("/getAll-service-for-host")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     public ResponseEntity<ResponseObj> getAllForHost(){
         return servicesService.getAllForHost();
     }

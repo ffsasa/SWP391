@@ -22,6 +22,7 @@ public class SlotController {
     }
 
     @GetMapping("/get-all-for-host")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     public ResponseEntity<ResponseObj> getAllForHost(){
         return slotService.getAllForHost();
     }

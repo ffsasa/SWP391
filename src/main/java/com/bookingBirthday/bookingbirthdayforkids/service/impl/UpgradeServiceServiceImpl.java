@@ -37,6 +37,19 @@ public class UpgradeServiceServiceImpl implements UpgradeServiceService {
     }
 
     @Override
+    public ResponseEntity<ResponseObj> getAllForHost() {
+        try {
+            List<UpgradeService> upgradeServiceList = upgradeServiceRepository.findAll();
+            if (upgradeServiceList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+            }
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", upgradeServiceList));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
     public ResponseEntity<ResponseObj> getById(Long id) {
         try {
             Optional<UpgradeService> theme = upgradeServiceRepository.findById(id);

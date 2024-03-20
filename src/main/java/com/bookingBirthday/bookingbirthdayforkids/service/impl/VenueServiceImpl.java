@@ -44,10 +44,26 @@ public class VenueServiceImpl implements VenueService {
     @Autowired
     SlotRepository slotRepository;
 
+    @Autowired
+    SlotInVenueRepository slotInVenueRepository;
+
     @Override
     public ResponseEntity<ResponseObj> getAll() {
         try {
             List<Venue> venueList = venueRepository.findAllByIsActiveIsTrue();
+            if (venueList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+            }
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", venueList));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> getAllForHost() {
+        try {
+            List<Venue> venueList = venueRepository.findAll();
             if (venueList.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
             }
@@ -265,6 +281,18 @@ public class VenueServiceImpl implements VenueService {
         try {
             Optional<Venue> venue = venueRepository.findById(id);
             if (venue.isPresent()) {
+                venue.get().getSlotInVenueList().forEach(slotInVenue -> {slotInVenue.setDeleteAt(LocalDateTime.now());
+                    slotInVenue.setActive(false);
+                    slotInVenueRepository.save(slotInVenue);});
+
+                venue.get().getThemeInVenueList().forEach(themeInVenue -> {themeInVenue.setDeleteAt(LocalDateTime.now());
+                    themeInVenue.setActive(false);
+                    themeInVenueRepository.save(themeInVenue);});
+
+                venue.get().getPackageInVenueList().forEach(packageInVenue -> {packageInVenue.setDeleteAt(LocalDateTime.now());
+                    packageInVenue.setActive(false);
+                    packageInVenueRepository.save(packageInVenue);});
+
                 venue.get().setActive(false);
                 venue.get().setDeleteAt(LocalDateTime.now());
                 venueRepository.save(venue.get());

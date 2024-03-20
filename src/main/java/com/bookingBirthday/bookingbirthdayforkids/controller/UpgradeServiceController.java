@@ -4,6 +4,7 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.service.UpgradeServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,6 +16,12 @@ public class UpgradeServiceController {
     @GetMapping("/get-all")
     public ResponseEntity<ResponseObj> getAll() {
         return upgradeServiceService.getAll();
+    }
+
+    @GetMapping("/get-all-upgrade-service-for-host")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    public ResponseEntity<ResponseObj> getAllForHost() {
+        return upgradeServiceService.getAllForHost();
     }
 
     @GetMapping("/get-id/{id}")

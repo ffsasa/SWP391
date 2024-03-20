@@ -9,6 +9,8 @@ import java.util.List;
 public interface ThemeService {
     public ResponseEntity<ResponseObj> getAll();
 
+    public ResponseEntity<ResponseObj> getAllForHost();
+
     public ResponseEntity<ResponseObj> getById(Long id);
 
     public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String themeName, String themDescription);

@@ -7,6 +7,7 @@ import com.bookingBirthday.bookingbirthdayforkids.service.PackageInVenueService;
 import com.bookingBirthday.bookingbirthdayforkids.service.ThemeInVenueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,6 +22,7 @@ public class ThemeInVenueController {
     }
 
     @GetMapping("/get-all-theme-in-venue-for-host")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     public ResponseEntity<ResponseObj> getAllForHost(){return themeInVenueService.getAll_ForHost();}
 
 
