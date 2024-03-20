@@ -87,6 +87,11 @@ public class VenueController {
         }
     }
 
+    @PutMapping("/set-active-venue/{id}")
+    public ResponseEntity<ResponseObj> setActiveVenue(@PathVariable Long id){
+        return venueService.activeVenue(id);
+    }
+
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PutMapping(value = "/update-venue/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> update(@PathVariable Long id,
