@@ -69,6 +69,9 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/slot//get-all").permitAll()
                         .requestMatchers("/slot-in-venue/get-all").permitAll()
                         .requestMatchers("/api/upgrade-service//get-all").permitAll()
+                        .requestMatchers("/api/payment/payment-vnpay").permitAll()
+                        .requestMatchers("/api/payment/payment-callback").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
