@@ -157,7 +157,7 @@ public class VenueServiceImpl implements VenueService {
                 List<Theme> themeList = themeRepository.findAll();
                 List<Theme> themeNotAddList = new ArrayList<>();
                 for(Theme theme : themeList){
-                    if(!themeNotAddList.contains(theme)){
+                    if(!themeAddedList.contains(theme)){
                         themeNotAddList.add(theme);
                     }
                 }
@@ -183,7 +183,7 @@ public class VenueServiceImpl implements VenueService {
                 List<Package> packageList = packageRepository.findAll();
                 List<Package> packageNotAddList = new ArrayList<>();
                 for(Package apacakge : packageList){
-                    if(!packageNotAddList.contains(apacakge)){
+                    if(!packageAddedList.contains(apacakge)){
                         packageNotAddList.add(apacakge);
                     }
                 }
@@ -229,7 +229,7 @@ public class VenueServiceImpl implements VenueService {
     @Override
     public ResponseEntity<ResponseObj> checkSlotInVenueForHost(LocalDate date) {
         try {
-            List<Venue> venueList = venueRepository.findAllByIsActiveIsTrue();
+            List<Venue> venueList = venueRepository.findAll();
             if (venueList.isEmpty())
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List venue is empty", null));
 
