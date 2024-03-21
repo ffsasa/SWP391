@@ -35,5 +35,9 @@ public interface VenueService {
 
     public ResponseEntity<ResponseObj> getAllSlotHaveNotAddByVenue(Long venueId);
 
+    public ResponseEntity<ResponseObj> getAllThemeHaveNotAddByVenue(Long venueId);
+
+    public ResponseEntity<ResponseObj> getAllPackageHaveNotAddByVenune(Long venueId);
+
     public ResponseEntity<ResponseObj> checkSlotInVenueForHost(LocalDate date);
 }

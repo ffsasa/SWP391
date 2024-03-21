@@ -77,6 +77,14 @@ public class VenueController {
     public ResponseEntity<ResponseObj> getSlotNotAddInVenue(@PathVariable Long id) {
         return venueService.getAllSlotHaveNotAddByVenue(id);
     }
+    @GetMapping("/get-theme-not-add-in-venue/{id}")
+    public ResponseEntity<ResponseObj> getThemeNotAddInVenue(@PathVariable Long id) {
+        return venueService.getAllThemeHaveNotAddByVenue(id);
+    }
+    @GetMapping("/get-package-not-add-in-venue/{id}")
+    public ResponseEntity<ResponseObj> getPackageNotAddInVenue(@PathVariable Long id) {
+        return venueService.getAllPackageHaveNotAddByVenune(id);
+    }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PostMapping(value = "/create-venue", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

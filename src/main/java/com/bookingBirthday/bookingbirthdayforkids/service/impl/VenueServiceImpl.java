@@ -145,6 +145,58 @@ public class VenueServiceImpl implements VenueService {
     }
 
     @Override
+    public ResponseEntity<ResponseObj> getAllThemeHaveNotAddByVenue(Long venueId){
+        try {
+            Optional<Venue> venue = venueRepository.findById(venueId);
+            if (venue.isPresent()) {
+                List<ThemeInVenue> themeInVenueList = venue.get().getThemeInVenueList();
+                List<Theme> themeAddedList = new ArrayList<>();
+                for(ThemeInVenue themeInVenue : themeInVenueList){
+                    themeAddedList.add(themeInVenue.getTheme());
+                }
+                List<Theme> themeList = themeRepository.findAll();
+                List<Theme> themeNotAddList = new ArrayList<>();
+                for(Theme theme : themeList){
+                    if(!themeNotAddList.contains(theme)){
+                        themeNotAddList.add(theme);
+                    }
+                }
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", themeNotAddList));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This theme does not exist", null));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> getAllPackageHaveNotAddByVenune(Long venueId){
+        try {
+            Optional<Venue> venue = venueRepository.findById(venueId);
+            if (venue.isPresent()) {
+                List<PackageInVenue> packageInVenueList = venue.get().getPackageInVenueList();
+                List<Package> packageAddedList = new ArrayList<>();
+                for(PackageInVenue packageInVenue : packageInVenueList){
+                    packageAddedList.add(packageInVenue.getApackage());
+                }
+                List<Package> packageList = packageRepository.findAll();
+                List<Package> packageNotAddList = new ArrayList<>();
+                for(Package apacakge : packageList){
+                    if(!packageNotAddList.contains(apacakge)){
+                        packageNotAddList.add(apacakge);
+                    }
+                }
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", packageNotAddList));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This theme does not exist", null));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
     public ResponseEntity<ResponseObj> checkSlotInVenue(LocalDate date) {
         try {
             LocalDate localDateValidate = LocalDate.now().plusDays(1);
