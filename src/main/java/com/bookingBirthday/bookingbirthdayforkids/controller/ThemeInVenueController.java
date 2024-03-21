@@ -31,11 +31,24 @@ public class ThemeInVenueController {
         return themeInVenueService.getById(id);
     }
 
+//    @GetMapping("/get-theme-in-venue-for-customer-id/{id}")
+//    @PreAuthorize("hasAuthority('CUSTOMER')")
+//    public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long id){
+//        return themeInVenueService.getById_ForCustomer(id);
+//    }
+
+
     @PutMapping("/update-theme-in-venue/{id}")
     public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody ThemeInVenueRequest themeInVenueRequest){
         return themeInVenueService.update(id,themeInVenueRequest);
     }
-    @DeleteMapping("/delete-theme-in-venue/{id}")
+    @PutMapping("/enable-theme-in-venue/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    public ResponseEntity<ResponseObj> enable(@PathVariable Long id){
+        return themeInVenueService.activeThemeInVenue(id);
+    }
+    @DeleteMapping("/disable-theme-in-venue/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
         return themeInVenueService.delete(id);
     }
