@@ -212,13 +212,20 @@ public class VenueServiceImpl implements VenueService {
 
             for (Venue venue : venueList) {
                 List<SlotInVenue> slotInVenueList = venue.getSlotInVenueList();
+                List<SlotInVenue> slotInVenueListValidate = new ArrayList<>();
                 for (SlotInVenue slotInVenue : slotInVenueList) {
+                    if (slotInVenue.isActive()){
+                        slotInVenueListValidate.add(slotInVenue);
+                    }
+                }
+                for (SlotInVenue slotInVenue : slotInVenueListValidate) {
                     for (PartyDated partyDated : partyDatedList) {
                         if (partyDated.getSlotInVenue().equals(slotInVenue)) {
                             slotInVenue.setStatus(true);
                         }
                     }
                 }
+                venue.setSlotInVenueList(slotInVenueListValidate);
             }
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", venueList));
         } catch (Exception e) {
