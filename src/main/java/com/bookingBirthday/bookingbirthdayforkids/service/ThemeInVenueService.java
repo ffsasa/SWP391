@@ -8,6 +8,10 @@ import org.springframework.http.ResponseEntity;
 public interface ThemeInVenueService {
     public ResponseEntity<ResponseObj> getAll();
 
+    public ResponseEntity<ResponseObj> activeThemeInVenue(Long id);
+
+//    public  ResponseEntity<ResponseObj> getById_ForCustomer(Long id);
+
     public ResponseEntity<ResponseObj> getAll_ForHost();
 
     public ResponseEntity<ResponseObj> getById(Long id);
