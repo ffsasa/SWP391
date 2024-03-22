@@ -47,7 +47,13 @@ public class PackageInVenueController {
     public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody PackageInVenueRequest packageInVenueRequest){
         return packageInVenueService.update(id,packageInVenueRequest);
     }
-    @DeleteMapping("/delete-package-in-venue/{id}")
+    @PutMapping("/enable-package-in-venue/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    public ResponseEntity<ResponseObj> enable(@PathVariable Long id){
+        return packageInVenueService.activePackageInVenue(id);
+    }
+    @DeleteMapping("/disable-package-in-venue/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
         return packageInVenueService.delete(id);
     }

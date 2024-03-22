@@ -31,6 +31,12 @@ public class PartyDatedController {
         return partyDatedService.getById(id);
     }
 
+    @GetMapping("/get-partydated-for-customer-id/{id}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long id){
+        return partyDatedService.getById_ForCustomer(id);
+    }
+
     @GetMapping("/get-party-booking/{id}")
     public ResponseEntity<ResponseObj> getPartyBookingByPartyDateId(@PathVariable Long id){
         return partyDatedService.getPartyBookingByPartyDateId(id);

@@ -63,6 +63,18 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
+    @Override
+    public ResponseEntity<ResponseObj> getById_ForCustomer(Long id) {
+        try {
+            Optional<Package> Package = packageRepository.findById(id);
+                if (Package.isPresent() && Package.get().isActive()) {
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", Package));
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This package does not exist", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
 
     @Override
     public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, String packageDescription, float percent,List<PackageServiceRequest> packageServiceRequestList) {

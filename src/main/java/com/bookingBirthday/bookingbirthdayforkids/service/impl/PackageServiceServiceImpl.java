@@ -4,6 +4,7 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.request.PackageServiceRequ
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.Package;
 import com.bookingBirthday.bookingbirthdayforkids.model.PackageService;
+import com.bookingBirthday.bookingbirthdayforkids.model.PartyDated;
 import com.bookingBirthday.bookingbirthdayforkids.model.Services;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PackageRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PackageServiceRepository;
@@ -57,7 +58,18 @@ public class PackageServiceServiceImpl implements PackageServiceService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
-
+    @Override
+    public ResponseEntity<ResponseObj> getById_ForCustomer(Long id) {
+        try {
+            Optional<PackageService> packageService = packageServiceRepository.findById(id);
+            if (packageService.isPresent() && packageService.get().isActive()) {
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", packageService));
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This package service does not exist", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
     @Override
     public ResponseEntity<ResponseObj> delete(Long id) {
         Optional<PackageService> packageService = packageServiceRepository.findById(id);
