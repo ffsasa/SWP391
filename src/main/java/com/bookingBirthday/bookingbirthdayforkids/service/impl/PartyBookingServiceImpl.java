@@ -49,6 +49,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 Venue venue = partyBooking.getThemeInVenue().getVenue();
                 venue.setSlotInVenueList(null);
                 partyBooking.setVenue(venue);
+                partyBooking.setSlotInVenueObject(partyBooking.getPartyDated().getSlotInVenue());
                 float pricingUpgradeService = 0;
                 for (UpgradeService upgradeService : partyBooking.getUpgradeServices()){
                      pricingUpgradeService += upgradeService.getServices().getPricing()*upgradeService.getCount();
