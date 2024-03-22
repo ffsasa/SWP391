@@ -114,10 +114,19 @@ public class ThemeServiceImpl implements ThemeService {
     public ResponseEntity<ResponseObj> addThemeInVenueByVenueId(Long venueId, List<Long> themeIdList){
         Venue venue = venueRepository.findById(venueId).get();
         ThemeInVenue themeInVenue = new ThemeInVenue();
-
+        ResponseEntity<ResponseObj> response = null;
         for (Long addtheme : themeIdList){
+            Theme theme = themeRepository.findById(addtheme.longValue()).orElse(null);
+            if (theme == null) {
+                response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Theme not found", null));
+                continue;
+            }
+            ThemeInVenue existingThemeInVenue = themeInVenueRepository.findByVenueAndTheme(venue, theme);
+            if (existingThemeInVenue != null) {
+                response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Theme in venue already exists", null));
+                continue;
+            }
             themeInVenue = new ThemeInVenue();
-            Theme theme = themeRepository.findById(addtheme.longValue()).get();
             themeInVenue.setVenue(venue);
             themeInVenue.setTheme(theme);
             themeInVenue.setActive(true);
@@ -125,9 +134,10 @@ public class ThemeServiceImpl implements ThemeService {
             themeInVenue.setUpdateAt(LocalDateTime.now());
             themeInVenueRepository.save(themeInVenue);
         }
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", themeInVenue));
-
-
+        if(response == null){
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", themeInVenue));
+        }
+        return response;
     }
 
     @Override

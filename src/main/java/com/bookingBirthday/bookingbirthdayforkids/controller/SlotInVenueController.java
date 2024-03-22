@@ -20,4 +20,16 @@ public class SlotInVenueController {
     public ResponseEntity<ResponseObj> create(@Valid @RequestBody SlotInVenueRequest slotInVenueRequest){
         return slotinVenueService.create(slotInVenueRequest);
     }
+
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    @DeleteMapping("/disable/{id}")
+    public ResponseEntity<ResponseObj> disableSlotInVenue(@PathVariable Long id){
+        return slotinVenueService.disableSlotInVenue(id);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    @PutMapping("/active/{id}")
+    public ResponseEntity<ResponseObj> activeSlotInVenue(@PathVariable Long id){
+        return slotinVenueService.activeSlotInVenue(id);
+    }
 }

@@ -161,13 +161,22 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
     }
 
     @Override
-    public ResponseEntity<ResponseObj> addPackageInVenueByVenueId(Long venueId, List<Long> packageIdList) {
+    public ResponseEntity<ResponseObj> addPackageInVenueByVenueId(Long venueId, List<Long> packageIdList){
         Venue venue = venueRepository.findById(venueId).get();
         PackageInVenue packageInVenue = new PackageInVenue();
-
+        ResponseEntity<ResponseObj> response = null;
         for (Long addPackage : packageIdList){
+            Package aPackage = packageRepository.findById(addPackage.longValue()).orElse(null);
+            if (addPackage == null) {
+                response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Package not found", null));
+                continue;
+            }
+            PackageInVenue existingPackageInVenue = packageInVenueRepository.findByVenueAndApackage(venue, aPackage);
+            if (existingPackageInVenue != null) {
+                response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package in venue already exists", null));
+                continue;
+            }
             packageInVenue = new PackageInVenue();
-            Package aPackage = packageRepository.findById(addPackage.longValue()).get();
             packageInVenue.setVenue(venue);
             packageInVenue.setApackage(aPackage);
             packageInVenue.setActive(true);
@@ -175,7 +184,10 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
             packageInVenue.setUpdateAt(LocalDateTime.now());
             packageInVenueRepository.save(packageInVenue);
         }
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", packageInVenue));
+        if(response == null){
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", packageInVenue));
+        }
+        return response;
     }
 }
 

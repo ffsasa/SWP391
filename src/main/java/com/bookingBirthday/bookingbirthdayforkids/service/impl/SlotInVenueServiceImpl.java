@@ -47,4 +47,26 @@ public class SlotInVenueServiceImpl implements SlotInVenueService {
         slotInVenueRepository.save(slotInVenue);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObj(HttpStatus.CREATED.toString(), "Create successful", slotInVenue));
     }
+
+    @Override
+    public ResponseEntity<ResponseObj> disableSlotInVenue(Long id) {
+        Optional<SlotInVenue> slotInVenue = slotInVenueRepository.findById(id);
+        if(slotInVenue.isPresent()){
+            slotInVenue.get().setActive(false);
+            slotInVenueRepository.save(slotInVenue.get());
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Disable successful", slotInVenue));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in venue does not exist", null));
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> activeSlotInVenue(Long id) {
+        Optional<SlotInVenue> slotInVenue = slotInVenueRepository.findById(id);
+        if(slotInVenue.isPresent()){
+            slotInVenue.get().setActive(true);
+            slotInVenueRepository.save(slotInVenue.get());
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Active successful", slotInVenue));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in venue does not exist", null));
+    }
 }
