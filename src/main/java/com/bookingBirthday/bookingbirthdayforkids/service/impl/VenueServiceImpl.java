@@ -115,8 +115,15 @@ public class VenueServiceImpl implements VenueService {
             Optional<Venue> venue = venueRepository.findById(venueId);
             if (venue.isPresent()) {
                 List<ThemeInVenue> themeInVenueList = venue.get().getThemeInVenueList();
+                List<ThemeInVenue> themeInVenuesListValidate = new ArrayList<>();
+                for (ThemeInVenue themeInVenue : themeInVenueList) {
+                    if (themeInVenue.isActive()) {
+                        themeInVenuesListValidate.add(themeInVenue);
+                    }
+                }
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", themeInVenueList));
-            } else {
+            }
+            else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This theme does not exist", null));
             }
         } catch (Exception e) {
