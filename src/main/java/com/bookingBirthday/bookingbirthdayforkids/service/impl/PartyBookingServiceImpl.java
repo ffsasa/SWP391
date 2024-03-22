@@ -49,6 +49,12 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 Venue venue = partyBooking.getThemeInVenue().getVenue();
                 venue.setSlotInVenueList(null);
                 partyBooking.setVenue(venue);
+                float pricingUpgradeService = 0;
+                for (UpgradeService upgradeService : partyBooking.getUpgradeServices()){
+                     pricingUpgradeService += upgradeService.getServices().getPricing()*upgradeService.getCount();
+                }
+
+                partyBooking.setPricingTotal(partyBooking.getPackageInVenue().getApackage().getPricing() + pricingUpgradeService);
             }
             if (partyBookingList.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
