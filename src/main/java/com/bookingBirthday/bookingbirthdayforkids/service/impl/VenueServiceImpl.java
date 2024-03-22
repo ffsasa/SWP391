@@ -94,7 +94,13 @@ public class VenueServiceImpl implements VenueService {
             Optional<Venue> venue = venueRepository.findById(venueId);
             if (venue.isPresent()) {
                 List<PackageInVenue> packageInVenuesList = venue.get().getPackageInVenueList();
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", packageInVenuesList));
+                List<PackageInVenue> packageInVenuesListValidate = new ArrayList<>();
+                for (PackageInVenue packageInVenue : packageInVenuesList) {
+                    if (packageInVenue.isActive()) {
+                        packageInVenuesListValidate.add(packageInVenue);
+                    }
+                }
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", packageInVenuesListValidate));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This venue does not exist", null));
             }
@@ -264,6 +270,19 @@ public class VenueServiceImpl implements VenueService {
         try {
             Optional<Venue> venue = venueRepository.findById(id);
             if (venue.isPresent()) {
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", venue));
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> getById_ForCustomer(Long id) {
+        try {
+            Optional<Venue> venue = venueRepository.findById(id);
+            if (venue.isPresent() && venue.get().isActive()) {
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", venue));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));

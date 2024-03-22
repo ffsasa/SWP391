@@ -34,6 +34,12 @@ public class ThemeController {
         return themeService.getById(id);
     }
 
+    @GetMapping("/get-theme-for-customer-id/{id}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long id){
+        return themeService.getById_ForCustomer(id);
+    }
+
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PostMapping(value = "/create-theme", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> create(@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,

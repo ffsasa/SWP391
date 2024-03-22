@@ -29,6 +29,12 @@ public class UpgradeServiceController {
         return upgradeServiceService.getById(id);
     }
 
+    @GetMapping("/get-upgrade-service-for-customer-id/{id}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long id){
+        return upgradeServiceService.getById_ForCustomer(id);
+    }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
         return upgradeServiceService.delete(id);
