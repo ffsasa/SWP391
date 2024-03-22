@@ -111,8 +111,21 @@ public class PartyBookingServiceImpl implements PartyBookingService {
         try {
             Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
             if (partyBooking.isPresent() && partyBooking.get().isActive()) {
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBooking));
+                PartyBooking partyBooking1 = partyBooking.get();
+                Venue venue = partyBooking1.getThemeInVenue().getVenue();
+                venue.setSlotInVenueList(null);
+                partyBooking1.setVenue(venue);
+                partyBooking1.setSlotInVenueObject(partyBooking1.getPartyDated().getSlotInVenue());
+                partyBooking1.getSlotInVenueObject().setPartyDatedObject(partyBooking1.getPartyDated());
+                float pricingUpgradeService = 0;
+                for (UpgradeService upgradeService : partyBooking1.getUpgradeServices()){
+                    pricingUpgradeService += upgradeService.getServices().getPricing()*upgradeService.getCount();
+                }
+
+                partyBooking1.setPricingTotal(partyBooking1.getPackageInVenue().getApackage().getPricing() + pricingUpgradeService);
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBooking1));
             }
+
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This party booking does not exist", null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
