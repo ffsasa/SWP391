@@ -58,6 +58,18 @@ public class PartyDatedServiceImpl implements PartyDatedService {
         }
     }
     @Override
+    public ResponseEntity<ResponseObj> getById_ForCustomer(Long id) {
+        try {
+            Optional<PartyDated> partyDatedList = partyDatedRepository.findById(id);
+            if (partyDatedList.isPresent() && partyDatedList.get().isActive()) {
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyDatedList));
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This partydated does not exist", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+    @Override
     public ResponseEntity<ResponseObj> update(Long id, PartyDatedRequest partyDatedRequest) {
         SlotInVenue slotInVenue = slotInVenueRepository.findById(partyDatedRequest.getSlotInVenueId()).get();
         Optional<PartyDated> existPartyDated  = partyDatedRepository.findById(id);

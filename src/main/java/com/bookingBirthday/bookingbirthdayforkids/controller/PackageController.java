@@ -38,6 +38,12 @@ public class PackageController {
         return packageService.getById(id);
     }
 
+    @GetMapping("/get-package-for-customer-id/{id}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long id){
+        return packageService.getById_ForCustomer(id);
+    }
+
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PostMapping(value = "/create-package", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> create(@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,

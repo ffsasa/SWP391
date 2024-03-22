@@ -32,6 +32,11 @@ public class SlotController {
         return slotService.getById(id);
     }
 
+    @GetMapping("/get-slot-for-customer-id/{id}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long id){
+        return slotService.getById_ForCustomer(id);
+    }
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PostMapping("/create")
     public ResponseEntity<ResponseObj> create(@RequestBody SlotRequest slotRequest){

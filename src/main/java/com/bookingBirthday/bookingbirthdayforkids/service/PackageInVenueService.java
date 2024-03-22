@@ -13,6 +13,8 @@ public interface PackageInVenueService {
 
     public ResponseEntity<ResponseObj> getById(Long id);
 
+    ResponseEntity<ResponseObj> activePackageInVenue(Long id);
+
     ResponseEntity<ResponseObj> update(Long id, PackageInVenueRequest packageInVenueRequest);
 
 

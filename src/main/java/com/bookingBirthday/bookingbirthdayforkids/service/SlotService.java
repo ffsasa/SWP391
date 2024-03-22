@@ -14,6 +14,8 @@ public interface SlotService {
 
     public ResponseEntity<ResponseObj> getById(Long id);
 
+    public ResponseEntity<ResponseObj> getById_ForCustomer(Long id);
+
     public ResponseEntity<ResponseObj> create(SlotRequest slotRequest);
 
     public ResponseEntity<ResponseObj> update(Long id, SlotRequest slotRequest);

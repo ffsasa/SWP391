@@ -31,6 +31,12 @@ public class PackageServiceController {
         return packageServiceService.getById(id);
     }
 
+    @GetMapping("/get-packageservice-for-customer-id/{id}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long id){
+        return packageServiceService.getById_ForCustomer(id);
+    }
+
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
