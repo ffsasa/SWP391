@@ -33,6 +33,12 @@ public class ServicesController {
         return servicesService.getById(id);
     }
 
+    @GetMapping("/get-services-for-customer-id/{id}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long id){
+        return servicesService.getById_ForCustomer(id);
+    }
+
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PostMapping(value = "/create-service", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> create(@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
