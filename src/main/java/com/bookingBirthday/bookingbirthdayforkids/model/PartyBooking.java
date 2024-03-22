@@ -43,6 +43,10 @@ public class PartyBooking extends BaseEntity{
     @JsonProperty("slotInVenueObject")
     private SlotInVenue slotInVenueObject;
 
+    @Transient
+    @JsonProperty("venue")
+    private Venue venue;
+
     @ManyToOne
     @JoinColumn(name = "packageInVenue_id")
     private PackageInVenue packageInVenue;

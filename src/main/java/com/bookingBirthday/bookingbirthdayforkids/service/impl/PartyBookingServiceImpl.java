@@ -45,6 +45,11 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
             }
             List<PartyBooking> partyBookingList = partyBookingRepository.findAllByIsActiveIsTrueAndAccountId(userId);
+            for (PartyBooking partyBooking: partyBookingList){
+                Venue venue = partyBooking.getThemeInVenue().getVenue();
+                venue.setSlotInVenueList(null);
+                partyBooking.setVenue(venue);
+            }
             if (partyBookingList.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
             }
