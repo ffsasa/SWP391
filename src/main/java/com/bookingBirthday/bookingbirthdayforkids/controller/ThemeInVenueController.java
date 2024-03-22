@@ -31,11 +31,11 @@ public class ThemeInVenueController {
         return themeInVenueService.getById(id);
     }
 
-//    @GetMapping("/get-theme-in-venue-for-customer-id/{id}")
-//    @PreAuthorize("hasAuthority('CUSTOMER')")
-//    public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long id){
-//        return themeInVenueService.getById_ForCustomer(id);
-//    }
+    @GetMapping("/get-theme-in-venue-for-customer-id/{id}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long id){
+        return themeInVenueService.getById_ForCustomer(id);
+    }
 
 
     @PutMapping("/update-theme-in-venue/{id}")

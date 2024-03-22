@@ -49,6 +49,20 @@ public class ServicesServicesImpl implements ServicesService {
     }
 
     @Override
+    public  ResponseEntity<ResponseObj> getById_ForCustomer(Long id){
+        try{
+            Optional<Services> services = servicesRepository.findById(id);
+            if(services.isPresent() && services.get().isActive() == true){
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", services));
+            }else{
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This service not exist", null));
+            }
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
     public ResponseEntity<ResponseObj> getById(Long id){
         try {
             Optional<Services> services = servicesRepository.findById(id);

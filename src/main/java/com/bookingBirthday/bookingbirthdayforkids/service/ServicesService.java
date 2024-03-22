@@ -9,6 +9,9 @@ public interface ServicesService {
 
     public ResponseEntity<ResponseObj> getAllForHost();
 
+    public  ResponseEntity<ResponseObj> getById_ForCustomer(Long id);
+
+
     public ResponseEntity<ResponseObj> getById(Long id);
 
     public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String serviceName, String description, float pricing);

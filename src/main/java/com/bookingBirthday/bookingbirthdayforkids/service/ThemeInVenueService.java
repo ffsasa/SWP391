@@ -10,7 +10,7 @@ public interface ThemeInVenueService {
 
     public ResponseEntity<ResponseObj> activeThemeInVenue(Long id);
 
-//    public  ResponseEntity<ResponseObj> getById_ForCustomer(Long id);
+    public  ResponseEntity<ResponseObj> getById_ForCustomer(Long id);
 
     public ResponseEntity<ResponseObj> getAll_ForHost();
 

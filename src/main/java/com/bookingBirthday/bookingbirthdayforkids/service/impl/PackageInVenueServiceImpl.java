@@ -68,6 +68,19 @@ public class PackageInVenueServiceImpl implements PackageInVenueService {
     }
 
     @Override
+    public  ResponseEntity<ResponseObj> getById_ForCustomer(Long id){
+        try {
+            Optional<PackageInVenue> packageInVenue = packageInVenueRepository.findById(id);
+            if(packageInVenue.isPresent() && packageInVenue.get().isActive() == true)
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), null, packageInVenue));
+            else
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Package In Venue does not exist", null));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
     public ResponseEntity<ResponseObj> update(Long id, PackageInVenueRequest packageInVenueRequest) {
         Package aPackage = packageRepository.findById(packageInVenueRequest.getPackageId()).get();
         Venue venue = venueRepository.findById(packageInVenueRequest.getVenueId()).get();

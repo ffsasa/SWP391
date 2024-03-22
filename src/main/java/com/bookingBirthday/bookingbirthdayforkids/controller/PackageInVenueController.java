@@ -38,6 +38,11 @@ public class PackageInVenueController {
         return packageInVenueService.getById(id);
     }
 
+    @GetMapping("/get-package-in-venue-for-customer-id/{id}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long id){
+        return packageInVenueService.getById_ForCustomer(id);
+    }
     @PutMapping("/update-package-in-venue/{id}")
     public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody PackageInVenueRequest packageInVenueRequest){
         return packageInVenueService.update(id,packageInVenueRequest);

@@ -9,6 +9,7 @@ public interface PackageInVenueService {
     public ResponseEntity<ResponseObj> getAll();
 
     public ResponseEntity<ResponseObj> getAllForHost();
+    public  ResponseEntity<ResponseObj> getById_ForCustomer(Long id);
 
     public ResponseEntity<ResponseObj> getById(Long id);
 
