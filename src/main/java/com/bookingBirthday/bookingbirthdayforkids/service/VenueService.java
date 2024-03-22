@@ -15,6 +15,8 @@ public interface VenueService {
 
     public ResponseEntity<ResponseObj> getById(Long id);
 
+    public ResponseEntity<ResponseObj> getById_ForCustomer(Long id);
+
     public ResponseEntity<ResponseObj> activeVenue(Long id);
 
     public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String venueName, String venueDescription, String location, int capacity);

@@ -58,6 +58,12 @@ public class VenueController {
         return venueService.getById(id);
     }
 
+    @GetMapping("/get-venue-for-customer-id/{id}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long id) {
+        return venueService.getById_ForCustomer(id);
+    }
+
     @GetMapping("/get-package-by-venue/{id}")
     public ResponseEntity<ResponseObj> getPackageByVenue(@PathVariable Long id) {
         return venueService.getPackageInVenueByVenue(id);

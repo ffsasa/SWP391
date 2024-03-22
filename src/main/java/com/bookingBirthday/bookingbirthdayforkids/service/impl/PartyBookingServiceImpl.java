@@ -94,6 +94,19 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     }
 
     @Override
+    public ResponseEntity<ResponseObj> getById_ForCustomer(Long id) {
+        try {
+            Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
+            if (partyBooking.isPresent() && partyBooking.get().isActive()) {
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBooking));
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This party booking does not exist", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
     public ResponseEntity<ResponseObj> create(PartyBookingRequest partyBookingRequest) {
         try {
             Long userId = AuthenUtil.getCurrentUserId();

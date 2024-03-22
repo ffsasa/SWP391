@@ -52,9 +52,22 @@ public class UpgradeServiceServiceImpl implements UpgradeServiceService {
     @Override
     public ResponseEntity<ResponseObj> getById(Long id) {
         try {
-            Optional<UpgradeService> theme = upgradeServiceRepository.findById(id);
-            if (theme.isPresent()) {
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", theme));
+            Optional<UpgradeService> upgradeService = upgradeServiceRepository.findById(id);
+            if (upgradeService.isPresent()) {
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", upgradeService));
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This upgrade service does not exist", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> getById_ForCustomer(Long id) {
+        try {
+            Optional<UpgradeService> upgradeService = upgradeServiceRepository.findById(id);
+            if (upgradeService.isPresent() && upgradeService.get().isActive()) {
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", upgradeService));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This upgrade service does not exist", null));
         } catch (Exception e) {

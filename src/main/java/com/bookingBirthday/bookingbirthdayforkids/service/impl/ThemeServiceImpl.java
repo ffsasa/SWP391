@@ -73,6 +73,19 @@ public class ThemeServiceImpl implements ThemeService {
     }
 
     @Override
+    public ResponseEntity<ResponseObj> getById_ForCustomer(Long id) {
+        try {
+            Optional<Theme> theme = themeRepository.findById(id);
+            if (theme.isPresent() && theme.get().isActive()) {
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", theme));
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This theme does not exist", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
     public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String themeName, String themDescription) {
         if (themeRepository.existsByThemeName(themeName)) {
             return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(), "Theme name has already exist", null));

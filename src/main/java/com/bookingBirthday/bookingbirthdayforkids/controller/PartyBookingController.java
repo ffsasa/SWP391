@@ -41,6 +41,12 @@ public class PartyBookingController {
         return partyBookingService.getById(id);
     }
 
+    @GetMapping("/get-party-booking-for-customer-id/{id}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long id){
+        return partyBookingService.getById_ForCustomer(id);
+    }
+
     @PostMapping("/create")
     public ResponseEntity<?> create(@Valid @RequestBody PartyBookingRequest partyBookingRequest){
         return partyBookingService.create(partyBookingRequest);

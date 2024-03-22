@@ -13,6 +13,8 @@ public interface ThemeService {
 
     public ResponseEntity<ResponseObj> getById(Long id);
 
+    public ResponseEntity<ResponseObj> getById_ForCustomer(Long id);
+
     public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String themeName, String themDescription);
 
     public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String themeName, String themDescription);
