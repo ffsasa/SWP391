@@ -63,9 +63,9 @@ public class PartyBooking extends BaseEntity{
     @JsonIgnore
     private PartyDated partyDated;
 
-    @OneToMany(mappedBy = "partyBooking", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "partyBooking", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Payment> paymentList;
+    private Payment payment;
 
     @OneToMany(mappedBy = "partyBooking", cascade = CascadeType.ALL)
     @JsonIgnore

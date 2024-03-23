@@ -125,20 +125,6 @@ public class PaymentServiceImpl implements PaymentService {
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         String paymentUrl = PaymentConfig.vnp_PayUrl + "?" + queryUrl;
 
-        Payment payment = new Payment();
-        payment.setPartyBooking(partyBooking.get());
-        payment.setCreateAt(LocalDateTime.now());
-        payment.setStatus(StatusEnum.PENDING);
-        payment.setActive(true);
-        payment.setAmount(vnp_Amount);
-
-        LocalDateTime expireDate =  payment.getCreateAt().plus(30, ChronoUnit.DAYS);
-        payment.setExpireDate(expireDate);
-        paymentRepository.save(payment);
-
-
-        Optional<Payment> paymentOptional = paymentRepository.findById(payment.getId());
-        vnp_Params.put("vnp_PaymentInfo", paymentOptional.get().getId().toString());
 
         return paymentUrl;
 
