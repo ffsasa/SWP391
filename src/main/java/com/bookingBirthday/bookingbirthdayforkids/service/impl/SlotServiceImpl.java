@@ -74,6 +74,11 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     public ResponseEntity<ResponseObj> create(SlotRequest slotRequest){
+        if (slotRequest == null || slotRequest.getTimeStart() == null || slotRequest.getTimeStart().isEmpty() ||
+                slotRequest.getTimeEnd() == null || slotRequest.getTimeEnd().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Time start and time end must be provided", null));
+        }
         Slot slot = new Slot();
         if (isInvalidTimeRange(slotRequest.getTimeStart(), slotRequest.getTimeEnd())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(),"Time start must be earlier than time end", null));
