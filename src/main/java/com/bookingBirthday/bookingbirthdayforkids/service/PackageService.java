@@ -17,7 +17,7 @@ public interface PackageService {
     public ResponseEntity<ResponseObj> getById_ForCustomer(Long id);
 
     public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, String packageDescription, float percent,List<PackageServiceRequest> packageServiceRequestList);
-    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String packageName, String packageDescription, float pricing);
+    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String packageName, String packageDescription);
     public ResponseEntity<ResponseObj> updatePercentPackage(Long id, float percent);
 
     public ResponseEntity<ResponseObj> delete(Long id);
