@@ -3,6 +3,7 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.SlotRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.*;
+import com.bookingBirthday.bookingbirthdayforkids.model.Package;
 import com.bookingBirthday.bookingbirthdayforkids.repository.SlotInVenueRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.SlotRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.VenueRepository;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -203,10 +205,19 @@ public class SlotServiceImpl implements SlotService {
     public ResponseEntity<ResponseObj> addSlotInVenueByVenueId(Long venueId, List<Long> slotId) {
         Venue venue = venueRepository.findById(venueId).get();
         SlotInVenue slotInVenue = new SlotInVenue();
-
+        ResponseEntity<ResponseObj> response = null;
         for (Long addSlot : slotId){
+            Slot slot = slotRepository.findById(addSlot.longValue()).orElse(null);
+            if (slot == null) {
+                response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Slot not found", null));
+                continue;
+            }
+            SlotInVenue existingSlotInVenue = slotInVenueRepository.findByVenueAndSlot(venue, slot);
+            if (existingSlotInVenue != null) {
+                response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in venue already exists", null));
+                continue;
+            }
             slotInVenue = new SlotInVenue();
-            Slot slot = slotRepository.findById(addSlot.longValue()).get();
             slotInVenue.setVenue(venue);
             slotInVenue.setSlot(slot);
             slotInVenue.setActive(true);
@@ -214,6 +225,10 @@ public class SlotServiceImpl implements SlotService {
             slotInVenue.setUpdateAt(LocalDateTime.now());
             slotInVenueRepository.save(slotInVenue);
         }
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", slotInVenue));
+        if(response == null){
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", slotInVenue));
+        }
+        return response;
     }
+
 }

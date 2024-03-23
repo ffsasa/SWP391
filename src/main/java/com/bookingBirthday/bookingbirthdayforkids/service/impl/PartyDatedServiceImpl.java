@@ -106,6 +106,9 @@ public class PartyDatedServiceImpl implements PartyDatedService {
             SlotInVenue slotInVenue = partyBooking.getPartyDated().getSlotInVenue();
             partyBooking.setSlotInVenueObject(slotInVenue);
             slotInVenue.setPartyDatedObject(partyDated.get());
+            Venue venue = slotInVenue.getVenue();
+            venue.setSlotInVenueList(null);
+            partyBooking.setVenue(venue);
 
             float Upricing = 0;
             List<UpgradeService> upgradeService = upgradeServiceRepository.findAllByPartyBookingId(partyBooking.getId());
