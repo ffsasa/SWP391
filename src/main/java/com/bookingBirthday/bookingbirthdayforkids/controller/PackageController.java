@@ -74,6 +74,21 @@ public class PackageController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    @PatchMapping(value = "/update-percent-package/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updatePercentPackage(@PathVariable Long id,
+                                    @RequestPart String percent) {
+        try {
+            float parsePercent = Float.parseFloat(percent);
+            if(parsePercent > 0.5 || parsePercent < 0.1){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Percent ranges from 0.1-0.5", null));
+            }
+            return packageService.updatePercentPackage(id, Float.parseFloat(percent));
+        }catch (NumberFormatException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid percent", null));
+        }
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id) {
         return packageService.delete(id);

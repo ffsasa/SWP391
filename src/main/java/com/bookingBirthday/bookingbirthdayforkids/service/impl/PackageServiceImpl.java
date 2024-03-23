@@ -140,6 +140,30 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
     }
 
     @Override
+    public ResponseEntity<ResponseObj> updatePercentPackage(Long id, float percent) {
+        Optional<Package> aPackage = packageRepository.findById(id);
+        if (aPackage.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This package does not exist", null));
+        }
+        float packPricing = 0;
+
+        List<PackageService> packageServiceList = aPackage.get().getPackageServiceList();
+        for (PackageService packageService : packageServiceList) {
+           packPricing += packageService.getPricing();
+        }
+        try {
+            float newPricing = packPricing * percent;
+            aPackage.get().setPricing(packPricing - newPricing);
+            aPackage.get().setUpdateAt(LocalDateTime.now());
+            packageRepository.save(aPackage.get());
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", aPackage));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
     public ResponseEntity<ResponseObj> delete(Long id) {
         Optional<Package> pack = packageRepository.findById(id);
         if (pack.isPresent()){
