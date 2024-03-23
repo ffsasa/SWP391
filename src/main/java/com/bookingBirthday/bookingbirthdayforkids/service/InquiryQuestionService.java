@@ -10,4 +10,7 @@ public interface InquiryQuestionService {
     public ResponseEntity<ResponseObj> getAll();
     public ResponseEntity<ResponseObj> delete(Long id);
     public ResponseEntity<ResponseObj> update(Long id, InquiryQuestionRequest inquiryRequest);
+    public ResponseEntity<ResponseObj> sendInquiryForChangeThemeInVenue(Long bookingId, Long themeInVenueId);
+    public ResponseEntity<ResponseObj> sendInquiryForChangePackageInVenue(Long bookingId, Long packageInVenueId);
+
 }
