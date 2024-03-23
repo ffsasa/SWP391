@@ -63,7 +63,11 @@ public class SlotInVenueServiceImpl implements SlotInVenueService {
     public ResponseEntity<ResponseObj> activeSlotInVenue(Long id) {
         Optional<SlotInVenue> slotInVenue = slotInVenueRepository.findById(id);
         if(slotInVenue.isPresent()){
+            if (!slotInVenue.get().getVenue().isActive())
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Venue is not active. You can not enable slotInVenue", null));
+
             slotInVenue.get().setActive(true);
+            slotInVenue.get().setUpdateAt(LocalDateTime.now());
             slotInVenueRepository.save(slotInVenue.get());
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Active successful", slotInVenue));
         }

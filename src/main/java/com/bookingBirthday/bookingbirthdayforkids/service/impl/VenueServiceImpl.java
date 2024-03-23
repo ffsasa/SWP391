@@ -122,8 +122,7 @@ public class VenueServiceImpl implements VenueService {
                     }
                 }
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", themeInVenueList));
-            }
-            else {
+            } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This theme does not exist", null));
             }
         } catch (Exception e) {
@@ -138,13 +137,13 @@ public class VenueServiceImpl implements VenueService {
             if (venue.isPresent()) {
                 List<SlotInVenue> slotInVenueList = venue.get().getSlotInVenueList();
                 List<Slot> slotAddedList = new ArrayList<>();
-                for(SlotInVenue slotInVenue : slotInVenueList){
+                for (SlotInVenue slotInVenue : slotInVenueList) {
                     slotAddedList.add(slotInVenue.getSlot());
                 }
                 List<Slot> slotList = slotRepository.findAll();
                 List<Slot> slotNotAddList = new ArrayList<>();
-                for(Slot slot : slotList){
-                    if(!slotAddedList.contains(slot)){
+                for (Slot slot : slotList) {
+                    if (!slotAddedList.contains(slot)) {
                         slotNotAddList.add(slot);
                     }
                 }
@@ -158,19 +157,19 @@ public class VenueServiceImpl implements VenueService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getAllThemeHaveNotAddByVenue(Long venueId){
+    public ResponseEntity<ResponseObj> getAllThemeHaveNotAddByVenue(Long venueId) {
         try {
             Optional<Venue> venue = venueRepository.findById(venueId);
             if (venue.isPresent()) {
                 List<ThemeInVenue> themeInVenueList = venue.get().getThemeInVenueList();
                 List<Theme> themeAddedList = new ArrayList<>();
-                for(ThemeInVenue themeInVenue : themeInVenueList){
+                for (ThemeInVenue themeInVenue : themeInVenueList) {
                     themeAddedList.add(themeInVenue.getTheme());
                 }
                 List<Theme> themeList = themeRepository.findAll();
                 List<Theme> themeNotAddList = new ArrayList<>();
-                for(Theme theme : themeList){
-                    if(!themeAddedList.contains(theme)){
+                for (Theme theme : themeList) {
+                    if (!themeAddedList.contains(theme)) {
                         themeNotAddList.add(theme);
                     }
                 }
@@ -184,19 +183,19 @@ public class VenueServiceImpl implements VenueService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getAllPackageHaveNotAddByVenune(Long venueId){
+    public ResponseEntity<ResponseObj> getAllPackageHaveNotAddByVenune(Long venueId) {
         try {
             Optional<Venue> venue = venueRepository.findById(venueId);
             if (venue.isPresent()) {
                 List<PackageInVenue> packageInVenueList = venue.get().getPackageInVenueList();
                 List<Package> packageAddedList = new ArrayList<>();
-                for(PackageInVenue packageInVenue : packageInVenueList){
+                for (PackageInVenue packageInVenue : packageInVenueList) {
                     packageAddedList.add(packageInVenue.getApackage());
                 }
                 List<Package> packageList = packageRepository.findAll();
                 List<Package> packageNotAddList = new ArrayList<>();
-                for(Package apacakge : packageList){
-                    if(!packageAddedList.contains(apacakge)){
+                for (Package apacakge : packageList) {
+                    if (!packageAddedList.contains(apacakge)) {
                         packageNotAddList.add(apacakge);
                     }
                 }
@@ -227,7 +226,7 @@ public class VenueServiceImpl implements VenueService {
                 List<SlotInVenue> slotInVenueList = venue.getSlotInVenueList();
                 List<SlotInVenue> slotInVenueListValidate = new ArrayList<>();
                 for (SlotInVenue slotInVenue : slotInVenueList) {
-                    if (slotInVenue.isActive()){
+                    if (slotInVenue.isActive()) {
                         slotInVenueListValidate.add(slotInVenue);
                     }
                 }
@@ -323,17 +322,35 @@ public class VenueServiceImpl implements VenueService {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", venue));
     }
 
-    public ResponseEntity<ResponseObj> activeVenue(Long id){
+    public ResponseEntity<ResponseObj> activeVenue(Long id) {
         Optional<Venue> venue = venueRepository.findById(id);
         if (!venue.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
         }
         try {
+            venue.get().getSlotInVenueList().forEach(slotInVenue -> {
+                slotInVenue.setUpdateAt(LocalDateTime.now());
+                slotInVenue.setActive(true);
+                slotInVenueRepository.save(slotInVenue);
+            });
+
+            venue.get().getThemeInVenueList().forEach(themeInVenue -> {
+                themeInVenue.setUpdateAt(LocalDateTime.now());
+                themeInVenue.setActive(true);
+                themeInVenueRepository.save(themeInVenue);
+            });
+
+            venue.get().getPackageInVenueList().forEach(packageInVenue -> {
+                packageInVenue.setUpdateAt(LocalDateTime.now());
+                packageInVenue.setActive(true);
+                packageInVenueRepository.save(packageInVenue);
+            });
+
             venue.get().setActive(true);
             venueRepository.save(venue.get());
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Set venue active successful", venue));
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
@@ -366,17 +383,23 @@ public class VenueServiceImpl implements VenueService {
         try {
             Optional<Venue> venue = venueRepository.findById(id);
             if (venue.isPresent()) {
-                venue.get().getSlotInVenueList().forEach(slotInVenue -> {slotInVenue.setDeleteAt(LocalDateTime.now());
+                venue.get().getSlotInVenueList().forEach(slotInVenue -> {
+                    slotInVenue.setDeleteAt(LocalDateTime.now());
                     slotInVenue.setActive(false);
-                    slotInVenueRepository.save(slotInVenue);});
+                    slotInVenueRepository.save(slotInVenue);
+                });
 
-                venue.get().getThemeInVenueList().forEach(themeInVenue -> {themeInVenue.setDeleteAt(LocalDateTime.now());
+                venue.get().getThemeInVenueList().forEach(themeInVenue -> {
+                    themeInVenue.setDeleteAt(LocalDateTime.now());
                     themeInVenue.setActive(false);
-                    themeInVenueRepository.save(themeInVenue);});
+                    themeInVenueRepository.save(themeInVenue);
+                });
 
-                venue.get().getPackageInVenueList().forEach(packageInVenue -> {packageInVenue.setDeleteAt(LocalDateTime.now());
+                venue.get().getPackageInVenueList().forEach(packageInVenue -> {
+                    packageInVenue.setDeleteAt(LocalDateTime.now());
                     packageInVenue.setActive(false);
-                    packageInVenueRepository.save(packageInVenue);});
+                    packageInVenueRepository.save(packageInVenue);
+                });
 
                 venue.get().setActive(false);
                 venue.get().setDeleteAt(LocalDateTime.now());
