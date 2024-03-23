@@ -103,20 +103,26 @@ public class PartyDatedServiceImpl implements PartyDatedService {
         Optional<PartyDated> partyDated = partyDatedRepository.findById(id);
         if (partyDated.isPresent()){
             PartyBooking partyBooking = partyDated.get().getPartyBooking();
-            SlotInVenue slotInVenue = partyBooking.getPartyDated().getSlotInVenue();
-            partyBooking.setSlotInVenueObject(slotInVenue);
-            slotInVenue.setPartyDatedObject(partyDated.get());
-            Venue venue = slotInVenue.getVenue();
-            venue.setSlotInVenueList(null);
-            partyBooking.setVenue(venue);
+            if(partyBooking != null){
+                SlotInVenue slotInVenue = partyBooking.getPartyDated().getSlotInVenue();
+                partyBooking.setSlotInVenueObject(slotInVenue);
+                slotInVenue.setPartyDatedObject(partyDated.get());
+                Venue venue = slotInVenue.getVenue();
+                venue.setSlotInVenueList(null);
+                partyBooking.setVenue(venue);
 
-            float Upricing = 0;
-            List<UpgradeService> upgradeService = upgradeServiceRepository.findAllByPartyBookingId(partyBooking.getId());
-            for (UpgradeService upgradeService1 : upgradeService){
-                Upricing = Upricing + upgradeService1.getPricing();
+                float Upricing = 0;
+                List<UpgradeService> upgradeService = upgradeServiceRepository.findAllByPartyBookingId(partyBooking.getId());
+                for (UpgradeService upgradeService1 : upgradeService){
+                    Upricing = Upricing + upgradeService1.getPricing();
+                }
+                partyBooking.setPricingTotal(partyBooking.getPackageInVenue().getApackage().getPricing()+Upricing);
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBooking));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "PartyDated can be deleted or does not exist", null));
+
             }
-            partyBooking.setPricingTotal(partyBooking.getPackageInVenue().getApackage().getPricing()+Upricing);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBooking));
+
         }
         else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "PartyDated does not exist", null));
