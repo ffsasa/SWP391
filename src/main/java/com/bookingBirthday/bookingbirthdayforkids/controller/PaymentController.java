@@ -33,9 +33,9 @@ public class PaymentController {
     }
 
     @PostMapping("/payment-vnpay")
-    public String pay(@RequestParam Long bookingId, @RequestBody PaymentRequest payModel, HttpServletRequest request){
+    public String pay(@RequestParam Long bookingId, HttpServletRequest request){
         try {
-            return paymentService.payWithVNPAYOnline(bookingId, payModel, request);
+            return paymentService.payWithVNPAYOnline(bookingId, request);
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
@@ -45,20 +45,19 @@ public class PaymentController {
     @GetMapping("/payment-callback")
     public ResponseEntity<Boolean> paymentCallback(@RequestParam Map<String, String> queryParams, HttpServletResponse response) throws IOException, IOException {
        String vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
-//        String vnp_Amount = queryParams.get("vnp_Amount");
-        Long id = Long.parseLong(queryParams.get("vnp_OrderInfo"));
-
+        Long bookingId = Long.parseLong(queryParams.get("vnp_OrderInfo"));
+//        Long paymentId = Long.parseLong(queryParams.get("vnp_PaymentInfo"));
 
         if ("00".equals(vnp_ResponseCode)) {
-            paymentService.paymentSuccess(id);
+            paymentService.paymentSuccess(bookingId);
 
-            response.sendRedirect("http://localhost:8080/api/payment/success");
+            response.sendRedirect("http://localhost:3000/payment/success/"+bookingId);
 
             return ResponseEntity.ok(true);
         } else{
 
 
-            response.sendRedirect("http://localhost:8080/payment/fail");
+            response.sendRedirect("http://localhost:3000/payment/fail");
 
     }
      return ResponseEntity.ok(false);

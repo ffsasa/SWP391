@@ -52,14 +52,18 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void paymentSuccess(Long id) {
-        Optional<Payment> payment = paymentRepository.findById(id);
-        payment.get().setStatus(StatusEnum.COMPLETED);
-        Optional <PartyBooking> partyBooking = partyBookingRepository.findById(payment.get().getPartyBooking().getId());
+//        Optional<Payment> paymentOptional = paymentRepository.findById(id);
+//
+//        paymentOptional.get().setStatus(StatusEnum.CONFIRMED);
+//        paymentRepository.save(paymentOptional.get());
+
+        Optional <PartyBooking> partyBooking = partyBookingRepository.findById(id);
+
         partyBooking.get().setStatus(StatusEnum.CONFIRMED);
         partyBookingRepository.save(partyBooking.get());
     }
 
-    public  String payWithVNPAYOnline(Long id, PaymentRequest payModel, HttpServletRequest request) throws UnsupportedEncodingException{
+    public  String payWithVNPAYOnline(Long id, HttpServletRequest request) throws UnsupportedEncodingException{
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
 
         Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
@@ -85,8 +89,8 @@ public class PaymentServiceImpl implements PaymentService {
         vnp_Params.put("vnp_CurrCode", PaymentConfig.vnp_CurrCode);
         vnp_Params.put("vnp_IpAddr", PaymentConfig.getIpAddress(request));
         vnp_Params.put("vnp_Locale", PaymentConfig.vnp_Locale);
-        vnp_Params.put("vnp_OrderInfo", payModel.vnp_OrderInfo);
-        vnp_Params.put("vnp_OrderType", payModel.vnp_OrderType);
+        vnp_Params.put("vnp_OrderInfo", String.valueOf(id));
+        vnp_Params.put("vnp_OrderType", "string");
         vnp_Params.put("vnp_ReturnUrl", PaymentConfig.vnp_ReturnUrl);
         vnp_Params.put("vnp_TxnRef", "HD" + RandomStringUtils.randomNumeric(6) + "-" + vnp_CreateDate);
         vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
@@ -122,11 +126,6 @@ public class PaymentServiceImpl implements PaymentService {
         String paymentUrl = PaymentConfig.vnp_PayUrl + "?" + queryUrl;
 
         Payment payment = new Payment();
-       // Account account = accountRepository.findById(paymentRequest.getAccountID()).get();
-       // PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentRequest.getPaymentMethodID()).get();
-      //  PartyBooking partyBooking = partyBookingRepository.findById(paymentRequest.getBookingID()).get();
-     //   payment.setAccount(account);
-      //  payment.setPaymentMethod(paymentMethod);
         payment.setPartyBooking(partyBooking.get());
         payment.setCreateAt(LocalDateTime.now());
         payment.setStatus(StatusEnum.PENDING);
@@ -139,7 +138,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 
         Optional<Payment> paymentOptional = paymentRepository.findById(payment.getId());
-        vnp_Params.put("vnp_OrderInfo", paymentOptional.get().getId().toString());
+        vnp_Params.put("vnp_PaymentInfo", paymentOptional.get().getId().toString());
 
         return paymentUrl;
 
