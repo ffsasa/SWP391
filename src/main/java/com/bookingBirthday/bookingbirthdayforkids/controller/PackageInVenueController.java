@@ -37,7 +37,10 @@ public class PackageInVenueController {
     public ResponseEntity<ResponseObj> getById(@PathVariable Long id){
         return packageInVenueService.getById(id);
     }
-
+    @GetMapping("/get-package-in-venue-id-not-choose/{id}")
+    public ResponseEntity<ResponseObj> getPackageInVenueNotChoose(@PathVariable Long id){
+        return packageInVenueService.getPackageInVenueNotChoose(id);
+    }
     @GetMapping("/get-package-in-venue-for-customer-id/{id}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
     public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long id){

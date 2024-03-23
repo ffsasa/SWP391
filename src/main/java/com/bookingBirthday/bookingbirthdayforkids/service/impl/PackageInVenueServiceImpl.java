@@ -14,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -53,7 +55,30 @@ public class PackageInVenueServiceImpl implements PackageInVenueService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
+    @Override
+    public ResponseEntity<ResponseObj> getPackageInVenueNotChoose(Long packageInVenueId) {
+        try{
+            Optional<PackageInVenue> packageInVenueOptional = packageInVenueRepository.findById(packageInVenueId);;
 
+            if(packageInVenueOptional.isPresent()){
+                PackageInVenue packageInVenue = packageInVenueOptional.get();
+                Venue venue = packageInVenue.getVenue();
+                List<PackageInVenue> packageInVenueList = venue.getPackageInVenueList();
+                List<PackageInVenue> filteredPackageInVenueList = new ArrayList<>();
+                for(PackageInVenue packageInVenue1 : packageInVenueList){
+                    if(!Objects.equals(packageInVenue1.getId(), packageInVenueId)){
+                        filteredPackageInVenueList.add(packageInVenue1);
+                    }
+                }
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), null, filteredPackageInVenueList));
+            }
+            else
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Theme In Venue does not exist", null));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+
+        }
+    }
     @Override
     public ResponseEntity<ResponseObj> getById(Long id) {
         try {
