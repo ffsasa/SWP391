@@ -69,12 +69,9 @@ public class PaymentController {
             Payment payment = new Payment();
             payment.setPartyBooking(partyBooking.get());
             payment.setCreateAt(LocalDateTime.now());
-            payment.setStatus(StatusEnum.PENDING);
             payment.setActive(true);
             payment.setAmount(vnp_Amount/100);
 
-            LocalDateTime expireDate =  payment.getCreateAt().plus(30, ChronoUnit.DAYS);
-            payment.setExpireDate(expireDate);
             paymentRepository.save(payment);
 
             response.sendRedirect("http://localhost:3000/payment/success/"+bookingId);
