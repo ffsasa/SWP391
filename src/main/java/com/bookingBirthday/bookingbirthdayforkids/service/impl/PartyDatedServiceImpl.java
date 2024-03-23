@@ -106,7 +106,6 @@ public class PartyDatedServiceImpl implements PartyDatedService {
             if(partyBooking != null){
                 SlotInVenue slotInVenue = partyBooking.getPartyDated().getSlotInVenue();
                 partyBooking.setSlotInVenueObject(slotInVenue);
-                slotInVenue.setPartyDatedObject(partyDated.get());
                 Venue venue = slotInVenue.getVenue();
                 venue.setSlotInVenueList(null);
                 partyBooking.setVenue(venue);

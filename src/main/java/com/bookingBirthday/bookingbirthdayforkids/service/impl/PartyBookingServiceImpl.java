@@ -46,11 +46,13 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             }
             List<PartyBooking> partyBookingList = partyBookingRepository.findAllByIsActiveIsTrueAndAccountId(userId);
             for (PartyBooking partyBooking: partyBookingList){
+                SlotInVenue slotInVenue = partyBooking.getPartyDated().getSlotInVenue();
+                partyBooking.setSlotInVenueObject(slotInVenue);
+                partyBooking.setPartyDated(partyBooking.getPartyDated());
                 Venue venue = partyBooking.getThemeInVenue().getVenue();
                 venue.setSlotInVenueList(null);
                 partyBooking.setVenue(venue);
-                partyBooking.setSlotInVenueObject(partyBooking.getPartyDated().getSlotInVenue());
-                partyBooking.getSlotInVenueObject().setPartyDatedObject(partyBooking.getPartyDated());
+
                 float pricingUpgradeService = 0;
                 for (UpgradeService upgradeService : partyBooking.getUpgradeServices()){
                      pricingUpgradeService += upgradeService.getServices().getPricing()*upgradeService.getCount();
@@ -112,11 +114,10 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
             if (partyBooking.isPresent() && partyBooking.get().isActive()) {
                 PartyBooking partyBooking1 = partyBooking.get();
+                partyBooking1.setSlotInVenueObject(partyBooking1.getPartyDated().getSlotInVenue());
                 Venue venue = partyBooking1.getThemeInVenue().getVenue();
                 venue.setSlotInVenueList(null);
                 partyBooking1.setVenue(venue);
-                partyBooking1.setSlotInVenueObject(partyBooking1.getPartyDated().getSlotInVenue());
-                partyBooking1.getSlotInVenueObject().setPartyDatedObject(partyBooking1.getPartyDated());
                 float pricingUpgradeService = 0;
                 for (UpgradeService upgradeService : partyBooking1.getUpgradeServices()){
                     pricingUpgradeService += upgradeService.getServices().getPricing()*upgradeService.getCount();

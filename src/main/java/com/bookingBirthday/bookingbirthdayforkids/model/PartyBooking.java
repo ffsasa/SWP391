@@ -60,7 +60,7 @@ public class PartyBooking extends BaseEntity{
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "partyDated_id", referencedColumnName = "id")
-    @JsonIgnore
+//    @JsonIgnore
     private PartyDated partyDated;
 
     @OneToOne(mappedBy = "partyBooking", cascade = CascadeType.ALL)

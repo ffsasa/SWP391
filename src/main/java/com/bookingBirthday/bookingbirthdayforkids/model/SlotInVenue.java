@@ -23,7 +23,7 @@ public class SlotInVenue extends BaseEntity{
 
     @Transient
     @JsonProperty("partyDated")
-    private PartyDated partyDatedObject;
+    private PartyDated partyDated;
 
     @ManyToOne
     @JoinColumn(name = "venue_id")
