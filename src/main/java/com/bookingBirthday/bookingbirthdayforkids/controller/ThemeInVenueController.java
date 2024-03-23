@@ -25,7 +25,10 @@ public class ThemeInVenueController {
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     public ResponseEntity<ResponseObj> getAllForHost(){return themeInVenueService.getAll_ForHost();}
 
-
+    @GetMapping("/get-theme-in-venue-id-not-choose/{id}")
+    public ResponseEntity<ResponseObj> getThemeInVenueNotChoose(@PathVariable Long id){
+        return themeInVenueService.getThemeInVenueNotChoose(id);
+    }
     @GetMapping("/get-theme-in-venue-id/{id}")
     public ResponseEntity<ResponseObj> getById(@PathVariable Long id){
         return themeInVenueService.getById(id);
