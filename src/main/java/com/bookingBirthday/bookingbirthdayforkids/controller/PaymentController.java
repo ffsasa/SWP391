@@ -57,13 +57,11 @@ public class PaymentController {
 
     @GetMapping("/payment-callback")
     public ResponseEntity<Boolean> paymentCallback(@RequestParam Map<String, String> queryParams, HttpServletResponse response) throws IOException, IOException {
-       String vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
+        String vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
         Long bookingId = Long.parseLong(queryParams.get("vnp_OrderInfo"));
         float vnp_Amount = Float.parseFloat(queryParams.get("vnp_Amount"));
-//        Long paymentId = Long.parseLong(queryParams.get("vnp_PaymentInfo"));
 
         if ("00".equals(vnp_ResponseCode)) {
-            paymentService.paymentSuccess(bookingId);
             Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
 
             Payment payment = new Payment();
@@ -71,16 +69,25 @@ public class PaymentController {
             payment.setCreateAt(LocalDateTime.now());
             payment.setActive(true);
             payment.setAmount(vnp_Amount/100);
-
+            payment.setStatus("SUCCESS");
             paymentRepository.save(payment);
+            paymentService.paymentSuccess(bookingId);
 
             response.sendRedirect("http://localhost:3000/payment/success/"+bookingId);
 
             return ResponseEntity.ok(true);
         } else{
+            Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
 
-
-            response.sendRedirect("http://localhost:3000/payment/fail");
+            Payment payment = new Payment();
+            payment.setPartyBooking(partyBooking.get());
+            payment.setCreateAt(LocalDateTime.now());
+            payment.setActive(true);
+            payment.setAmount(vnp_Amount/100);
+            payment.setStatus("FAILED");
+            paymentRepository.save(payment);
+            paymentService.paymentSuccess(bookingId);
+            response.sendRedirect("http://localhost:3000/payment/failed");
 
     }
      return ResponseEntity.ok(false);

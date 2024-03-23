@@ -24,11 +24,13 @@ public class Payment extends BaseEntity {
     @Min(value = 1, message = "Min at least = 1")
     private float amount;
 
+    private String status;
+
     @ManyToOne
     @JoinColumn(name = "paymentMethod_id")
     private PaymentMethod paymentMethod;
 
-    @OneToOne
-    @JoinColumn(name = "partyBooking_id", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name = "partyBooking_id")
     private PartyBooking partyBooking;
 }

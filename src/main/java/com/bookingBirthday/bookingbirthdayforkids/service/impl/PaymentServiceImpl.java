@@ -52,81 +52,82 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void paymentSuccess(Long id) {
-//        Optional<Payment> paymentOptional = paymentRepository.findById(id);
-//
-//        paymentOptional.get().setStatus(StatusEnum.CONFIRMED);
-//        paymentRepository.save(paymentOptional.get());
-
         Optional <PartyBooking> partyBooking = partyBookingRepository.findById(id);
 
         partyBooking.get().setStatus(StatusEnum.CONFIRMED);
         partyBookingRepository.save(partyBooking.get());
     }
 
-    public  String payWithVNPAYOnline(Long id, HttpServletRequest request) throws UnsupportedEncodingException{
-        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+    public String payWithVNPAYOnline(Long id, HttpServletRequest request) throws UnsupportedEncodingException{
+        Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(id);
+        if(partyBookingOptional.isPresent()){
+            if(partyBookingOptional.get().getStatus().equals(StatusEnum.PENDING)){
+                Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
 
-        Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
-        int vnp_Amount = (int) partyBooking.get().getPackageInVenue().getApackage().getPricing();
+                Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
+                int vnp_Amount = (int) partyBooking.get().getPackageInVenue().getApackage().getPricing();
 
-        for(UpgradeService upgradeService : partyBooking.get().getUpgradeServices()){
-            vnp_Amount += (int) (upgradeService.getServices().getPricing() * upgradeService.getCount());
-        }
-
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-        String vnp_CreateDate = formatter.format(cld.getTime());
-        cld.add(Calendar.MINUTE, 15);
-
-        String vnp_ExpireDate = formatter.format(cld.getTime());
-
-        Map<String, String> vnp_Params = new HashMap<>();
-        vnp_Params.put("vnp_Version", PaymentConfig.vnp_Version);
-        vnp_Params.put("vnp_Command", PaymentConfig.vnp_Command);
-        vnp_Params.put("vnp_TmnCode", PaymentConfig.vnp_TmnCode);
-        vnp_Params.put("vnp_Amount", String.valueOf(String.valueOf(vnp_Amount) + "00"));
-        vnp_Params.put("vnp_BankCode",  PaymentConfig.vnp_BankCode);
-        vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
-        vnp_Params.put("vnp_CurrCode", PaymentConfig.vnp_CurrCode);
-        vnp_Params.put("vnp_IpAddr", PaymentConfig.getIpAddress(request));
-        vnp_Params.put("vnp_Locale", PaymentConfig.vnp_Locale);
-        vnp_Params.put("vnp_OrderInfo", String.valueOf(id));
-        vnp_Params.put("vnp_OrderType", "string");
-        vnp_Params.put("vnp_ReturnUrl", PaymentConfig.vnp_ReturnUrl);
-        vnp_Params.put("vnp_TxnRef", "HD" + RandomStringUtils.randomNumeric(6) + "-" + vnp_CreateDate);
-        vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
-
-        List fieldList = new ArrayList(vnp_Params.keySet());
-        Collections.sort(fieldList);
-
-        StringBuilder hashData = new StringBuilder();
-        StringBuilder query = new StringBuilder();
-
-        Iterator itr = fieldList.iterator();
-        while (itr.hasNext()) {
-            String fieldName = (String) itr.next();
-            String fieldValue = vnp_Params.get(fieldName);
-            if (fieldValue != null && (fieldValue.length() > 0)) {
-                hashData.append(fieldName);
-                hashData.append("=");
-                hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
-
-                query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
-                query.append("=");
-                query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
-
-                if (itr.hasNext()) {
-                    query.append("&");
-                    hashData.append("&");
+                for(UpgradeService upgradeService : partyBooking.get().getUpgradeServices()){
+                    vnp_Amount += (int) (upgradeService.getServices().getPricing() * upgradeService.getCount());
                 }
+
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+                String vnp_CreateDate = formatter.format(cld.getTime());
+                cld.add(Calendar.MINUTE, 1);
+
+                String vnp_ExpireDate = formatter.format(cld.getTime());
+
+                Map<String, String> vnp_Params = new HashMap<>();
+                vnp_Params.put("vnp_Version", PaymentConfig.vnp_Version);
+                vnp_Params.put("vnp_Command", PaymentConfig.vnp_Command);
+                vnp_Params.put("vnp_TmnCode", PaymentConfig.vnp_TmnCode);
+                vnp_Params.put("vnp_Amount", String.valueOf(String.valueOf(vnp_Amount) + "00"));
+                vnp_Params.put("vnp_BankCode",  PaymentConfig.vnp_BankCode);
+                vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
+                vnp_Params.put("vnp_CurrCode", PaymentConfig.vnp_CurrCode);
+                vnp_Params.put("vnp_IpAddr", PaymentConfig.getIpAddress(request));
+                vnp_Params.put("vnp_Locale", PaymentConfig.vnp_Locale);
+                vnp_Params.put("vnp_OrderInfo", String.valueOf(id));
+                vnp_Params.put("vnp_OrderType", "string");
+                vnp_Params.put("vnp_ReturnUrl", PaymentConfig.vnp_ReturnUrl);
+                vnp_Params.put("vnp_TxnRef", "HD" + RandomStringUtils.randomNumeric(6) + "-" + vnp_CreateDate);
+                vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
+
+                List fieldList = new ArrayList(vnp_Params.keySet());
+                Collections.sort(fieldList);
+
+                StringBuilder hashData = new StringBuilder();
+                StringBuilder query = new StringBuilder();
+
+                Iterator itr = fieldList.iterator();
+                while (itr.hasNext()) {
+                    String fieldName = (String) itr.next();
+                    String fieldValue = vnp_Params.get(fieldName);
+                    if (fieldValue != null && (fieldValue.length() > 0)) {
+                        hashData.append(fieldName);
+                        hashData.append("=");
+                        hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+
+                        query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
+                        query.append("=");
+                        query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+
+                        if (itr.hasNext()) {
+                            query.append("&");
+                            hashData.append("&");
+                        }
+                    }
+                }
+                String queryUrl = query.toString();
+                String vnp_SecureHash = PaymentConfig.hmacSHA512(PaymentConfig.secretKey, hashData.toString());
+                queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
+                String paymentUrl = PaymentConfig.vnp_PayUrl + "?" + queryUrl;
+
+                return paymentUrl;
             }
+
         }
-        String queryUrl = query.toString();
-        String vnp_SecureHash = PaymentConfig.hmacSHA512(PaymentConfig.secretKey, hashData.toString());
-        queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
-        String paymentUrl = PaymentConfig.vnp_PayUrl + "?" + queryUrl;
-
-
-        return paymentUrl;
+        return "Khách hàng đã thanh toán cho bữa tiệc này";
 
     }
     @Override
