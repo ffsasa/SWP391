@@ -27,7 +27,9 @@ public class PaymentRequest {
 //    @NotNull(message = "Expire date cannot null")
 //    private LocalDateTime expireDate;
 
-    public String vnp_Amount ;
+//    private static final int EXPIRATION_TIME = 15;
+
+//    public String vnp_Amount ;
     public String vnp_OrderInfo ;
     public String vnp_OrderType;
 

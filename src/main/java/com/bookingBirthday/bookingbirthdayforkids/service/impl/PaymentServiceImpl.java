@@ -50,8 +50,24 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
-    public  String payWithVNPAYOnline(PaymentRequest payModel, HttpServletRequest request) throws UnsupportedEncodingException{
+    @Override
+    public void paymentSuccess(Long id) {
+        Optional<Payment> payment = paymentRepository.findById(id);
+        payment.get().setStatus(StatusEnum.COMPLETED);
+        Optional <PartyBooking> partyBooking = partyBookingRepository.findById(payment.get().getPartyBooking().getId());
+        partyBooking.get().setStatus(StatusEnum.CONFIRMED);
+        partyBookingRepository.save(partyBooking.get());
+    }
+
+    public  String payWithVNPAYOnline(Long id, PaymentRequest payModel, HttpServletRequest request) throws UnsupportedEncodingException{
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+
+        Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
+        int vnp_Amount = (int) partyBooking.get().getPackageInVenue().getApackage().getPricing();
+
+        for(UpgradeService upgradeService : partyBooking.get().getUpgradeServices()){
+            vnp_Amount += (int) (upgradeService.getServices().getPricing() * upgradeService.getCount());
+        }
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
         String vnp_CreateDate = formatter.format(cld.getTime());
@@ -63,7 +79,7 @@ public class PaymentServiceImpl implements PaymentService {
         vnp_Params.put("vnp_Version", PaymentConfig.vnp_Version);
         vnp_Params.put("vnp_Command", PaymentConfig.vnp_Command);
         vnp_Params.put("vnp_TmnCode", PaymentConfig.vnp_TmnCode);
-        vnp_Params.put("vnp_Amount", String.valueOf(payModel.vnp_Amount + "00"));
+        vnp_Params.put("vnp_Amount", String.valueOf(String.valueOf(vnp_Amount) + "00"));
         vnp_Params.put("vnp_BankCode",  PaymentConfig.vnp_BankCode);
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
         vnp_Params.put("vnp_CurrCode", PaymentConfig.vnp_CurrCode);
@@ -105,10 +121,29 @@ public class PaymentServiceImpl implements PaymentService {
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         String paymentUrl = PaymentConfig.vnp_PayUrl + "?" + queryUrl;
 
+        Payment payment = new Payment();
+       // Account account = accountRepository.findById(paymentRequest.getAccountID()).get();
+       // PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentRequest.getPaymentMethodID()).get();
+      //  PartyBooking partyBooking = partyBookingRepository.findById(paymentRequest.getBookingID()).get();
+     //   payment.setAccount(account);
+      //  payment.setPaymentMethod(paymentMethod);
+        payment.setPartyBooking(partyBooking.get());
+        payment.setCreateAt(LocalDateTime.now());
+        payment.setStatus(StatusEnum.PENDING);
+        payment.setActive(true);
+        payment.setAmount(vnp_Amount);
+
+        LocalDateTime expireDate =  payment.getCreateAt().plus(30, ChronoUnit.DAYS);
+        payment.setExpireDate(expireDate);
+        paymentRepository.save(payment);
+
+
+        Optional<Payment> paymentOptional = paymentRepository.findById(payment.getId());
+        vnp_Params.put("vnp_OrderInfo", paymentOptional.get().getId().toString());
+
         return paymentUrl;
 
     }
-
     @Override
     public ResponseEntity<ResponseObj> getById(Long id) {
         try {
