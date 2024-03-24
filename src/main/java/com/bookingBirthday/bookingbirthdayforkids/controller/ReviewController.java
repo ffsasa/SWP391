@@ -19,6 +19,7 @@ public class ReviewController {
     public ResponseEntity<ResponseObj> create(@PathVariable Long bookingId, @Valid @RequestBody ReviewRequest reviewRequest){
         return reviewService.create(bookingId, reviewRequest);
     }
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PostMapping("/reply/{bookingId}/{id}")
     public ResponseEntity<ResponseObj> reply(@PathVariable Long bookingId,@PathVariable Long id, @Valid @RequestBody ReplyReviewRequest replyReviewRequest){
         return reviewService.reply(bookingId, id, replyReviewRequest);

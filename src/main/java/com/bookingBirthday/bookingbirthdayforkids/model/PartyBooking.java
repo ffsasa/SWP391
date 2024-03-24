@@ -68,7 +68,6 @@ public class PartyBooking extends BaseEntity{
     private List<Payment> paymentList;
 
     @OneToMany(mappedBy = "partyBooking", cascade = CascadeType.ALL)
-    @JsonIgnore
     private List<Review> reviewList;
 
     @Transient
