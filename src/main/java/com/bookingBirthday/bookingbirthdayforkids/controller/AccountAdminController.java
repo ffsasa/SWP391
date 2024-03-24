@@ -45,6 +45,7 @@ public class AccountAdminController {
         return accountAdminService.information();
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ResponseObj> delete(@RequestParam Long id){
         return accountAdminService.delete(id);
