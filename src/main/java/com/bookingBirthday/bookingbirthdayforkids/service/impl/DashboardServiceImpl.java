@@ -36,6 +36,9 @@ public class DashboardServiceImpl implements DashboardService {
     @Autowired
     private ReviewRepository reviewRepository;
 
+    @Autowired
+    private AccountRepository accountRepository;
+
     @Override
     public ResponseEntity<ResponseObj> getDashboard() {
         try {
@@ -49,6 +52,7 @@ public class DashboardServiceImpl implements DashboardService {
             List<DashboardResponse> venueListResponse = new ArrayList<>();
             List<PartyBooking> partyBookingList = partyBookingRepository.findAll();
             List<Review> reviewList = reviewRepository.findAll();
+            List<Account> accountList = accountRepository.findAll();
 
             float totalRevenue = 0;
             float CountCancel = 0;
@@ -117,6 +121,13 @@ public class DashboardServiceImpl implements DashboardService {
                 countReview += review.getRating();
             }
 
+            List<Account> customerList = new ArrayList<>();
+            for (Account account: accountList){
+                if(account.getRole().getName().equals(RoleEnum.CUSTOMER)){
+                    customerList.add(account);
+                }
+            }
+
             Dashboard dashboard = new Dashboard();
             dashboard.setTotalRevenue(totalRevenue);
             dashboard.setTotalBooking(partyBookingList.size());
@@ -127,6 +138,7 @@ public class DashboardServiceImpl implements DashboardService {
             dashboard.setAverageValueOfOrders(totalRevenue/partyBookingList.size());
             dashboard.setAverageRate(countReview/reviewList.size());
             dashboard.setPartyCancellationRate(CountCancel/partyBookingList.size());
+            dashboard.setCustomerList(customerList);
 
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", dashboard));
         } catch (Exception e) {

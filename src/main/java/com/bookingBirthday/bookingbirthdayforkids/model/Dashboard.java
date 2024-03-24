@@ -20,4 +20,5 @@ public class Dashboard {
     private float averageValueOfOrders;
     private float averageRate;
     private float partyCancellationRate;
+    private List<Account> customerList;
 }
