@@ -13,7 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Time;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -374,13 +377,12 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     @Transactional
     public ResponseEntity<ResponseObj> cancelBookingForHost(Long bookingId) {
         try {
-            Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(bookingId);
-            if (partyBookingOptional.isPresent()) {
-                PartyBooking partyBooking = partyBookingOptional.get();
-                if (partyBooking.getStatus() == StatusEnum.PENDING || partyBooking.getStatus() == StatusEnum.CONFIRMED) {
-                    partyBooking.setStatus(StatusEnum.CANCELLED);
-                    partyBooking.setDeleteAt(LocalDateTime.now());
-                    partyBookingRepository.save(partyBooking);
+            Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
+            if (partyBooking.isPresent()) {
+                if (partyBooking.get().getStatus() == StatusEnum.PENDING || partyBooking.get().getStatus() == StatusEnum.CONFIRMED) {
+                    partyBooking.get().setStatus(StatusEnum.CANCELLED);
+                    partyBooking.get().setDeleteAt(LocalDateTime.now());
+                    partyBookingRepository.save(partyBooking.get());
 
                     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Cancel successful", null));
                 } else {
@@ -393,6 +395,28 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseObj> completeBookingForHost(Long bookingId) {
+            Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
+            if (partyBooking.isPresent()) {
+                LocalTime currentTime = LocalTime.now();
+                Time timeStart = Time.valueOf(partyBooking.get().getPartyDated().getSlotInVenue().getSlot().getTimeStart());
+                LocalTime localTimeStart = timeStart.toLocalTime();
+                if (partyBooking.get().getStatus() == StatusEnum.CONFIRMED && currentTime.isAfter(localTimeStart.plusHours(1))) {
+                    partyBooking.get().setStatus(StatusEnum.COMPLETED);
+                    partyBooking.get().setUpdateAt(LocalDateTime.now());
+                    partyBookingRepository.save(partyBooking.get());
+
+                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Party booking completed successfully", null));
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Cannot complete booking at this time", null));
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Party booking not found", null));
+            }
+    }
+
 
     @Override
     @Transactional
@@ -403,14 +427,13 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
             }
             Account account = accountRepository.findById(userId).get();
-            Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(bookingId);
-            if (partyBookingOptional.isPresent()) {
-                if (partyBookingOptional.get().getAccount().getId().equals(account.getId())) {
-                    PartyBooking partyBooking = partyBookingOptional.get();
-                    if (partyBooking.getStatus() == StatusEnum.PENDING) {
-                        partyBooking.setStatus(StatusEnum.CANCELLED);
-                        partyBooking.setDeleteAt(LocalDateTime.now());
-                        partyBookingRepository.save(partyBooking);
+            Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
+            if (partyBooking.isPresent()) {
+                if (partyBooking.get().getAccount().getId().equals(account.getId())) {
+                    if (partyBooking.get().getStatus() == StatusEnum.PENDING) {
+                        partyBooking.get().setStatus(StatusEnum.CANCELLED);
+                        partyBooking.get().setDeleteAt(LocalDateTime.now());
+                        partyBookingRepository.save(partyBooking.get());
 
                         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Cancel successful", null));
                     }
