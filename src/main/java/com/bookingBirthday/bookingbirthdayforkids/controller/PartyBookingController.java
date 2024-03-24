@@ -62,12 +62,15 @@ public class PartyBookingController {
     public ResponseEntity<ResponseObj> Cacnel(@PathVariable Long bookingId){
         return partyBookingService.Cancel(bookingId);
     }
+    @PostMapping("/party-booking-cancel-for-host/{bookingId}")
+    public ResponseEntity<ResponseObj> cancelBookingForHost(@PathVariable Long bookingId) {
+        return partyBookingService.cancelBookingForHost(bookingId);
+    }
 
-    //    @GetMapping("/party-booking-confirm")
-    //    public List<PartyBooking> Get(){
-    //        return partyBookingService.findConfirmedBookings();
-    //    }
-
+    @PostMapping("/party-booking-cancel-for-customer/{bookingId}")
+    public ResponseEntity<ResponseObj> cancelBookingForCustomer(@PathVariable Long bookingId) {
+        return partyBookingService.cancelBookingForCustomer(bookingId);
+    }
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
         return partyBookingService.delete(id);

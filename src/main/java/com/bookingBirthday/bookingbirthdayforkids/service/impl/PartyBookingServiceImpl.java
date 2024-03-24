@@ -7,11 +7,11 @@ import com.bookingBirthday.bookingbirthdayforkids.model.*;
 import com.bookingBirthday.bookingbirthdayforkids.repository.*;
 import com.bookingBirthday.bookingbirthdayforkids.service.PartyBookingService;
 import com.bookingBirthday.bookingbirthdayforkids.util.AuthenUtil;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -369,6 +369,53 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             }
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Cancel failed", null));
+    }
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseObj> cancelBookingForHost(Long bookingId) {
+        try {
+            Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(bookingId);
+            if (partyBookingOptional.isPresent()) {
+                PartyBooking partyBooking = partyBookingOptional.get();
+                if (partyBooking.getStatus() == StatusEnum.PENDING || partyBooking.getStatus() == StatusEnum.CONFIRMED) {
+                    partyBooking.setStatus(StatusEnum.CANCELLED);
+                    partyBooking.setDeleteAt(LocalDateTime.now());
+                    partyBookingRepository.save(partyBooking);
+
+                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Cancel successful", null));
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Cannot cancel booking with current status", null));
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Party booking not found", null));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseObj> cancelBookingForCustomer(Long bookingId) {
+        try {
+            Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(bookingId);
+            if (partyBookingOptional.isPresent()) {
+                PartyBooking partyBooking = partyBookingOptional.get();
+                if (partyBooking.getStatus() == StatusEnum.PENDING) {
+                    partyBooking.setStatus(StatusEnum.CANCELLED);
+                    partyBooking.setDeleteAt(LocalDateTime.now());
+                    partyBookingRepository.save(partyBooking);
+
+                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Cancel successful", null));
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Cannot cancel booking with current status", null));
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Party booking not found", null));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
     }
 
     @Override
