@@ -21,8 +21,7 @@ import java.util.List;
 public class PackageController {
     @Autowired
     PackageService packageService;
-
-    @PreAuthorize("hasAuthority('CUSTOMER')")
+    
     @GetMapping("/get-all")
     public ResponseEntity<ResponseObj> getAll() {
         return packageService.getAll();
