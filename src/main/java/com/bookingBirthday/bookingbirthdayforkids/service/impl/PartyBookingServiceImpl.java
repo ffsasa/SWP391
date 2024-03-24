@@ -398,18 +398,28 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     @Transactional
     public ResponseEntity<ResponseObj> cancelBookingForCustomer(Long bookingId) {
         try {
+            Long userId = AuthenUtil.getCurrentUserId();
+            if(userId == null){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+            }
+            Account account = accountRepository.findById(userId).get();
             Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(bookingId);
             if (partyBookingOptional.isPresent()) {
-                PartyBooking partyBooking = partyBookingOptional.get();
-                if (partyBooking.getStatus() == StatusEnum.PENDING) {
-                    partyBooking.setStatus(StatusEnum.CANCELLED);
-                    partyBooking.setDeleteAt(LocalDateTime.now());
-                    partyBookingRepository.save(partyBooking);
+                if (partyBookingOptional.get().getAccount().getId().equals(account.getId())) {
+                    PartyBooking partyBooking = partyBookingOptional.get();
+                    if (partyBooking.getStatus() == StatusEnum.PENDING) {
+                        partyBooking.setStatus(StatusEnum.CANCELLED);
+                        partyBooking.setDeleteAt(LocalDateTime.now());
+                        partyBookingRepository.save(partyBooking);
 
-                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Cancel successful", null));
-                } else {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Cannot cancel booking with current status", null));
+                        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Cancel successful", null));
+                    }
+                    else {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Cannot cancel booking with current status", null));
+                    }
                 }
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to cancel this party", null));
+
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Party booking not found", null));
             }
