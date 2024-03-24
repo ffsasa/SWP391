@@ -16,6 +16,8 @@ public interface PaymentService {
 
     void paymentSuccess(Long id);
 
+    public ResponseEntity<ResponseObj> Cancel(Long bookingId);
+
 //    public ResponseEntity<ResponseObj> create(PaymentRequest paymentRequest);
 
 //    public ResponseEntity<ResponseObj> update(Long id, PaymentRequest paymentRequest);
