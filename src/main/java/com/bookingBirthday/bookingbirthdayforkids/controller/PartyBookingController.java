@@ -57,6 +57,11 @@ public class PartyBookingController {
         return partyBookingService.update(id, partyBookingRequest);
     }
 
+    @PutMapping("/party-booking-cancel/{bookingId}")
+    public ResponseEntity<ResponseObj> Cacnel(@PathVariable Long bookingId){
+        return partyBookingService.Cancel(bookingId);
+    }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
         return partyBookingService.delete(id);

@@ -20,6 +20,8 @@ public interface PartyBookingService {
     public ResponseEntity<ResponseObj> delete(Long id);
     public ResponseEntity<ResponseObj> getAllByUser();
 
+    public ResponseEntity<ResponseObj> Cancel(Long bookingId);
+
     public ResponseEntity<ResponseObj> updateThemeInVenue(Long partyBookingId, Long themeInVenueId);
 
     public ResponseEntity<ResponseObj> updatePackageInVenue(Long partyBookingId, Long packageInVenueId);

@@ -45,7 +45,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
             }
             List<PartyBooking> partyBookingList = partyBookingRepository.findAllByIsActiveIsTrueAndAccountId(userId);
-            for (PartyBooking partyBooking: partyBookingList){
+            for (PartyBooking partyBooking : partyBookingList) {
                 SlotInVenue slotInVenue = partyBooking.getPartyDated().getSlotInVenue();
                 partyBooking.setSlotInVenueObject(slotInVenue);
                 partyBooking.setPartyDated(partyBooking.getPartyDated());
@@ -54,8 +54,8 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 partyBooking.setVenue(venue);
 
                 float pricingUpgradeService = 0;
-                for (UpgradeService upgradeService : partyBooking.getUpgradeServices()){
-                     pricingUpgradeService += upgradeService.getServices().getPricing()*upgradeService.getCount();
+                for (UpgradeService upgradeService : partyBooking.getUpgradeServices()) {
+                    pricingUpgradeService += upgradeService.getServices().getPricing() * upgradeService.getCount();
                 }
 
                 partyBooking.setPricingTotal(partyBooking.getPackageInVenue().getApackage().getPricing() + pricingUpgradeService);
@@ -119,8 +119,8 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 venue.setSlotInVenueList(null);
                 partyBooking1.setVenue(venue);
                 float pricingUpgradeService = 0;
-                for (UpgradeService upgradeService : partyBooking1.getUpgradeServices()){
-                    pricingUpgradeService += upgradeService.getServices().getPricing()*upgradeService.getCount();
+                for (UpgradeService upgradeService : partyBooking1.getUpgradeServices()) {
+                    pricingUpgradeService += upgradeService.getServices().getPricing() * upgradeService.getCount();
                 }
 
                 partyBooking1.setPricingTotal(partyBooking1.getPackageInVenue().getApackage().getPricing() + pricingUpgradeService);
@@ -324,6 +324,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
+
     @Override
     public ResponseEntity<ResponseObj> updateThemeInVenue(Long partyBookingId, Long themeInVenueId) {
         try {
@@ -350,6 +351,26 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     }
 
     @Override
+    public ResponseEntity<ResponseObj> Cancel(Long bookingId) {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if(userId == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+        }
+        Account account = accountRepository.findById(userId).get();
+        Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
+        if(partyBooking.isPresent()){
+            if(!partyBooking.get().getAccount().getId().equals(account.getId())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to cancel this party booking", null));
+            }else{
+                partyBooking.get().setStatus(StatusEnum.CANCELLED);
+                partyBooking.get().setDeleteAt(LocalDateTime.now());
+                partyBookingRepository.save(partyBooking.get());
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(),"Cancel successfully", partyBooking));
+            }
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Cancel failed", null));
+    }
+    @Override
     public ResponseEntity<ResponseObj> updatePackageInVenue(Long partyBookingId, Long packageInVenueId) {
         try {
             Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(partyBookingId);
@@ -373,6 +394,4 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
-
-
-    }
+}
