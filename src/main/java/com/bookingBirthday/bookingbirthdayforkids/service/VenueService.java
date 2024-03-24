@@ -5,13 +5,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public interface VenueService {
     public ResponseEntity<ResponseObj> getAll();
 
     public ResponseEntity<ResponseObj> getAllForHost();
 
-    public ResponseEntity<ResponseObj> checkSlotInVenue(LocalDate date);
+    public ResponseEntity<ResponseObj> checkSlotInVenue(LocalDateTime date);
 
     public ResponseEntity<ResponseObj> getById(Long id);
 

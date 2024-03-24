@@ -209,10 +209,12 @@ public class VenueServiceImpl implements VenueService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> checkSlotInVenue(LocalDate date) {
+    public ResponseEntity<ResponseObj> checkSlotInVenue(LocalDateTime date) {
         try {
-            LocalDate localDateValidate = LocalDate.now().plusDays(1);
-            if (date.isBefore(localDateValidate)) {
+            LocalDateTime currentDateTime = LocalDateTime.now();;
+            LocalDateTime chooseDateTime = date.withHour(0).withMinute(0).withSecond(0);
+
+            if (currentDateTime.isAfter(chooseDateTime.plusHours(6)) ) {
                 List<SlotInVenue> slotInVenueList = new ArrayList<>();
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "The date has expired", slotInVenueList));
             }
@@ -220,7 +222,7 @@ public class VenueServiceImpl implements VenueService {
             if (venueList.isEmpty())
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
 
-            List<PartyDated> partyDatedList = partyDatedRepository.findByDate(date);
+            List<PartyDated> partyDatedList = partyDatedRepository.findByDate(date.toLocalDate());
 
             for (Venue venue : venueList) {
                 List<SlotInVenue> slotInVenueList = venue.getSlotInVenueList();

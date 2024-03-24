@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class VenueController {
     @GetMapping("/check-slot-in-venue")
     public ResponseEntity<ResponseObj> checkSlotInVenue(@RequestParam String date) {
         try {
-            return venueService.checkSlotInVenue(LocalDate.parse(date));
+            return venueService.checkSlotInVenue(LocalDateTime.parse(date));
         } catch (Exception e) {
             List<Object> errors = new ArrayList<>();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid date", errors));
