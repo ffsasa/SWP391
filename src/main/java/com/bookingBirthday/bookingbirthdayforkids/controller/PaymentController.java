@@ -86,7 +86,6 @@ public class PaymentController {
             payment.setAmount(vnp_Amount/100);
             payment.setStatus("FAILED");
             paymentRepository.save(payment);
-            paymentService.paymentSuccess(bookingId);
             response.sendRedirect("http://localhost:3000/payment/failed");
 
     }
