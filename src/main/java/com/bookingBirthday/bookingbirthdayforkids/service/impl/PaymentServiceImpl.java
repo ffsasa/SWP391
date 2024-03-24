@@ -132,26 +132,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     }
 
-    @Override
-    public ResponseEntity<ResponseObj> Cancel(Long bookingId) {
-        Long userId = AuthenUtil.getCurrentUserId();
-        if(userId == null){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
-        }
-        Account account = accountRepository.findById(userId).get();
-        Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
-        if(partyBooking.isPresent()){
-            if(!partyBooking.get().getAccount().getId().equals(account.getId())) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to cancel this party booking", null));
-            }else{
-                partyBooking.get().setStatus(StatusEnum.CANCELLED);
-                partyBooking.get().setDeleteAt(LocalDateTime.now());
-                partyBookingRepository.save(partyBooking.get());
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(),"Cancel successfully", partyBooking));
-            }
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Cancel failed", null));
-    }
+
 
     @Override
     public ResponseEntity<ResponseObj> getById(Long id) {
