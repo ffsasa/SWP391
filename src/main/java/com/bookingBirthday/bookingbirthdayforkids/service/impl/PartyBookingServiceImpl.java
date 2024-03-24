@@ -45,7 +45,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
             }
             List<PartyBooking> partyBookingList = partyBookingRepository.findAllByIsActiveIsTrueAndAccountId(userId);
-            for (PartyBooking partyBooking: partyBookingList){
+            for (PartyBooking partyBooking : partyBookingList) {
                 SlotInVenue slotInVenue = partyBooking.getPartyDated().getSlotInVenue();
                 partyBooking.setSlotInVenueObject(slotInVenue);
                 partyBooking.setPartyDated(partyBooking.getPartyDated());
@@ -54,8 +54,8 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 partyBooking.setVenue(venue);
 
                 float pricingUpgradeService = 0;
-                for (UpgradeService upgradeService : partyBooking.getUpgradeServices()){
-                     pricingUpgradeService += upgradeService.getServices().getPricing()*upgradeService.getCount();
+                for (UpgradeService upgradeService : partyBooking.getUpgradeServices()) {
+                    pricingUpgradeService += upgradeService.getServices().getPricing() * upgradeService.getCount();
                 }
 
                 partyBooking.setPricingTotal(partyBooking.getPackageInVenue().getApackage().getPricing() + pricingUpgradeService);
@@ -119,8 +119,8 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 venue.setSlotInVenueList(null);
                 partyBooking1.setVenue(venue);
                 float pricingUpgradeService = 0;
-                for (UpgradeService upgradeService : partyBooking1.getUpgradeServices()){
-                    pricingUpgradeService += upgradeService.getServices().getPricing()*upgradeService.getCount();
+                for (UpgradeService upgradeService : partyBooking1.getUpgradeServices()) {
+                    pricingUpgradeService += upgradeService.getServices().getPricing() * upgradeService.getCount();
                 }
 
                 partyBooking1.setPricingTotal(partyBooking1.getPackageInVenue().getApackage().getPricing() + pricingUpgradeService);
@@ -324,6 +324,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
+
     @Override
     public ResponseEntity<ResponseObj> updateThemeInVenue(Long partyBookingId, Long themeInVenueId) {
         try {
@@ -373,6 +374,4 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
-
-
-    }
+}
