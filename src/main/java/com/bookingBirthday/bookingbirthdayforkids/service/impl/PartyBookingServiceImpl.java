@@ -348,4 +348,31 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
+
+    @Override
+    public ResponseEntity<ResponseObj> updatePackageInVenue(Long partyBookingId, Long packageInVenueId) {
+        try {
+            Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(partyBookingId);
+            if (partyBookingOptional.isPresent()) {
+                PartyBooking partyBooking = partyBookingOptional.get();
+
+                Optional<PackageInVenue> packageInVenue = packageInVenueRepository.findById(packageInVenueId);
+                if (packageInVenue.isPresent()) {
+                    PackageInVenue newPackageInVenue = packageInVenue.get();
+                    partyBooking.setPackageInVenue(newPackageInVenue);
+                    partyBookingRepository.save(partyBooking);
+
+                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Update successful", null));
+                } else {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Package in venue not found", null));
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Party booking not found", null));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+
     }
