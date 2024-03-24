@@ -61,8 +61,18 @@ public class PaymentServiceImpl implements PaymentService {
 
     public String payWithVNPAYOnline(Long id, Long paymentMethodId,HttpServletRequest request) throws UnsupportedEncodingException{
         Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(id);
+
+
+
         if(partyBookingOptional.isPresent()){
             if(partyBookingOptional.get().getStatus().equals(StatusEnum.PENDING)){
+
+                for(Payment payment : partyBookingOptional.get().getPaymentList()){
+                    if(payment.getStatus().equals("SUCCESS")){
+                        return "success";
+                    }
+                }
+
                 Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
 
                 Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
@@ -128,7 +138,7 @@ public class PaymentServiceImpl implements PaymentService {
             }
 
         }
-        return "Khách hàng đã thanh toán cho bữa tiệc này";
+        return "success";
 
     }
 
