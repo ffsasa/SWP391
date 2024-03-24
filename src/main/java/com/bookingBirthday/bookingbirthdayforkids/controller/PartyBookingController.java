@@ -61,4 +61,9 @@ public class PartyBookingController {
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
         return partyBookingService.delete(id);
     }
+
+    @PatchMapping("/update-theme-in-venue/{partyBookingId}/{themeInVenueId}")
+    public ResponseEntity<ResponseObj> updateThemeInVenue(@PathVariable Long partyBookingId, @PathVariable Long themeInVenueId){
+        return partyBookingService.updateThemeInVenue(partyBookingId, themeInVenueId);
+    }
 }
