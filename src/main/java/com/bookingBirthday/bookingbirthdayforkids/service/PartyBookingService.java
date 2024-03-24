@@ -2,12 +2,17 @@ package com.bookingBirthday.bookingbirthdayforkids.service;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.PartyBookingRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
+import com.bookingBirthday.bookingbirthdayforkids.model.PartyBooking;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 public interface PartyBookingService {
     public ResponseEntity<ResponseObj> getAll();
 
     public ResponseEntity<ResponseObj> getAllForHost();
+
+    public void updateCronJob(Long bookingId, PartyBooking partyBooking);
 
     public ResponseEntity<ResponseObj> getById(Long id);
 
@@ -18,9 +23,12 @@ public interface PartyBookingService {
     public ResponseEntity<ResponseObj> update(Long id, PartyBookingRequest partyBookingRequest);
 
     public ResponseEntity<ResponseObj> delete(Long id);
+
     public ResponseEntity<ResponseObj> getAllByUser();
 
     public ResponseEntity<ResponseObj> Cancel(Long bookingId);
+
+    public List<PartyBooking> findConfirmedBookings();
 
     public ResponseEntity<ResponseObj> updateThemeInVenue(Long partyBookingId, Long themeInVenueId);
 
