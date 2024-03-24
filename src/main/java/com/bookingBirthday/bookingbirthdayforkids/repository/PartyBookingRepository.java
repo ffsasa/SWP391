@@ -10,6 +10,7 @@ import java.util.List;
 @Repository
 public interface PartyBookingRepository extends JpaRepository<PartyBooking, Long> {
     List<PartyBooking> findAllByIsActiveIsTrue();
+    List<PartyBooking> findAllByIsActiveIsTrueAndStatus(StatusEnum statusEnum);
     List<PartyBooking> findAllByIsActiveIsTrueAndAccountId(Long id);
 
     List<PartyBooking> findAllByStatus(StatusEnum statusEnum );

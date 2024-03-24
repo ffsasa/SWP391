@@ -5,7 +5,8 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import org.springframework.http.ResponseEntity;
 
 public interface AccountAdminService {
-    public ResponseEntity<ResponseObj> getAll(int page, int size);
+    public ResponseEntity<ResponseObj> getAllCustomer();
+    public ResponseEntity<ResponseObj> getAllHost();
 
     public ResponseEntity<ResponseObj> getById(Long id);
 

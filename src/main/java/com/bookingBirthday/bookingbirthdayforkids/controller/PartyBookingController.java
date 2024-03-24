@@ -24,6 +24,10 @@ public class PartyBookingController {
     public ResponseEntity<ResponseObj> getAll() {
         return partyBookingService.getAll();
     }
+    @GetMapping("/get-all-completed")
+    public ResponseEntity<ResponseObj> getAllCompleted() {
+        return partyBookingService.getAllCompleted();
+    }
 
     @GetMapping("/get-all-party-booking-for-host")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
