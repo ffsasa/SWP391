@@ -54,10 +54,7 @@ public class PaymentController {
         }
     }
 
-    @PutMapping("/payment-cancel/{bookingId}")
-    public ResponseEntity<ResponseObj> Cacnel(@PathVariable Long bookingId){
-        return paymentService.Cancel(bookingId);
-    }
+
 
 
     @GetMapping("/payment-callback")
