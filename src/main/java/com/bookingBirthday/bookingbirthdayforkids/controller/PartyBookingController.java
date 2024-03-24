@@ -57,7 +57,7 @@ public class PartyBookingController {
         return partyBookingService.update(id, partyBookingRequest);
     }
 
-    @PutMapping("/payment-cancel/{bookingId}")
+    @PutMapping("/party-booking-cancel/{bookingId}")
     public ResponseEntity<ResponseObj> Cacnel(@PathVariable Long bookingId){
         return partyBookingService.Cancel(bookingId);
     }
