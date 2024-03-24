@@ -59,7 +59,7 @@ public class PaymentServiceImpl implements PaymentService {
         partyBookingRepository.save(partyBooking.get());
     }
 
-    public String payWithVNPAYOnline(Long id, HttpServletRequest request) throws UnsupportedEncodingException{
+    public String payWithVNPAYOnline(Long id, Long paymentMethodId,HttpServletRequest request) throws UnsupportedEncodingException{
         Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(id);
         if(partyBookingOptional.isPresent()){
             if(partyBookingOptional.get().getStatus().equals(StatusEnum.PENDING)){
@@ -74,7 +74,7 @@ public class PaymentServiceImpl implements PaymentService {
 
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
                 String vnp_CreateDate = formatter.format(cld.getTime());
-                cld.add(Calendar.MINUTE, 1);
+                cld.add(Calendar.MINUTE, 10);
 
                 String vnp_ExpireDate = formatter.format(cld.getTime());
 
@@ -89,7 +89,7 @@ public class PaymentServiceImpl implements PaymentService {
                 vnp_Params.put("vnp_IpAddr", PaymentConfig.getIpAddress(request));
                 vnp_Params.put("vnp_Locale", PaymentConfig.vnp_Locale);
                 vnp_Params.put("vnp_OrderInfo", String.valueOf(id));
-                vnp_Params.put("vnp_OrderType", "string");
+                vnp_Params.put("vnp_OrderType", String.valueOf(paymentMethodId));
                 vnp_Params.put("vnp_ReturnUrl", PaymentConfig.vnp_ReturnUrl);
                 vnp_Params.put("vnp_TxnRef", "HD" + RandomStringUtils.randomNumeric(6) + "-" + vnp_CreateDate);
                 vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);

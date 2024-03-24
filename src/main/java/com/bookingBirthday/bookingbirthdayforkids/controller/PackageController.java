@@ -22,6 +22,7 @@ public class PackageController {
     @Autowired
     PackageService packageService;
 
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     @GetMapping("/get-all")
     public ResponseEntity<ResponseObj> getAll() {
         return packageService.getAll();
@@ -30,7 +31,6 @@ public class PackageController {
     @GetMapping("/get-all-package-for-host")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     public ResponseEntity<ResponseObj> getAllForHost(){return packageService.getAllForHost();}
-
 
 
     @GetMapping("/get-id/{id}")

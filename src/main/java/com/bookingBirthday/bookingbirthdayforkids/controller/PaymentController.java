@@ -4,8 +4,10 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.request.PaymentRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.PartyBooking;
 import com.bookingBirthday.bookingbirthdayforkids.model.Payment;
+import com.bookingBirthday.bookingbirthdayforkids.model.PaymentMethod;
 import com.bookingBirthday.bookingbirthdayforkids.model.StatusEnum;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PartyBookingRepository;
+import com.bookingBirthday.bookingbirthdayforkids.repository.PaymentMethodRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PaymentRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.PaymentService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,6 +36,8 @@ public class PaymentController {
 
     @Autowired
     PaymentRepository paymentRepository;
+    @Autowired
+    PaymentMethodRepository paymentMethodRepository;
 
     @GetMapping("/getAll-payment")
     public ResponseEntity<ResponseObj> getAll() {
@@ -46,9 +50,9 @@ public class PaymentController {
     }
 
     @PostMapping("/payment-vnpay")
-    public String pay(@RequestParam Long bookingId, HttpServletRequest request){
+    public String pay(@RequestParam Long bookingId, @RequestParam Long paymentMethodId,HttpServletRequest request){
         try {
-            return paymentService.payWithVNPAYOnline(bookingId, request);
+            return paymentService.payWithVNPAYOnline(bookingId, paymentMethodId, request);
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
@@ -61,10 +65,12 @@ public class PaymentController {
     public ResponseEntity<Boolean> paymentCallback(@RequestParam Map<String, String> queryParams, HttpServletResponse response) throws IOException, IOException {
         String vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
         Long bookingId = Long.parseLong(queryParams.get("vnp_OrderInfo"));
+        Long paymentMethodId = Long.parseLong(queryParams.get("vnp_OrderType"));
         float vnp_Amount = Float.parseFloat(queryParams.get("vnp_Amount"));
 
         if ("00".equals(vnp_ResponseCode)) {
             Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
+            PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId).get();
 
             Payment payment = new Payment();
             payment.setPartyBooking(partyBooking.get());
@@ -72,6 +78,7 @@ public class PaymentController {
             payment.setActive(true);
             payment.setAmount(vnp_Amount/100);
             payment.setStatus("SUCCESS");
+            payment.setPaymentMethod(paymentMethod);
             paymentRepository.save(payment);
             paymentService.paymentSuccess(bookingId);
 
@@ -80,13 +87,14 @@ public class PaymentController {
             return ResponseEntity.ok(true);
         } else{
             Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
-
+            PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId).get();
             Payment payment = new Payment();
             payment.setPartyBooking(partyBooking.get());
             payment.setCreateAt(LocalDateTime.now());
             payment.setActive(true);
             payment.setAmount(vnp_Amount/100);
             payment.setStatus("FAILED");
+            payment.setPaymentMethod(paymentMethod);
             paymentRepository.save(payment);
             response.sendRedirect("http://localhost:3000/payment/failed");
 
