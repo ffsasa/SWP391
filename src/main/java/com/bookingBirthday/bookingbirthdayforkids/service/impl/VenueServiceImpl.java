@@ -222,7 +222,7 @@ public class VenueServiceImpl implements VenueService {
             if (venueList.isEmpty())
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
 
-            List<PartyDated> partyDatedList = partyDatedRepository.findByDate(date.toLocalDate());
+            List<PartyDated> partyDatedList = partyDatedRepository.findByDateAndIsActiveIsTrue(date.toLocalDate());
 
             for (Venue venue : venueList) {
                 List<SlotInVenue> slotInVenueList = venue.getSlotInVenueList();
@@ -254,7 +254,7 @@ public class VenueServiceImpl implements VenueService {
             if (venueList.isEmpty())
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List venue is empty", null));
 
-            List<PartyDated> partyDatedList = partyDatedRepository.findByDate(date);
+            List<PartyDated> partyDatedList = partyDatedRepository.findByDateAndIsActiveIsTrue(date);
 
             for (Venue venue : venueList) {
                 List<SlotInVenue> slotInVenueList = venue.getSlotInVenueList();

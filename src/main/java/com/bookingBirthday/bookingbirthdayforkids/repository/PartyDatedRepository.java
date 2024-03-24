@@ -13,5 +13,5 @@ public interface PartyDatedRepository extends JpaRepository<PartyDated, Long> {
 
     List<PartyDated> findAllByIsActiveIsTrue();
     Optional<PartyDated> findPartyDatedByPartyBookingId(Long id);
-    List<PartyDated> findByDate(LocalDate date);
+    List<PartyDated> findByDateAndIsActiveIsTrue(LocalDate date);
 }
