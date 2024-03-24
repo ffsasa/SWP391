@@ -8,6 +8,7 @@ import com.bookingBirthday.bookingbirthdayforkids.service.PaymentMethodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -48,6 +49,9 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     @Override
     public ResponseEntity<ResponseObj> create(PaymentMethodRequest paymentMethodRequest){
         PaymentMethod paymentMethod = new PaymentMethod();
+        if(paymentMethodRepository.existsPaymentMethodByMethodName(paymentMethodRequest.getMethodName())){
+            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(), "Payment method has already", null));
+        }
         paymentMethod.setMethodName(paymentMethodRequest.getMethodName());
         paymentMethod.setMethodDescription(paymentMethodRequest.getMethodDescription());
         paymentMethod.setActive(true);

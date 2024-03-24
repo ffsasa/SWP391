@@ -67,7 +67,7 @@ public class PartyBookingController {
         return partyBookingService.updateThemeInVenue(partyBookingId, themeInVenueId);
     }
     @PatchMapping("/update-package-in-venue/{partyBookingId}/{packageInVenueId}")
-    public ResponseEntity<ResponseObj> updatePackageInVenue(@PathVariable Long partyBookingId, @PathVariable Long pacakgeInVenueId){
-        return partyBookingService.updatePackageInVenue(partyBookingId, pacakgeInVenueId);
+    public ResponseEntity<ResponseObj> updatePackageInVenue(@PathVariable Long partyBookingId, @PathVariable Long packageInVenueId){
+        return partyBookingService.updatePackageInVenue(partyBookingId, packageInVenueId);
     }
 }
