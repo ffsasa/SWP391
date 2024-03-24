@@ -65,12 +65,12 @@ public class PaymentController {
     public ResponseEntity<Boolean> paymentCallback(@RequestParam Map<String, String> queryParams, HttpServletResponse response) throws IOException, IOException {
         String vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
         Long bookingId = Long.parseLong(queryParams.get("vnp_OrderInfo"));
-        Long paymentMethodId = Long.parseLong(queryParams.get("vnp_OrderType"));
+//        Long paymentMethodId = Long.parseLong(queryParams.get("vnp_OrderType"));
         float vnp_Amount = Float.parseFloat(queryParams.get("vnp_Amount"));
 
         if ("00".equals(vnp_ResponseCode)) {
             Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
-            PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId).get();
+            PaymentMethod paymentMethod = paymentMethodRepository.findById(1L).get();
 
             Payment payment = new Payment();
             payment.setPartyBooking(partyBooking.get());
@@ -87,7 +87,7 @@ public class PaymentController {
             return ResponseEntity.ok(true);
         } else{
             Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
-            PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId).get();
+            PaymentMethod paymentMethod = paymentMethodRepository.findById(1L).get();
             Payment payment = new Payment();
             payment.setPartyBooking(partyBooking.get());
             payment.setCreateAt(LocalDateTime.now());

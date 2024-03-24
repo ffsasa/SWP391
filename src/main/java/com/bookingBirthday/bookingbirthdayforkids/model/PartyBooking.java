@@ -47,6 +47,10 @@ public class PartyBooking extends BaseEntity{
     @JsonProperty("venue")
     private Venue venue;
 
+    @Transient
+    @JsonProperty("isPayment")
+    private Boolean isPayment;
+
     @ManyToOne
     @JoinColumn(name = "packageInVenue_id")
     private PackageInVenue packageInVenue;

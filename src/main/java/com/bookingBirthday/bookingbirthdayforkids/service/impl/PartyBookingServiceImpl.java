@@ -125,7 +125,13 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 for (UpgradeService upgradeService : partyBooking1.getUpgradeServices()) {
                     pricingUpgradeService += upgradeService.getServices().getPricing() * upgradeService.getCount();
                 }
-
+                for (Payment payment: partyBooking.get().getPaymentList()){
+                    if(payment.getStatus().equals("SUCCESS")){
+                        partyBooking1.setIsPayment(true);
+                    } else {
+                        partyBooking1.setIsPayment(false);
+                    }
+                }
                 partyBooking1.setPricingTotal(partyBooking1.getPackageInVenue().getApackage().getPricing() + pricingUpgradeService);
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBooking1));
             }
