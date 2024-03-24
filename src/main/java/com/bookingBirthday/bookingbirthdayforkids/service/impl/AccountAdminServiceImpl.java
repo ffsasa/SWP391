@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,9 +33,18 @@ public class AccountAdminServiceImpl implements AccountAdminService {
     PasswordEncoder passwordEncoder;
 
     @Override
-    public ResponseEntity<ResponseObj> getAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Account> accountPage = accountRepository.findAll(pageable);
+    public ResponseEntity<ResponseObj> getAllCustomer() {
+        List<Account> accountPage = accountRepository.findAllByRoleId(3L);
+        if (accountPage.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.OK.toString(), "OK", accountPage));
+
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> getAllHost() {
+        List<Account> accountPage = accountRepository.findAllByRoleId(2L);
         if (accountPage.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
 

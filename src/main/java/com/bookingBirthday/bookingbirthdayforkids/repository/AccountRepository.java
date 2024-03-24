@@ -1,9 +1,13 @@
 package com.bookingBirthday.bookingbirthdayforkids.repository;
 
 import com.bookingBirthday.bookingbirthdayforkids.model.Account;
+import com.bookingBirthday.bookingbirthdayforkids.model.RoleEnum;
+import com.bookingBirthday.bookingbirthdayforkids.model.StatusEnum;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -17,5 +21,5 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     Optional<Account> findByUsername(String username);
 
-    Optional<Account> findAccountById(Long id);
+    List<Account> findAllByRoleId(Long id);
 }

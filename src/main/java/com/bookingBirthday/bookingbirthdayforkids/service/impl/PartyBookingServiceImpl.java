@@ -17,6 +17,7 @@ import java.sql.Time;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +40,8 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     PartyDatedRepository partyDatedRepository;
     @Autowired
     SlotInVenueRepository slotInVenueRepository;
+    @Autowired
+    ReviewRepository reviewRepository;
 
     @Override
     public ResponseEntity<ResponseObj> getAllByUser() {
@@ -86,6 +89,19 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     }
 
     @Override
+    public ResponseEntity<ResponseObj> getAllCompleted() {
+        try {
+            List<PartyBooking> partyBookingList = partyBookingRepository.findAllByIsActiveIsTrueAndStatus(StatusEnum.COMPLETED);
+            if (partyBookingList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+            }
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
     public ResponseEntity<ResponseObj> getAllForHost() {
         try {
             List<PartyBooking> partyBookingList = partyBookingRepository.findAll();
@@ -114,8 +130,15 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     @Override
     public ResponseEntity<ResponseObj> getById_ForCustomer(Long id) {
         try {
+            Long userId = AuthenUtil.getCurrentUserId();
+            if(userId == null){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+            }
             Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
             if (partyBooking.isPresent() && partyBooking.get().isActive()) {
+                if (!partyBooking.get().getAccount().getId().equals(userId)){
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to see this party", null));
+                }
                 PartyBooking partyBooking1 = partyBooking.get();
                 partyBooking1.setSlotInVenueObject(partyBooking1.getPartyDated().getSlotInVenue());
                 Venue venue = partyBooking1.getThemeInVenue().getVenue();
@@ -132,6 +155,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                         partyBooking1.setIsPayment(false);
                     }
                 }
+
                 partyBooking1.setPricingTotal(partyBooking1.getPackageInVenue().getApackage().getPricing() + pricingUpgradeService);
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBooking1));
             }

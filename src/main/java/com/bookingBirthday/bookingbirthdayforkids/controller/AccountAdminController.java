@@ -21,12 +21,16 @@ public class AccountAdminController {
     @Autowired
     AccountAdminService accountAdminService;
 
-    @GetMapping("/get-all")
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getAll(
-            @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "5") int size){
-        return accountAdminService.getAll(page, size);
+    @GetMapping("/get-all/customer")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObj> getAllCustomer(){
+        return accountAdminService.getAllCustomer();
+    }
+
+    @GetMapping("/get-all/host")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObj> getAllHost(){
+        return accountAdminService.getAllHost();
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")

@@ -44,5 +44,6 @@ public interface PartyBookingService {
     public ResponseEntity<ResponseObj> updateThemeInVenue(Long partyBookingId, Long themeInVenueId);
 
     public ResponseEntity<ResponseObj> updatePackageInVenue(Long partyBookingId, Long packageInVenueId);
+    public ResponseEntity<ResponseObj> getAllCompleted();
 
 }
