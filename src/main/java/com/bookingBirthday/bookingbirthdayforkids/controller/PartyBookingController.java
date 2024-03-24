@@ -2,6 +2,7 @@ package com.bookingBirthday.bookingbirthdayforkids.controller;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.PartyBookingRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
+import com.bookingBirthday.bookingbirthdayforkids.model.PartyBooking;
 import com.bookingBirthday.bookingbirthdayforkids.service.PartyBookingService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,11 @@ public class PartyBookingController {
     public ResponseEntity<ResponseObj> Cacnel(@PathVariable Long bookingId){
         return partyBookingService.Cancel(bookingId);
     }
+
+    //    @GetMapping("/party-booking-confirm")
+    //    public List<PartyBooking> Get(){
+    //        return partyBookingService.findConfirmedBookings();
+    //    }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){

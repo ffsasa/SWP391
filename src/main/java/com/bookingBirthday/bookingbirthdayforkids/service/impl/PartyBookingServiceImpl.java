@@ -370,6 +370,19 @@ public class PartyBookingServiceImpl implements PartyBookingService {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Cancel failed", null));
     }
+
+    @Override
+    public List<PartyBooking> findConfirmedBookings() {
+        return partyBookingRepository.findAllByStatus(StatusEnum.CONFIRMED);
+    }
+
+    @Override
+    public void updateCronJob(Long bookingId, PartyBooking partyBooking){
+        Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(bookingId);
+        partyBookingOptional.get().setStatus(partyBooking.getStatus());
+        partyBookingRepository.save(partyBookingOptional.get());
+    }
+
     @Override
     public ResponseEntity<ResponseObj> updatePackageInVenue(Long partyBookingId, Long packageInVenueId) {
         try {
