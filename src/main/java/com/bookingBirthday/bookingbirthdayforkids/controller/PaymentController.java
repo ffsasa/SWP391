@@ -54,6 +54,11 @@ public class PaymentController {
         }
     }
 
+    @PutMapping("/payment-cancel/{bookingId}")
+    public ResponseEntity<ResponseObj> Cacnel(@PathVariable Long bookingId){
+        return paymentService.Cancel(bookingId);
+    }
+
 
     @GetMapping("/payment-callback")
     public ResponseEntity<Boolean> paymentCallback(@RequestParam Map<String, String> queryParams, HttpServletResponse response) throws IOException, IOException {
