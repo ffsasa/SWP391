@@ -4,6 +4,7 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.request.PartyBookingReques
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.PartyBooking;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,6 +28,12 @@ public interface PartyBookingService {
     public ResponseEntity<ResponseObj> getAllByUser();
 
     public ResponseEntity<ResponseObj> Cancel(Long bookingId);
+
+    @Transactional
+    ResponseEntity<ResponseObj> cancelBookingForHost(Long bookingId);
+
+    @Transactional
+    ResponseEntity<ResponseObj> cancelBookingForCustomer(Long bookingId);
 
     public List<PartyBooking> findConfirmedBookings();
 
