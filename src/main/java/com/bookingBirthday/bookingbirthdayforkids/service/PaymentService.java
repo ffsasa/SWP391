@@ -9,10 +9,12 @@ import java.io.UnsupportedEncodingException;
 
 public interface PaymentService {
 
-    public  String payWithVNPAYOnline(PaymentRequest payModel, HttpServletRequest request) throws UnsupportedEncodingException;
+    public  String payWithVNPAYOnline(Long bookingId, HttpServletRequest request) throws UnsupportedEncodingException;
     public ResponseEntity<ResponseObj> getAll();
 
     public ResponseEntity<ResponseObj> getById(Long id);
+
+    void paymentSuccess(Long id);
 
 //    public ResponseEntity<ResponseObj> create(PaymentRequest paymentRequest);
 

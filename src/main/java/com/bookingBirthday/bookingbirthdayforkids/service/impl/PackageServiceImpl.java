@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -37,7 +39,6 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageList));
     }
-
     @Override
     public ResponseEntity<ResponseObj> getAllForHost() {
         try {
@@ -119,7 +120,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
 
 
     @Override
-    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String packageName, String packageDescription, float pricing) {
+    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String packageName, String packageDescription) {
         Optional<Package> aPackage = packageRepository.findById(id);
         if (!aPackage.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This package does not exist", null));
@@ -129,7 +130,31 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
             aPackage.get().setPackageName(packageName == null ? aPackage.get().getPackageName() : packageName);
             aPackage.get().setPackageDescription(packageDescription == null ? aPackage.get().getPackageDescription() : packageDescription);
             aPackage.get().setPackageImgUrl(imgFile == null ? aPackage.get().getPackageImgUrl() : firebaseService.uploadImage(imgFile));
-            aPackage.get().setPricing(pricing == 0 ? aPackage.get().getPricing() : pricing);
+            aPackage.get().setPricing(aPackage.get().getPricing());
+            aPackage.get().setUpdateAt(LocalDateTime.now());
+            packageRepository.save(aPackage.get());
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", aPackage));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> updatePercentPackage(Long id, float percent) {
+        Optional<Package> aPackage = packageRepository.findById(id);
+        if (aPackage.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This package does not exist", null));
+        }
+        float packPricing = 0;
+
+        List<PackageService> packageServiceList = aPackage.get().getPackageServiceList();
+        for (PackageService packageService : packageServiceList) {
+           packPricing += packageService.getPricing();
+        }
+        try {
+            float newPricing = packPricing * percent;
+            aPackage.get().setPricing(packPricing - newPricing);
             aPackage.get().setUpdateAt(LocalDateTime.now());
             packageRepository.save(aPackage.get());
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", aPackage));

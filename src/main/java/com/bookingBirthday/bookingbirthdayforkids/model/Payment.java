@@ -23,23 +23,12 @@ import java.util.List;
 public class Payment extends BaseEntity {
     @Min(value = 1, message = "Min at least = 1")
     private float amount;
-    @DateTimeFormat(pattern = "yyyy-mm-dd")
-    @NotNull(message = "Expire date cannot null")
-    private LocalDateTime expireDate;
-    @Enumerated(EnumType.STRING)
-    private StatusEnum status;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id")
-    private Account account;
+    private String status;
 
     @ManyToOne
     @JoinColumn(name = "paymentMethod_id")
     private PaymentMethod paymentMethod;
-
-    @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Transaction> transactionList;
 
     @ManyToOne
     @JoinColumn(name = "partyBooking_id")

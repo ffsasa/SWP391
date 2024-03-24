@@ -10,7 +10,7 @@ public interface PackageInVenueService {
 
     public ResponseEntity<ResponseObj> getAllForHost();
     public  ResponseEntity<ResponseObj> getById_ForCustomer(Long id);
-
+    public ResponseEntity<ResponseObj> getPackageInVenueNotChoose(Long packageInVenueId);
     public ResponseEntity<ResponseObj> getById(Long id);
 
     ResponseEntity<ResponseObj> activePackageInVenue(Long id);
