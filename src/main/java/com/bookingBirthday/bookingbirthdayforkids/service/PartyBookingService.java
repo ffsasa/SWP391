@@ -6,6 +6,7 @@ import com.bookingBirthday.bookingbirthdayforkids.model.PartyBooking;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PartyBookingService {
@@ -31,6 +32,9 @@ public interface PartyBookingService {
 
     @Transactional
     ResponseEntity<ResponseObj> cancelBookingForHost(Long bookingId);
+
+    @Transactional
+    ResponseEntity<ResponseObj> completeBookingForHost(Long bookingId);
 
     @Transactional
     ResponseEntity<ResponseObj> cancelBookingForCustomer(Long bookingId);

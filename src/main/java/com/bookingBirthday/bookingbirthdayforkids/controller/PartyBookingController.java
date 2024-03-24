@@ -62,14 +62,21 @@ public class PartyBookingController {
     public ResponseEntity<ResponseObj> Cacnel(@PathVariable Long bookingId){
         return partyBookingService.Cancel(bookingId);
     }
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PostMapping("/party-booking-cancel-for-host/{bookingId}")
     public ResponseEntity<ResponseObj> cancelBookingForHost(@PathVariable Long bookingId) {
         return partyBookingService.cancelBookingForHost(bookingId);
     }
 
     @PostMapping("/party-booking-cancel-for-customer/{bookingId}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     public ResponseEntity<ResponseObj> cancelBookingForCustomer(@PathVariable Long bookingId) {
         return partyBookingService.cancelBookingForCustomer(bookingId);
+    }
+    @PostMapping("/complete-booking-for-host/{bookingId}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    public ResponseEntity<ResponseObj> completeBookingForHost(@PathVariable Long bookingId) {
+        return partyBookingService.completeBookingForHost(bookingId);
     }
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
