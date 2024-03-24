@@ -26,7 +26,7 @@ public class PartyBookingCronJob {
 
     @Scheduled(fixedRate = 90000)
     public void processConfirmPartyBookings() {
-        LocalDateTime currentTime = LocalDateTime.now().withHour(10).withMinute(15).withSecond(1);
+        LocalDateTime currentTime = LocalDateTime.now();
         List<PartyBooking> confirmedBookings = partyBookingService.findConfirmedBookings();
         for (PartyBooking booking : confirmedBookings) {
             try {
@@ -36,7 +36,7 @@ public class PartyBookingCronJob {
 
                 LocalDateTime localDateTime = LocalDateTime.of(booking.getPartyDated().getDate(), localTime);
 
-                if (currentTime.isAfter(localDateTime .plusMinutes(15))) {
+                if (currentTime.isAfter(localDateTime.plusMinutes(15))) {
                     booking.setStatus(StatusEnum.COMPLETED);
                     partyBookingService.updateCronJob(booking.getId(), booking);
                 }
