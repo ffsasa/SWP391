@@ -467,6 +467,8 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     if (partyBooking.get().getStatus() == StatusEnum.PENDING) {
                         partyBooking.get().setStatus(StatusEnum.CANCELLED);
                         partyBooking.get().setDeleteAt(LocalDateTime.now());
+                        partyBooking.get().setActive(false);
+                        partyBooking.get().getPartyDated().setActive(false);
                         partyBookingRepository.save(partyBooking.get());
 
                         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Cancel successful", null));
