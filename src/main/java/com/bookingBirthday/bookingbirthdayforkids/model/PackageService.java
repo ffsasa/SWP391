@@ -14,6 +14,7 @@ import lombok.*;
 @Entity
 @Builder
 public class PackageService extends BaseEntity{
+
     @NotNull(message = "Count value cannot be null")
     private int count;
     @NotNull(message = "Pricing value cannot be null")

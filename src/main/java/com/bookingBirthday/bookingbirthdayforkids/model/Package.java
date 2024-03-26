@@ -17,6 +17,7 @@ import java.util.List;
 @Entity
 @Builder
 public class Package extends BaseEntity{
+    private long packageCategoryId;
     @NotBlank(message = "Package name cannot blank")
     private String packageName;
     @Column(name = "package_description",columnDefinition = "TEXT")

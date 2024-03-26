@@ -29,14 +29,6 @@ public class Review extends BaseEntity{
     @Max(value = 5, message = "Rating must be at most 5")
     private float rating;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id")
-    private Account account;
-
-    @ManyToOne
-    @JoinColumn(name = "account_id_reply")
-    private Account accountReply;
-
     @OneToOne
     @JoinColumn(name = "partyBooking_id", referencedColumnName = "id")
     @JsonIgnore

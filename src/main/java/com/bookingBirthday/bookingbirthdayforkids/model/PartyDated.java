@@ -1,8 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -24,7 +22,7 @@ public class PartyDated extends BaseEntity{
     private PartyBooking partyBooking;
 
     @ManyToOne
-    @JoinColumn(name = "slotInVenue_id")
+    @JoinColumn(name = "slotInRoom_id")
     @JsonIgnore
     private SlotInVenue slotInVenue;
 }
