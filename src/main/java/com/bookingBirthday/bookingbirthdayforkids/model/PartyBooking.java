@@ -1,8 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -70,6 +68,11 @@ public class PartyBooking extends BaseEntity{
     @OneToMany(mappedBy = "partyBooking", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Payment> paymentList;
+
+    @OneToMany(mappedBy = "partyBooking", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<PackageInBooking> packageInBookings;
+
 
     @OneToOne(mappedBy = "partyBooking", cascade = CascadeType.ALL)
     private Review review;

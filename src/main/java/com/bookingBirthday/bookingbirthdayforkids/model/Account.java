@@ -46,10 +46,6 @@ public class Account extends BaseEntity implements UserDetails {
     @JsonIgnore
     private List<PartyBooking> partyBookingList;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Review> reviewList;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.getName().name()));

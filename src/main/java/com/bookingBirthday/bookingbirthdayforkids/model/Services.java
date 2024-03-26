@@ -22,6 +22,7 @@ import java.util.List;
 public class Services extends BaseEntity{
     @NotBlank(message = "Services name cannot be blank")
     private String serviceName;
+    private String type;
     @Column(name = "service_img_url",columnDefinition = "TEXT")
     private String serviceImgUrl;
     @Column(name = "service_description",columnDefinition = "TEXT")

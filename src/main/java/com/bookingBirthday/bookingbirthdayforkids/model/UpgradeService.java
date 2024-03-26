@@ -17,6 +17,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 public class UpgradeService extends BaseEntity{
+
     @Min(value = 1, message = "Count value must be greater than or equal to 1")
     private int count;
     @Min(value = 0, message = "Pricing value must be greater than or equal to 0")
