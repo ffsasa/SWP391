@@ -43,6 +43,9 @@ public class Venue extends BaseEntity{
     @OneToMany(mappedBy = "venue")
     private List<SlotInVenue> slotInVenueList;
 
+    @OneToMany(mappedBy = "venue")
+    @JsonIgnore
+    private List<Room> roomList;
 
 
 }
