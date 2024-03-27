@@ -55,8 +55,8 @@ public class SlotController {
         return slotService.delete(id);
     }
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PostMapping(value = "/add-slot-in-venue-by-venue-id")
-    public ResponseEntity<?> addSlotInVenueBySlotId(@RequestParam Long venueId, @RequestBody List<Long> slotId){
-        return slotService.addSlotInVenueByVenueId(venueId, slotId);
+    @PostMapping(value = "/add-slot-in-room-by-slot-id")
+    public ResponseEntity<?> addSlotInRoomBySlotId(@RequestParam Long roomId, @RequestBody List<Long> slotId){
+        return slotService.addSlotInRoomByRoomId(roomId, slotId);
     }
 }
