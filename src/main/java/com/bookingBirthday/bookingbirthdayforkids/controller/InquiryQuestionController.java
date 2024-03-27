@@ -23,10 +23,10 @@ public class InquiryQuestionController {
     }
 
 
-//    @PostMapping("/create-inquiry-for-change-package-in-venue")
-//    public ResponseEntity<ResponseObj> sendInquiryForChangePackageInVenue(@Valid @RequestParam Long bookingId, @RequestParam Long packageInVenueId){
-//        return inquiryService.sendInquiryForChangePackageInVenue(bookingId, packageInVenueId);
-//    }
+    @PostMapping("/create-inquiry-for-change-package-in-venue")
+    public ResponseEntity<ResponseObj> sendInquiryForChangePackageInVenue(@Valid @RequestParam Long bookingId, @RequestParam Long packageInVenueId){
+        return inquiryService.sendInquiryForChangePackageInVenue(bookingId, packageInVenueId);
+    }
     @GetMapping("/get-all-question")
     public ResponseEntity<ResponseObj> getAll(){
         return inquiryService.getAll();
