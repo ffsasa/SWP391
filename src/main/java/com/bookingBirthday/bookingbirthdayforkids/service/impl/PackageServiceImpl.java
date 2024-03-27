@@ -77,29 +77,49 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         }
     }
 
+    //Sửa
     @Override
-    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, String packageDescription, float percent,List<PackageServiceRequest> packageServiceRequestList) {
+    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, String packageDescription, float percent,List<PackageServiceRequest> packageServiceRequestList, TypeEnum typeEnum) {
         if (packageRepository.existsByPackageName(packageName)) {
             return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(), "Package name has already exist", null));
         }
         Package pack = new Package();
         float packPricing = 0;
         try {
-            if (imgFile != null) {
-                String img = firebaseService.uploadImage(imgFile);
-                pack.setPackageName(packageName);
-                pack.setPackageImgUrl(img);
-                pack.setPackageDescription(packageDescription);
-                pack.setActive(true);
-                pack.setCreateAt(LocalDateTime.now());
-                pack.setUpdateAt(LocalDateTime.now());
-                packageRepository.save(pack);
+            String img = "";
+            if (imgFile != null){
+                switch (typeEnum){
+                    case FOOD:
+                        img = firebaseService.uploadImage(imgFile);
+                        pack.setPackageName(packageName);
+                        pack.setPackageImgUrl(img);
+                        pack.setPackageDescription(packageDescription);
+                        pack.setActive(true);
+                        pack.setCreateAt(LocalDateTime.now());
+                        pack.setUpdateAt(LocalDateTime.now());
+                        pack.setPackageType(typeEnum);
+                        packageRepository.save(pack);
+                        break;
+                    case DECORATION:
+                        img = firebaseService.uploadImage(imgFile);
+                        pack.setPackageName(packageName);
+                        pack.setPackageImgUrl(img);
+                        pack.setPackageDescription(packageDescription);
+                        pack.setActive(true);
+                        pack.setCreateAt(LocalDateTime.now());
+                        pack.setUpdateAt(LocalDateTime.now());
+                        pack.setPackageType(typeEnum);
+                        packageRepository.save(pack);
+                        break;
+                    default:
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid package type", null));
+                }
             }
-        } catch (Exception e){
+        }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Image is invalid", null));
         }
-        List<PackageServiceRequest> packageServiceRequests = packageServiceRequestList;
-        for (PackageServiceRequest packageServiceRequest : packageServiceRequests) {
+
+        for (PackageServiceRequest packageServiceRequest : packageServiceRequestList) {
                 PackageService packageService = new PackageService();
                 packageService.setCount(packageServiceRequest.getCount());
                 packageService.setPricing((packageServiceRequest.getCount()*servicesRepository.findById(packageServiceRequest.getServiceId()).get().getPricing()));

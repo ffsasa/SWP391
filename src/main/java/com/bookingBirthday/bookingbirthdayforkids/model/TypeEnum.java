@@ -1,5 +1,8 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
+import lombok.Getter;
+
+@Getter
 public enum TypeEnum {
     FOOD(1),
     DECORATION(2);
