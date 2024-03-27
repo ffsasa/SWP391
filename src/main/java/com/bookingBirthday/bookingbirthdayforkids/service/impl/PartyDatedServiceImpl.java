@@ -98,6 +98,7 @@ public class PartyDatedServiceImpl implements PartyDatedService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "PartyDated does not exist", null));
     }
 
+    //Sửa
     @Override
     public ResponseEntity<ResponseObj> getPartyBookingByPartyDateId(Long id) {
         Optional<PartyDated> partyDated = partyDatedRepository.findById(id);
@@ -116,12 +117,13 @@ public class PartyDatedServiceImpl implements PartyDatedService {
                     }
                 }
 
-                float Upricing = 0;
-                List<UpgradeService> upgradeService = upgradeServiceRepository.findAllByPartyBookingId(partyBooking.getId());
-                for (UpgradeService upgradeService1 : upgradeService){
-                    Upricing = Upricing + upgradeService1.getPricing();
+                float upPricing = 0;
+                List<UpgradeService> upgradeServiceList = upgradeServiceRepository.findAllByPartyBookingId(partyBooking.getId());
+                for (UpgradeService upgradeService : upgradeServiceList){
+                    upPricing = upPricing + upgradeService.getPricing();
                 }
-//                partyBooking.setPricingTotal(partyBooking.getPackageInVenue().getApackage().getPricing()+Upricing);
+                float totalPricingPackage = getTotalPricingPackage(partyBooking);
+                partyBooking.setPricingTotal(totalPricingPackage + upPricing);
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBooking));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "PartyDated can be deleted or does not exist", null));
@@ -131,5 +133,18 @@ public class PartyDatedServiceImpl implements PartyDatedService {
         }
         else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "PartyDated does not exist", null));
+    }
+
+    private static float getTotalPricingPackage(PartyBooking partyBooking) {
+        float totalPricingPackage = 0;
+        for (PackageInBooking packageInBooking : partyBooking.getPackageInBookings()){
+            if(packageInBooking.getPackageInVenue().getApackage().getPackageType().equals(TypeEnum.DECORATION)){
+                totalPricingPackage += packageInBooking.getPackageInVenue().getApackage().getPricing();
+            }
+            else {
+                totalPricingPackage += (packageInBooking.getPackageInVenue().getApackage().getPricing()* partyBooking.getParticipantAmount());
+            }
+        }
+        return totalPricingPackage;
     }
 }
