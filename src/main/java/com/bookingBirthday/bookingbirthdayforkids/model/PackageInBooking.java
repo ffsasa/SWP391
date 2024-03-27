@@ -23,5 +23,4 @@ public class PackageInBooking extends BaseEntity{
     @ManyToOne()
     @JoinColumn(name = "packageInVenue_id")
     private PackageInVenue packageInVenue;
-
 }

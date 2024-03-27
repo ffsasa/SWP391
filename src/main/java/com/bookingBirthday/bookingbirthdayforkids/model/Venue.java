@@ -28,7 +28,7 @@ public class Venue extends BaseEntity{
     @NotBlank(message = "Ward cannot be blank")
     private String ward;
     @NotBlank(message = "District cannot be blank")
-    private String District;
+    private String district;
     @NotBlank(message = "City cannot be blank")
     private String city;
 
