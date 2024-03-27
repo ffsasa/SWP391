@@ -1,9 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.dto.request;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -26,6 +23,8 @@ public class PartyBookingRequest {
     @NotBlank(message = "Phone number cannot be blank")
     @Pattern(regexp = "\\d{10}", message = "Invalid phone number format")
     private String phone;
+    @Min(value = 1, message = "Capacity value must be greater than or equal to 1")
+    private int participantAmount;
 
     @NotNull(message = "Theme ID cannot be null")
     private Long themeInVenueId;

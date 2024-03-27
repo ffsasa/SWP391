@@ -28,4 +28,4 @@ public class Slot extends BaseEntity {
     @OneToMany(mappedBy = "slot")
     @JsonIgnore
     private List<SlotInRoom> slotInRoom;
-    }
+}

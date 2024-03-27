@@ -6,6 +6,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,8 +20,9 @@ import java.util.List;
 @Getter
 @Setter
 public class PaymentMethod extends BaseEntity {
-
+    @NotBlank(message = "Method Name cannot blank")
     private String methodName;
+    @NotBlank(message = "Method Description cannot blank")
     private String methodDescription;
 
     @OneToMany(mappedBy = "paymentMethod", cascade = CascadeType.ALL)

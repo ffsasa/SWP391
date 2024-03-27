@@ -76,11 +76,11 @@ public class PaymentServiceImpl implements PaymentService {
                 Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
 
                 Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
-                int vnp_Amount = (int) partyBooking.get().getPackageInVenue().getApackage().getPricing();
+//                int vnp_Amount = (int) partyBooking.get().getPackageInBookings()..getPricing();
 
-                for(UpgradeService upgradeService : partyBooking.get().getUpgradeServices()){
-                    vnp_Amount += (int) (upgradeService.getServices().getPricing() * upgradeService.getCount());
-                }
+//                for(UpgradeService upgradeService : partyBooking.get().getUpgradeServices()){
+//                    vnp_Amount += (int) (upgradeService.getServices().getPricing() * upgradeService.getCount());
+//                }
 
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
                 String vnp_CreateDate = formatter.format(cld.getTime());
@@ -92,7 +92,7 @@ public class PaymentServiceImpl implements PaymentService {
                 vnp_Params.put("vnp_Version", PaymentConfig.vnp_Version);
                 vnp_Params.put("vnp_Command", PaymentConfig.vnp_Command);
                 vnp_Params.put("vnp_TmnCode", PaymentConfig.vnp_TmnCode);
-                vnp_Params.put("vnp_Amount", String.valueOf(String.valueOf(vnp_Amount) + "00"));
+//                vnp_Params.put("vnp_Amount", String.valueOf(String.valueOf(vnp_Amount) + "00"));
                 vnp_Params.put("vnp_BankCode",  PaymentConfig.vnp_BankCode);
                 vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
                 vnp_Params.put("vnp_CurrCode", PaymentConfig.vnp_CurrCode);
