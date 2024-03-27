@@ -14,7 +14,6 @@ import java.util.List;
 @Entity
 @Builder
 public class Role extends BaseEntity{
-
     @Enumerated(EnumType.STRING)
     private RoleEnum name;
 

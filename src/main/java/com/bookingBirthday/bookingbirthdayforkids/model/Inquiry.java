@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 public class Inquiry extends BaseEntity{
+
     private String inquiryQuestion;
     private String inquiryReply;
     @Enumerated(EnumType.STRING)

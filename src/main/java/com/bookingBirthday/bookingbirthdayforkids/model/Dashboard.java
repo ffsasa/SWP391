@@ -13,7 +13,6 @@ public class Dashboard {
 
     private float totalRevenue;
     private int totalBooking;
-    private List<DashboardResponse> themeList;
     private List<DashboardResponse> serviceList;
     private List<DashboardResponse> venueList;
     private List<DashboardResponse> aPackageList;

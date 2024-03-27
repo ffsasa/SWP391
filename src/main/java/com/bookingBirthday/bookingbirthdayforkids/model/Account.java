@@ -21,7 +21,6 @@ import java.util.List;
 @Builder
 @Entity
 public class Account extends BaseEntity implements UserDetails {
-
     private String username;
     private String password;
     private String fullName;
