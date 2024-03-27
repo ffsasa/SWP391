@@ -505,7 +505,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 Optional<PackageInVenue> packageInVenue = packageInVenueRepository.findById(packageInVenueId);
                 if (packageInVenue.isPresent()) {
                     PackageInVenue newPackageInVenue = packageInVenue.get();
-                    partyBooking.setPackageInVenue(newPackageInVenue);
+//                    partyBooking.setPackageInVenue(newPackageInVenue);
                     partyBookingRepository.save(partyBooking);
 
                     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Update successful", null));

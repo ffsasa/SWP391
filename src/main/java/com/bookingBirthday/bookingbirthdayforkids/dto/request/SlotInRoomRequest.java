@@ -10,9 +10,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SlotInVenueRequest {
+public class SlotInRoomRequest {
     @NotNull(message = "Venue ID cannot be null")
-    private Long venue_id;
+    private Long room_id;
     @NotNull(message = "Slot ID cannot be null")
     private Long slot_id;
 }
