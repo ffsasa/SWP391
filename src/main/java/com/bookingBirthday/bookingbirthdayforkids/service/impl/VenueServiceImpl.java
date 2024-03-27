@@ -45,7 +45,7 @@ public class VenueServiceImpl implements VenueService {
     SlotRepository slotRepository;
 
     @Autowired
-    SlotInVenueRepository slotInVenueRepository;
+    SlotInRoomRepository slotInRoomRepository;
 
     @Override
     public ResponseEntity<ResponseObj> getAll() {
@@ -74,19 +74,19 @@ public class VenueServiceImpl implements VenueService {
     }
 
 
-    @Override
-    public ResponseEntity<ResponseObj> getSlotInVenueById(Long id) {
-        try {
-            Optional<Venue> venue = venueRepository.findById(id);
-            if (venue.isPresent()) {
-                List<SlotInVenue> slotInVenueList = venue.get().getSlotInVenueList();
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", slotInVenueList));
-            }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
-    }
+//    @Override
+//    public ResponseEntity<ResponseObj> getSlotInVenueById(Long id) {
+//        try {
+//            Optional<Venue> venue = venueRepository.findById(id);
+//            if (venue.isPresent()) {
+//                List<SlotInRoom> slotInRoomList = venue.get().getSlotInRoomList();
+//                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", slotInRoomList));
+//            }
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+//        }
+//    }
 
     @Override
     public ResponseEntity<ResponseObj> getPackageInVenueByVenue(Long venueId) {
@@ -130,31 +130,31 @@ public class VenueServiceImpl implements VenueService {
         }
     }
 
-    @Override
-    public ResponseEntity<ResponseObj> getAllSlotHaveNotAddByVenue(Long venueId) {
-        try {
-            Optional<Venue> venue = venueRepository.findById(venueId);
-            if (venue.isPresent()) {
-                List<SlotInVenue> slotInVenueList = venue.get().getSlotInVenueList();
-                List<Slot> slotAddedList = new ArrayList<>();
-                for (SlotInVenue slotInVenue : slotInVenueList) {
-                    slotAddedList.add(slotInVenue.getSlot());
-                }
-                List<Slot> slotList = slotRepository.findAll();
-                List<Slot> slotNotAddList = new ArrayList<>();
-                for (Slot slot : slotList) {
-                    if (!slotAddedList.contains(slot)) {
-                        slotNotAddList.add(slot);
-                    }
-                }
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", slotNotAddList));
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This theme does not exist", null));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
-    }
+//    @Override
+//    public ResponseEntity<ResponseObj> getAllSlotHaveNotAddByVenue(Long venueId) {
+//        try {
+//            Optional<Venue> venue = venueRepository.findById(venueId);
+//            if (venue.isPresent()) {
+//                List<SlotInRoom> slotInRoomList = venue.get().getSlotInRoomList();
+//                List<Slot> slotAddedList = new ArrayList<>();
+//                for (SlotInRoom slotInRoom : slotInRoomList) {
+//                    slotAddedList.add(slotInRoom.getSlot());
+//                }
+//                List<Slot> slotList = slotRepository.findAll();
+//                List<Slot> slotNotAddList = new ArrayList<>();
+//                for (Slot slot : slotList) {
+//                    if (!slotAddedList.contains(slot)) {
+//                        slotNotAddList.add(slot);
+//                    }
+//                }
+//                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", slotNotAddList));
+//            } else {
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This theme does not exist", null));
+//            }
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+//        }
+//    }
 
     @Override
     public ResponseEntity<ResponseObj> getAllThemeHaveNotAddByVenue(Long venueId) {
@@ -208,71 +208,71 @@ public class VenueServiceImpl implements VenueService {
         }
     }
 
-    @Override
-    public ResponseEntity<ResponseObj> checkSlotInVenue(LocalDateTime date) {
-        try {
-            LocalDateTime currentDateTime = LocalDateTime.now();;
-            LocalDateTime chooseDateTime = date.withHour(0).withMinute(0).withSecond(0);
+//    @Override
+//    public ResponseEntity<ResponseObj> checkSlotInVenue(LocalDateTime date) {
+//        try {
+//            LocalDateTime currentDateTime = LocalDateTime.now();;
+//            LocalDateTime chooseDateTime = date.withHour(0).withMinute(0).withSecond(0);
+//
+//            if (currentDateTime.isAfter(chooseDateTime.plusHours(6)) ) {
+//                List<SlotInRoom> slotInRoomList = new ArrayList<>();
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "The date has expired", slotInRoomList));
+//            }
+//            List<Venue> venueList = venueRepository.findAllByIsActiveIsTrue();
+//            if (venueList.isEmpty())
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+//
+//            List<PartyDated> partyDatedList = partyDatedRepository.findByDateAndIsActiveIsTrue(date.toLocalDate());
+//
+//            for (Venue venue : venueList) {
+//                List<SlotInRoom> slotInRoomList = venue.getSlotInRoomList();
+//                List<SlotInRoom> slotInRoomListValidate = new ArrayList<>();
+//                for (SlotInRoom slotInRoom : slotInRoomList) {
+//                    if (slotInRoom.isActive()) {
+//                        slotInRoomListValidate.add(slotInRoom);
+//                    }
+//                }
+//                for (SlotInRoom slotInRoom : slotInRoomListValidate) {
+//                    for (PartyDated partyDated : partyDatedList) {
+//                        if (partyDated.getSlotInRoom().equals(slotInRoom)) {
+//                            slotInRoom.setStatus(true);
+//                        }
+//                    }
+//                }
+//                venue.setSlotInRoomList(slotInRoomListValidate);
+//            }
+//            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", venueList));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+//        }
+//    }
 
-            if (currentDateTime.isAfter(chooseDateTime.plusHours(6)) ) {
-                List<SlotInVenue> slotInVenueList = new ArrayList<>();
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "The date has expired", slotInVenueList));
-            }
-            List<Venue> venueList = venueRepository.findAllByIsActiveIsTrue();
-            if (venueList.isEmpty())
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
-
-            List<PartyDated> partyDatedList = partyDatedRepository.findByDateAndIsActiveIsTrue(date.toLocalDate());
-
-            for (Venue venue : venueList) {
-                List<SlotInVenue> slotInVenueList = venue.getSlotInVenueList();
-                List<SlotInVenue> slotInVenueListValidate = new ArrayList<>();
-                for (SlotInVenue slotInVenue : slotInVenueList) {
-                    if (slotInVenue.isActive()) {
-                        slotInVenueListValidate.add(slotInVenue);
-                    }
-                }
-                for (SlotInVenue slotInVenue : slotInVenueListValidate) {
-                    for (PartyDated partyDated : partyDatedList) {
-                        if (partyDated.getSlotInVenue().equals(slotInVenue)) {
-                            slotInVenue.setStatus(true);
-                        }
-                    }
-                }
-                venue.setSlotInVenueList(slotInVenueListValidate);
-            }
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", venueList));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
-    }
-
-    @Override
-    public ResponseEntity<ResponseObj> checkSlotInVenueForHost(LocalDate date) {
-        try {
-            List<Venue> venueList = venueRepository.findAll();
-            if (venueList.isEmpty())
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List venue is empty", null));
-
-            List<PartyDated> partyDatedList = partyDatedRepository.findByDateAndIsActiveIsTrue(date);
-
-            for (Venue venue : venueList) {
-                List<SlotInVenue> slotInVenueList = venue.getSlotInVenueList();
-                for (SlotInVenue slotInVenue : slotInVenueList) {
-
-                    for (PartyDated partyDated : partyDatedList) {
-                        if (partyDated.getSlotInVenue().equals(slotInVenue)) {
-                            slotInVenue.setPartyDated(partyDated);
-                            slotInVenue.setStatus(true);
-                        }
-                    }
-                }
-            }
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", venueList));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
-    }
+//    @Override
+//    public ResponseEntity<ResponseObj> checkSlotInVenueForHost(LocalDate date) {
+//        try {
+//            List<Venue> venueList = venueRepository.findAll();
+//            if (venueList.isEmpty())
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List venue is empty", null));
+//
+//            List<PartyDated> partyDatedList = partyDatedRepository.findByDateAndIsActiveIsTrue(date);
+//
+//            for (Venue venue : venueList) {
+//                List<SlotInRoom> slotInRoomList = venue.getSlotInRoomList();
+//                for (SlotInRoom slotInRoom : slotInRoomList) {
+//
+//                    for (PartyDated partyDated : partyDatedList) {
+//                        if (partyDated.getSlotInRoom().equals(slotInRoom)) {
+//                            slotInRoom.setPartyDated(partyDated);
+//                            slotInRoom.setStatus(true);
+//                        }
+//                    }
+//                }
+//            }
+//            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", venueList));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+//        }
+//    }
 
     @Override
     public ResponseEntity<ResponseObj> getById(Long id) {
@@ -312,8 +312,8 @@ public class VenueServiceImpl implements VenueService {
                 venue.setVenueName(venueName);
                 venue.setVenueDescription(venueDescription);
                 venue.setVenueImgUrl(img);
-                venue.setLocation(location);
-                venue.setCapacity(capacity);
+//                venue.setLocation(location);
+//                venue.setCapacity(capacity);
                 venue.setActive(false);
                 venue.setCreateAt(LocalDateTime.now());
                 venue.setUpdateAt(LocalDateTime.now());
@@ -325,38 +325,38 @@ public class VenueServiceImpl implements VenueService {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", venue));
     }
 
-    public ResponseEntity<ResponseObj> activeVenue(Long id) {
-        Optional<Venue> venue = venueRepository.findById(id);
-        if (!venue.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
-        }
-        try {
-            venue.get().getSlotInVenueList().forEach(slotInVenue -> {
-                slotInVenue.setUpdateAt(LocalDateTime.now());
-                slotInVenue.setActive(true);
-                slotInVenueRepository.save(slotInVenue);
-            });
-
-            venue.get().getThemeInVenueList().forEach(themeInVenue -> {
-                themeInVenue.setUpdateAt(LocalDateTime.now());
-                themeInVenue.setActive(true);
-                themeInVenueRepository.save(themeInVenue);
-            });
-
-            venue.get().getPackageInVenueList().forEach(packageInVenue -> {
-                packageInVenue.setUpdateAt(LocalDateTime.now());
-                packageInVenue.setActive(true);
-                packageInVenueRepository.save(packageInVenue);
-            });
-
-            venue.get().setActive(true);
-            venueRepository.save(venue.get());
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Set venue active successful", venue));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
-    }
+//    public ResponseEntity<ResponseObj> activeVenue(Long id) {
+//        Optional<Venue> venue = venueRepository.findById(id);
+//        if (!venue.isPresent()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
+//        }
+//        try {
+//            venue.get().getSlotInRoomList().forEach(slotInVenue -> {
+//                slotInVenue.setUpdateAt(LocalDateTime.now());
+//                slotInVenue.setActive(true);
+//                slotInRoomRepository.save(slotInVenue);
+//            });
+//
+//            venue.get().getThemeInVenueList().forEach(themeInVenue -> {
+//                themeInVenue.setUpdateAt(LocalDateTime.now());
+//                themeInVenue.setActive(true);
+//                themeInVenueRepository.save(themeInVenue);
+//            });
+//
+//            venue.get().getPackageInVenueList().forEach(packageInVenue -> {
+//                packageInVenue.setUpdateAt(LocalDateTime.now());
+//                packageInVenue.setActive(true);
+//                packageInVenueRepository.save(packageInVenue);
+//            });
+//
+//            venue.get().setActive(true);
+//            venueRepository.save(venue.get());
+//            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Set venue active successful", venue));
+//
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+//        }
+//    }
 
 
     @Override
@@ -369,8 +369,8 @@ public class VenueServiceImpl implements VenueService {
 
             venue.get().setVenueName(venueName == null ? venue.get().getVenueName() : venueName);
             venue.get().setVenueDescription(venueDescription == null ? venue.get().getVenueDescription() : venueDescription);
-            venue.get().setLocation(location == null ? venue.get().getLocation() : location);
-            venue.get().setCapacity(capacity == 0 ? venue.get().getCapacity() : capacity);
+//            venue.get().setLocation(location == null ? venue.get().getLocation() : location);
+//            venue.get().setCapacity(capacity == 0 ? venue.get().getCapacity() : capacity);
             venue.get().setVenueImgUrl(imgFile == null ? venue.get().getVenueImgUrl() : firebaseService.uploadImage(imgFile));
             venue.get().setUpdateAt(LocalDateTime.now());
             venueRepository.save(venue.get());
@@ -383,14 +383,14 @@ public class VenueServiceImpl implements VenueService {
 
     @Override
     public ResponseEntity<ResponseObj> delete(Long id) {
-        try {
+//        try {
             Optional<Venue> venue = venueRepository.findById(id);
-            if (venue.isPresent()) {
-                venue.get().getSlotInVenueList().forEach(slotInVenue -> {
-                    slotInVenue.setDeleteAt(LocalDateTime.now());
-                    slotInVenue.setActive(false);
-                    slotInVenueRepository.save(slotInVenue);
-                });
+//            if (venue.isPresent()) {
+//                venue.get().getSlotInRoomList().forEach(slotInVenue -> {
+//                    slotInVenue.setDeleteAt(LocalDateTime.now());
+//                    slotInVenue.setActive(false);
+//                    slotInRoomRepository.save(slotInVenue);
+//                });
 
                 venue.get().getThemeInVenueList().forEach(themeInVenue -> {
                     themeInVenue.setDeleteAt(LocalDateTime.now());
@@ -408,58 +408,58 @@ public class VenueServiceImpl implements VenueService {
                 venue.get().setDeleteAt(LocalDateTime.now());
                 venueRepository.save(venue.get());
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Delete successful", null));
-            } else
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
-    }
+//            } else
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+//        }
+//    }
 
-    @Override
-    public ResponseEntity<ResponseObj> addTheme(Long venueId, Long themeId) {
-        try {
-            Optional<Theme> theme = themeRepository.findById(themeId);
-            Optional<Venue> venue = venueRepository.findById(venueId);
-            if (!theme.isPresent()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This theme does not exist", null));
-            }
-            if (venue.isPresent()) {
-                ThemeInVenue themeInVenue = new ThemeInVenue();
-                themeInVenue.setTheme(theme.get());
-                themeInVenue.setVenue(venue.get());
-                themeInVenue.setActive(true);
-                themeInVenue.setCreateAt(LocalDateTime.now());
-                themeInVenue.setUpdateAt(LocalDateTime.now());
-                themeInVenueRepository.save(themeInVenue);
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", null));
-            } else
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
-    }
-
-    @Override
-    public ResponseEntity<ResponseObj> addPackage(Long venueId, Long packageId) {
-        try {
-            Optional<Package> aPackage = packageRepository.findById(packageId);
-            Optional<Venue> venue = venueRepository.findById(venueId);
-            if (!aPackage.isPresent()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This package does not exist", null));
-            }
-            if (venue.isPresent()) {
-                PackageInVenue packageInVenue = new PackageInVenue();
-                packageInVenue.setApackage(aPackage.get());
-                packageInVenue.setVenue(venue.get());
-                packageInVenue.setActive(true);
-                packageInVenue.setCreateAt(LocalDateTime.now());
-                packageInVenue.setUpdateAt(LocalDateTime.now());
-                packageInVenueRepository.save(packageInVenue);
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", null));
-            } else
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
+//    @Override
+//    public ResponseEntity<ResponseObj> addTheme(Long venueId, Long themeId) {
+//        try {
+//            Optional<Theme> theme = themeRepository.findById(themeId);
+//            Optional<Venue> venue = venueRepository.findById(venueId);
+//            if (!theme.isPresent()) {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This theme does not exist", null));
+//            }
+//            if (venue.isPresent()) {
+//                ThemeInVenue themeInVenue = new ThemeInVenue();
+//                themeInVenue.setTheme(theme.get());
+//                themeInVenue.setVenue(venue.get());
+//                themeInVenue.setActive(true);
+//                themeInVenue.setCreateAt(LocalDateTime.now());
+//                themeInVenue.setUpdateAt(LocalDateTime.now());
+//                themeInVenueRepository.save(themeInVenue);
+//                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", null));
+//            } else
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+//        }
+//    }
+//
+//    @Override
+//    public ResponseEntity<ResponseObj> addPackage(Long venueId, Long packageId) {
+//        try {
+//            Optional<Package> aPackage = packageRepository.findById(packageId);
+//            Optional<Venue> venue = venueRepository.findById(venueId);
+//            if (!aPackage.isPresent()) {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This package does not exist", null));
+//            }
+//            if (venue.isPresent()) {
+//                PackageInVenue packageInVenue = new PackageInVenue();
+//                packageInVenue.setApackage(aPackage.get());
+//                packageInVenue.setVenue(venue.get());
+//                packageInVenue.setActive(true);
+//                packageInVenue.setCreateAt(LocalDateTime.now());
+//                packageInVenue.setUpdateAt(LocalDateTime.now());
+//                packageInVenueRepository.save(packageInVenue);
+//                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", null));
+//            } else
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+//        }
     }
 }

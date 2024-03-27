@@ -39,7 +39,7 @@ public class PartyBooking extends BaseEntity{
 
     @Transient
     @JsonProperty("slotInVenueObject")
-    private SlotInVenue slotInVenueObject;
+    private SlotInRoom slotInRoomObject;
 
     @Transient
     @JsonProperty("venue")

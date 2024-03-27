@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Builder
-public class SlotInVenue extends BaseEntity{
+public class SlotInRoom extends BaseEntity{
 
     @Transient
     @JsonProperty("status")
@@ -32,7 +32,11 @@ public class SlotInVenue extends BaseEntity{
     @JoinColumn(name = "slot_id")
     private Slot slot;
 
-    @OneToMany(mappedBy = "slotInVenue", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "slotInRoom", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<PartyDated> partyDatedList;
+
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    private Room room;
 }

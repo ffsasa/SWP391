@@ -50,8 +50,8 @@ public class InquiryQuestionServiceImpl implements InquiryQuestionService {
         Account account = accountRepository.findById(userId).get();
         Inquiry inquiry = new Inquiry();
         String question = "Tại booking (id = " + bookingId + ") ngày " + partyBooking.getPartyDated().getDate()
-                + " khung giờ từ " + partyBooking.getPartyDated().getSlotInVenue().getSlot().getTimeStart()
-                + " đến " + partyBooking.getPartyDated().getSlotInVenue().getSlot().getTimeEnd()
+                + " khung giờ từ " + partyBooking.getPartyDated().getSlotInRoom().getSlot().getTimeStart()
+                + " đến " + partyBooking.getPartyDated().getSlotInRoom().getSlot().getTimeEnd()
                 + " tại địa điểm " + themeInVenue.getVenue().getVenueName().toUpperCase()
                 + ". Tôi muốn thay đổi chủ đề bữa tiệc thành " + themeName.toUpperCase();
         inquiry.setInquiryQuestion(question);
@@ -80,8 +80,8 @@ public class InquiryQuestionServiceImpl implements InquiryQuestionService {
 
         Account account = accountRepository.findById(userId).get();
         Inquiry inquiry = new Inquiry();
-        String question = "Tại booking (id = " + bookingId + ") ngày " + partyBooking.getPartyDated().getDate() + " khung giờ từ " + partyBooking.getPartyDated().getSlotInVenue().getSlot().getTimeStart()
-                + " đến " + partyBooking.getPartyDated().getSlotInVenue().getSlot().getTimeEnd()
+        String question = "Tại booking (id = " + bookingId + ") ngày " + partyBooking.getPartyDated().getDate() + " khung giờ từ " + partyBooking.getPartyDated().getSlotInRoom().getSlot().getTimeStart()
+                + " đến " + partyBooking.getPartyDated().getSlotInRoom().getSlot().getTimeEnd()
                 + " tại địa điểm " + themeInVenue.getVenue().getVenueName().toUpperCase()
                 + ". Tôi muốn thay đổi gói dịch vụ bữa tiệc thành " + packageName.toUpperCase();
         inquiry.setInquiryQuestion(question);

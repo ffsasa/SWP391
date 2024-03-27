@@ -5,7 +5,7 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.*;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PartyBookingRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PartyDatedRepository;
-import com.bookingBirthday.bookingbirthdayforkids.repository.SlotInVenueRepository;
+import com.bookingBirthday.bookingbirthdayforkids.repository.SlotInRoomRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.UpgradeServiceRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.PartyDatedService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class PartyDatedServiceImpl implements PartyDatedService {
     @Autowired
     PartyDatedRepository partyDatedRepository;
     @Autowired
-    SlotInVenueRepository slotInVenueRepository;
+    SlotInRoomRepository slotInRoomRepository;
     @Autowired
     PartyBookingRepository partyBookingRepository;
     @Autowired
@@ -71,10 +71,10 @@ public class PartyDatedServiceImpl implements PartyDatedService {
     }
     @Override
     public ResponseEntity<ResponseObj> update(Long id, PartyDatedRequest partyDatedRequest) {
-        SlotInVenue slotInVenue = slotInVenueRepository.findById(partyDatedRequest.getSlotInVenueId()).get();
+        SlotInRoom slotInRoom = slotInRoomRepository.findById(partyDatedRequest.getSlotInVenueId()).get();
         Optional<PartyDated> existPartyDated  = partyDatedRepository.findById(id);
         if (existPartyDated.isPresent()){
-            existPartyDated.get().setSlotInVenue(slotInVenue == null ? existPartyDated.get().getSlotInVenue() : slotInVenue);
+            existPartyDated.get().setSlotInRoom(slotInRoom == null ? existPartyDated.get().getSlotInRoom() : slotInRoom);
             existPartyDated.get().setDate(partyDatedRequest.getDate() == null ? existPartyDated.get().getDate() : partyDatedRequest.getDate());
             existPartyDated.get().setUpdateAt(LocalDateTime.now());
             partyDatedRepository.save(existPartyDated.get());
@@ -104,10 +104,10 @@ public class PartyDatedServiceImpl implements PartyDatedService {
         if (partyDated.isPresent()){
             PartyBooking partyBooking = partyDated.get().getPartyBooking();
             if(partyBooking != null){
-                SlotInVenue slotInVenue = partyBooking.getPartyDated().getSlotInVenue();
-                partyBooking.setSlotInVenueObject(slotInVenue);
-                Venue venue = slotInVenue.getVenue();
-                venue.setSlotInVenueList(null);
+                SlotInRoom slotInRoom = partyBooking.getPartyDated().getSlotInRoom();
+                partyBooking.setSlotInRoomObject(slotInRoom);
+                Venue venue = slotInRoom.getVenue();
+//                venue.setSlotInRoomList(null);
                 partyBooking.setVenue(venue);
                 partyBooking.setIsPayment(false);
                 for(Payment payment: partyBooking.getPaymentList()){
