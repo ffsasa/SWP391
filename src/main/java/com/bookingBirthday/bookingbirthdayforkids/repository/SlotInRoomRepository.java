@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SlotInRoomRepository extends JpaRepository<SlotInRoom, Long> {
     boolean existsBySlotIdAndRoomId(Long slot_id, Long room_id);
-//    SlotInRoom findByVenueAndSlot(Venue venue, Slot slot);
+    SlotInRoom findByRoomAndSlot(Room room, Slot slot);
 }
