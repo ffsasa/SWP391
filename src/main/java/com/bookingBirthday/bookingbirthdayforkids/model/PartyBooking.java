@@ -46,10 +46,6 @@ public class PartyBooking extends BaseEntity{
     private Boolean isPayment;
 
     @ManyToOne
-    @JoinColumn(name = "packageInVenue_id")
-    private PackageInVenue packageInVenue;
-
-    @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
 
@@ -58,7 +54,6 @@ public class PartyBooking extends BaseEntity{
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "partyDated_id", referencedColumnName = "id")
-//    @JsonIgnore
     private PartyDated partyDated;
 
     @OneToMany(mappedBy = "partyBooking", cascade = CascadeType.ALL)

@@ -29,4 +29,5 @@ public class PackageService extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "service_id")
     private Services services;
+
 }

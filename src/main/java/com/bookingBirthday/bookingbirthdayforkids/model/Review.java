@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 public class Review extends BaseEntity{
+
     private String reviewMessage;
     private String replyMessage;
     @Min(value = 1, message = "Rating must be at least 1")

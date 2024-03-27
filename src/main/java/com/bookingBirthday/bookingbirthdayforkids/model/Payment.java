@@ -23,7 +23,6 @@ import java.util.List;
 public class Payment extends BaseEntity {
     @Min(value = 1, message = "Min at least = 1")
     private float amount;
-
     private String status;
 
     @ManyToOne

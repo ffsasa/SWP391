@@ -24,11 +24,6 @@ public class SlotInRoom extends BaseEntity{
     private PartyDated partyDated;
 
     @ManyToOne
-    @JoinColumn(name = "venue_id")
-    @JsonIgnore
-    private Venue venue;
-
-    @ManyToOne
     @JoinColumn(name = "slot_id")
     private Slot slot;
 

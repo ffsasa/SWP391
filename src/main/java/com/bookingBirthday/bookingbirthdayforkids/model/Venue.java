@@ -31,19 +31,12 @@ public class Venue extends BaseEntity{
     private String District;
     @NotBlank(message = "City cannot be blank")
     private String city;
-//    @Min(value = 1, message = "Capacity value must be greater than or equal to 1")
-//    private int capacity;
-
 
     @OneToMany(mappedBy = "venue")
     @JsonIgnore
     private List<PackageInVenue> packageInVenueList;
-
-
-
+    
     @OneToMany(mappedBy = "venue")
     @JsonIgnore
     private List<Room> roomList;
-
-
 }

@@ -19,6 +19,7 @@ import java.util.List;
 @Getter
 @Setter
 public class PaymentMethod extends BaseEntity {
+
     private String methodName;
     private String methodDescription;
 

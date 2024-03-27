@@ -25,4 +25,5 @@ public class PartyDated extends BaseEntity{
     @JoinColumn(name = "slotInRoom_id")
     @JsonIgnore
     private SlotInRoom slotInRoom;
+
 }

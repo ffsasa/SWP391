@@ -35,7 +35,7 @@ public class Package extends BaseEntity{
     private List<PackageService> packageServiceList;
 
 
-   @OneToMany(mappedBy = "apackage", cascade = CascadeType.ALL)
-   @JsonIgnore
-   private List<PackageInVenue> packageInVenueList;
+    @OneToMany(mappedBy = "apackage", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<PackageInVenue> packageInVenueList;
 }

@@ -25,10 +25,6 @@ public class PackageInVenue extends BaseEntity{
     @JoinColumn(name = "package_id")
     private Package apackage;
 
-    @OneToMany(mappedBy = "packageInVenue", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<PackageInBooking> packageInBooking;
-
     @OneToMany(mappedBy = "packageInVenue")
     @JsonIgnore
     private List<PackageInBooking> packageInBookings;

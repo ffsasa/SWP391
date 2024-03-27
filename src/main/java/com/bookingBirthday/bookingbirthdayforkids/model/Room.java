@@ -19,6 +19,7 @@ public class Room extends BaseEntity{
     @Column(name = "room_img_url",columnDefinition = "TEXT")
     private String roomImgUrl;
     private int capacity;
+
     @ManyToOne
     @JoinColumn(name = "venue_id")
     private Venue venue;
