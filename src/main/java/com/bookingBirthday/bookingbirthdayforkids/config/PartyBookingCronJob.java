@@ -1,20 +1,15 @@
 package com.bookingBirthday.bookingbirthdayforkids.config;
 
-import com.bookingBirthday.bookingbirthdayforkids.dto.request.PartyBookingRequest;
 import com.bookingBirthday.bookingbirthdayforkids.model.PartyBooking;
 import com.bookingBirthday.bookingbirthdayforkids.model.StatusEnum;
 import com.bookingBirthday.bookingbirthdayforkids.service.PartyBookingService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.client.util.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.sql.Time;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
@@ -30,7 +25,7 @@ public class PartyBookingCronJob {
         List<PartyBooking> confirmedBookings = partyBookingService.findConfirmedBookings();
         for (PartyBooking booking : confirmedBookings) {
             try {
-                Time time = Time.valueOf(booking.getPartyDated().getSlotInVenue().getSlot().getTimeEnd());
+                Time time = Time.valueOf(booking.getPartyDated().getSlotInRoom().getSlot().getTimeEnd());
 
                 LocalTime localTime = time.toLocalTime();
 

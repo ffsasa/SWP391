@@ -33,26 +33,26 @@ public class VenueController {
         return venueService.getAllForHost();
     }
 
-    @GetMapping("/check-slot-in-venue")
-    public ResponseEntity<ResponseObj> checkSlotInVenue(@RequestParam String date) {
-        try {
-            return venueService.checkSlotInVenue(LocalDateTime.parse(date));
-        } catch (Exception e) {
-            List<Object> errors = new ArrayList<>();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid date", errors));
-        }
-    }
-
-    @GetMapping("/check-slot-in-venue-for-host")
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> checkSlotInVenueForHost(@RequestParam String date) {
-        try {
-            return venueService.checkSlotInVenueForHost(LocalDate.parse(date));
-        } catch (Exception e) {
-            List<Object> errors = new ArrayList<>();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid date", errors));
-        }
-    }
+//    @GetMapping("/check-slot-in-venue")
+//    public ResponseEntity<ResponseObj> checkSlotInVenue(@RequestParam String date) {
+//        try {
+//            return venueService.checkSlotInVenue(LocalDateTime.parse(date));
+//        } catch (Exception e) {
+//            List<Object> errors = new ArrayList<>();
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid date", errors));
+//        }
+//    }
+//
+//    @GetMapping("/check-slot-in-venue-for-host")
+//    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+//    public ResponseEntity<ResponseObj> checkSlotInVenueForHost(@RequestParam String date) {
+//        try {
+//            return venueService.checkSlotInVenueForHost(LocalDate.parse(date));
+//        } catch (Exception e) {
+//            List<Object> errors = new ArrayList<>();
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid date", errors));
+//        }
+//    }
 
     @GetMapping("/get-id/{id}")
     public ResponseEntity<ResponseObj> getById(@PathVariable Long id) {
@@ -75,15 +75,15 @@ public class VenueController {
         return venueService.getThemeInVenueByVenue(id);
     }
 
-    @GetMapping("/get-slot-in-venue-by-venue/{id}")
-    public ResponseEntity<ResponseObj> getSlotInVenueByVenue(@PathVariable Long id) {
-        return venueService.getSlotInVenueById(id);
-    }
-
-    @GetMapping("/get-slot-not-add-in-venue/{id}")
-    public ResponseEntity<ResponseObj> getSlotNotAddInVenue(@PathVariable Long id) {
-        return venueService.getAllSlotHaveNotAddByVenue(id);
-    }
+//    @GetMapping("/get-slot-in-venue-by-venue/{id}")
+//    public ResponseEntity<ResponseObj> getSlotInVenueByVenue(@PathVariable Long id) {
+//        return venueService.getSlotInVenueById(id);
+//    }
+//
+//    @GetMapping("/get-slot-not-add-in-venue/{id}")
+//    public ResponseEntity<ResponseObj> getSlotNotAddInVenue(@PathVariable Long id) {
+//        return venueService.getAllSlotHaveNotAddByVenue(id);
+//    }
     @GetMapping("/get-theme-not-add-in-venue/{id}")
     public ResponseEntity<ResponseObj> getThemeNotAddInVenue(@PathVariable Long id) {
         return venueService.getAllThemeHaveNotAddByVenue(id);
@@ -108,10 +108,10 @@ public class VenueController {
         }
     }
 
-    @PutMapping("/set-active-venue/{id}")
-    public ResponseEntity<ResponseObj> setActiveVenue(@PathVariable Long id){
-        return venueService.activeVenue(id);
-    }
+//    @PutMapping("/set-active-venue/{id}")
+//    public ResponseEntity<ResponseObj> setActiveVenue(@PathVariable Long id){
+//        return venueService.activeVenue(id);
+//    }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PutMapping(value = "/update-venue/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -135,13 +135,13 @@ public class VenueController {
         return venueService.delete(id);
     }
 
-    @PostMapping("/add-theme")
-    public ResponseEntity<ResponseObj> addTheme(@RequestParam Long venueId, @RequestParam Long themeId) {
-        return venueService.addTheme(venueId, themeId);
-    }
-
-    @PostMapping("/add-package")
-    public ResponseEntity<ResponseObj> addPackage(@RequestParam Long venueId, @RequestParam Long packageId) {
-        return venueService.addPackage(venueId, packageId);
-    }
+//    @PostMapping("/add-theme")
+//    public ResponseEntity<ResponseObj> addTheme(@RequestParam Long venueId, @RequestParam Long themeId) {
+//        return venueService.addTheme(venueId, themeId);
+//    }
+//
+//    @PostMapping("/add-package")
+//    public ResponseEntity<ResponseObj> addPackage(@RequestParam Long venueId, @RequestParam Long packageId) {
+//        return venueService.addPackage(venueId, packageId);
+//    }
 }

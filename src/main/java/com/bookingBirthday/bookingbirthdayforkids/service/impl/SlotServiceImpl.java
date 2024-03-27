@@ -3,7 +3,7 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.SlotRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.*;
-import com.bookingBirthday.bookingbirthdayforkids.repository.SlotInVenueRepository;
+import com.bookingBirthday.bookingbirthdayforkids.repository.SlotInRoomRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.SlotRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.VenueRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.SlotService;
@@ -27,7 +27,7 @@ public class SlotServiceImpl implements SlotService {
     @Autowired
     VenueRepository venueRepository;
     @Autowired
-    SlotInVenueRepository slotInVenueRepository;
+    SlotInRoomRepository slotInRoomRepository;
     @Override
     public ResponseEntity<ResponseObj> getAll() {
         List<Slot> slotList = slotRepository.findAllByIsActiveIsTrue();
@@ -187,7 +187,7 @@ public class SlotServiceImpl implements SlotService {
     @Override
     public ResponseEntity<ResponseObj> addSlotInVenueByVenueId(Long venueId, List<Long> slotId) {
         Venue venue = venueRepository.findById(venueId).get();
-        SlotInVenue slotInVenue = new SlotInVenue();
+        SlotInRoom slotInRoom = new SlotInRoom();
         ResponseEntity<ResponseObj> response = null;
         for (Long addSlot : slotId){
             Slot slot = slotRepository.findById(addSlot.longValue()).orElse(null);
@@ -195,21 +195,21 @@ public class SlotServiceImpl implements SlotService {
                 response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Slot not found", null));
                 continue;
             }
-            SlotInVenue existingSlotInVenue = slotInVenueRepository.findByVenueAndSlot(venue, slot);
-            if (existingSlotInVenue != null) {
+            SlotInRoom existingSlotInRoom = slotInRoomRepository.findByVenueAndSlot(venue, slot);
+            if (existingSlotInRoom != null) {
                 response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in venue already exists", null));
                 continue;
             }
-            slotInVenue = new SlotInVenue();
-            slotInVenue.setVenue(venue);
-            slotInVenue.setSlot(slot);
-            slotInVenue.setActive(true);
-            slotInVenue.setCreateAt(LocalDateTime.now());
-            slotInVenue.setUpdateAt(LocalDateTime.now());
-            slotInVenueRepository.save(slotInVenue);
+            slotInRoom = new SlotInRoom();
+            slotInRoom.setVenue(venue);
+            slotInRoom.setSlot(slot);
+            slotInRoom.setActive(true);
+            slotInRoom.setCreateAt(LocalDateTime.now());
+            slotInRoom.setUpdateAt(LocalDateTime.now());
+            slotInRoomRepository.save(slotInRoom);
         }
         if(response == null){
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", slotInVenue));
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", slotInRoom));
         }
         return response;
     }

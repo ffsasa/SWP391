@@ -37,7 +37,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     @Autowired
     PartyDatedRepository partyDatedRepository;
     @Autowired
-    SlotInVenueRepository slotInVenueRepository;
+    SlotInRoomRepository slotInRoomRepository;
     @Autowired
     ReviewRepository reviewRepository;
 
@@ -50,11 +50,11 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             }
             List<PartyBooking> partyBookingList = partyBookingRepository.findAllByIsActiveIsTrueAndAccountId(userId);
             for (PartyBooking partyBooking : partyBookingList) {
-                SlotInVenue slotInVenue = partyBooking.getPartyDated().getSlotInVenue();
-                partyBooking.setSlotInVenueObject(slotInVenue);
+                SlotInRoom slotInRoom = partyBooking.getPartyDated().getSlotInRoom();
+                partyBooking.setSlotInRoomObject(slotInRoom);
                 partyBooking.setPartyDated(partyBooking.getPartyDated());
                 Venue venue = partyBooking.getThemeInVenue().getVenue();
-                venue.setSlotInVenueList(null);
+//                venue.setSlotInRoomList(null);
                 partyBooking.setVenue(venue);
 
                 float pricingUpgradeService = 0;
@@ -138,9 +138,9 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to see this party", null));
                 }
                 PartyBooking partyBooking1 = partyBooking.get();
-                partyBooking1.setSlotInVenueObject(partyBooking1.getPartyDated().getSlotInVenue());
+                partyBooking1.setSlotInRoomObject(partyBooking1.getPartyDated().getSlotInRoom());
                 Venue venue = partyBooking1.getThemeInVenue().getVenue();
-                venue.setSlotInVenueList(null);
+//                venue.setSlotInRoomList(null);
                 partyBooking1.setVenue(venue);
                 float pricingUpgradeService = 0;
                 for (UpgradeService upgradeService : partyBooking1.getUpgradeServices()) {
@@ -175,7 +175,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
 
             Optional<ThemeInVenue> themeInVenue = themeInVenueRepository.findById(partyBookingRequest.getThemeInVenueId());
             Optional<PackageInVenue> packageInVenue = packageInVenueRepository.findById(partyBookingRequest.getPackageInVenueId());
-            Optional<SlotInVenue> slotInVenue = slotInVenueRepository.findById(partyBookingRequest.getSlotInVenueId());
+            Optional<SlotInRoom> slotInVenue = slotInRoomRepository.findById(partyBookingRequest.getSlotInVenueId());
             if (slotInVenue.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in venue does not exist", null));
             }
@@ -201,7 +201,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             //PartyDated
             PartyDated partyDate = new PartyDated();
             partyDate.setDate(partyBookingRequest.getDate());
-            partyDate.setSlotInVenue(slotInVenue.get());
+            partyDate.setSlotInRoom(slotInVenue.get());
             partyDate.setActive(true);
             partyDate.setCreateAt(LocalDateTime.now());
             partyDate.setUpdateAt(LocalDateTime.now());
@@ -251,10 +251,10 @@ public class PartyBookingServiceImpl implements PartyBookingService {
 
                 Optional<PartyDated> existPartyDated = partyDatedRepository.findPartyDatedByPartyBookingId(id);
                 if (partyBookingRequest.getDate() != null || partyBookingRequest.getSlotInVenueId() != null) {
-                    Optional<SlotInVenue> optionalSlotInVenue = slotInVenueRepository.findById(partyBookingRequest.getSlotInVenueId());
+                    Optional<SlotInRoom> optionalSlotInVenue = slotInRoomRepository.findById(partyBookingRequest.getSlotInVenueId());
                     if (optionalSlotInVenue.isPresent()) {
-                        SlotInVenue slotInVenue = optionalSlotInVenue.get();
-                        existPartyDated.get().setSlotInVenue(slotInVenue);
+                        SlotInRoom slotInRoom = optionalSlotInVenue.get();
+                        existPartyDated.get().setSlotInRoom(slotInRoom);
                     } else {
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in venue does not exist", null));
                     }
@@ -433,7 +433,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
             if (partyBooking.isPresent()) {
                 LocalTime currentTime = LocalTime.now();
-                Time timeStart = Time.valueOf(partyBooking.get().getPartyDated().getSlotInVenue().getSlot().getTimeStart());
+                Time timeStart = Time.valueOf(partyBooking.get().getPartyDated().getSlotInRoom().getSlot().getTimeStart());
                 LocalTime localTimeStart = timeStart.toLocalTime();
                 if (partyBooking.get().getStatus() == StatusEnum.CONFIRMED && currentTime.isAfter(localTimeStart.plusHours(1))) {
                     partyBooking.get().setStatus(StatusEnum.COMPLETED);

@@ -12,35 +12,35 @@ public interface VenueService {
 
     public ResponseEntity<ResponseObj> getAllForHost();
 
-    public ResponseEntity<ResponseObj> checkSlotInVenue(LocalDateTime date);
-
+//    public ResponseEntity<ResponseObj> checkSlotInVenue(LocalDateTime date);
+//
     public ResponseEntity<ResponseObj> getById(Long id);
 
     public ResponseEntity<ResponseObj> getById_ForCustomer(Long id);
 
-    public ResponseEntity<ResponseObj> activeVenue(Long id);
+//    public ResponseEntity<ResponseObj> activeVenue(Long id);
 
     public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String venueName, String venueDescription, String location, int capacity);
 
     public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String venueName, String venueDescription, String location, int capacity);
 
     public ResponseEntity<ResponseObj> delete(Long id);
-
-    public ResponseEntity<ResponseObj> addTheme(Long venueId, Long themeId);
-
-    public ResponseEntity<ResponseObj> addPackage(Long venueId, Long packageId);
-
+//
+//    public ResponseEntity<ResponseObj> addTheme(Long venueId, Long themeId);
+//
+//    public ResponseEntity<ResponseObj> addPackage(Long venueId, Long packageId);
+//
     public ResponseEntity<ResponseObj> getPackageInVenueByVenue(Long venueId);
-
+//
     public ResponseEntity<ResponseObj> getThemeInVenueByVenue(Long venueId);
-
-    public ResponseEntity<ResponseObj> getSlotInVenueById(Long venueId);
-
-    public ResponseEntity<ResponseObj> getAllSlotHaveNotAddByVenue(Long venueId);
-
+//
+//    public ResponseEntity<ResponseObj> getSlotInVenueById(Long venueId);
+//
+//    public ResponseEntity<ResponseObj> getAllSlotHaveNotAddByVenue(Long venueId);
+//
     public ResponseEntity<ResponseObj> getAllThemeHaveNotAddByVenue(Long venueId);
-
+//
     public ResponseEntity<ResponseObj> getAllPackageHaveNotAddByVenune(Long venueId);
-
-    public ResponseEntity<ResponseObj> checkSlotInVenueForHost(LocalDate date);
+//
+//    public ResponseEntity<ResponseObj> checkSlotInVenueForHost(LocalDate date);
 }

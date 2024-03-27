@@ -48,7 +48,7 @@ public class ReviewServiceImpl implements ReviewService {
             review.setRating(reviewRequest.getRating());
             review.setUpdateAt(LocalDateTime.now());
             review.setActive(true);
-            review.setAccount(account);
+//            review.setAccount(account);
             reviewRepository.save(review);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObj(HttpStatus.CREATED.toString(), "Review Successful", review));
         }
@@ -66,7 +66,7 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = reviewRepository.findById(id).get();
         Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
         if(partyBooking.isPresent()) {
-            review.setAccountReply(account);
+//            review.setAccountReply(account);
             review.setReplyMessage(replyReviewRequest.getReplyMessage());
             reviewRepository.save(review);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObj(HttpStatus.CREATED.toString(), "Reply Successful", review));
@@ -93,8 +93,8 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = reviewRepository.findById(id).get();
         Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
         if(partyBooking.isPresent()) {
-            if(!review.getAccount().getId().equals(account.getId()))
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to update this review", null));
+//            if(!review.getAccount().getId().equals(account.getId()))
+//                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to update this review", null));
             review.setReviewMessage(reviewRequest.getReviewMessage());
             review.setRating(reviewRequest.getRating() == 0 ? review.getRating() : reviewRequest.getRating());
             reviewRepository.save(review);

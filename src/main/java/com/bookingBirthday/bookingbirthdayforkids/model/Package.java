@@ -25,6 +25,8 @@ public class Package extends BaseEntity{
     private String packageDescription;
     @Column(name = "package_img_url",columnDefinition = "TEXT")
     private String packageImgUrl;
+    @Enumerated(EnumType.STRING)
+    private TypeEnum packageType;
     @NotNull(message = "Pricing value cannot be null")
     @Min(value = 0, message = "Pricing value must be greater than or equal to 0")
     private float pricing;
