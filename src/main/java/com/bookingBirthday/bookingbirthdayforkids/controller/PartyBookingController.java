@@ -35,32 +35,32 @@ public class PartyBookingController {
         return partyBookingService.getAllForHost();
     }
 
-    @PreAuthorize("hasAuthority('CUSTOMER')")
-    @GetMapping("/get-all-by-user")
-    public ResponseEntity<ResponseObj> getAllByUser() {
-        return partyBookingService.getAllByUser();
-    }
+//    @PreAuthorize("hasAuthority('CUSTOMER')")
+//    @GetMapping("/get-all-by-user")
+//    public ResponseEntity<ResponseObj> getAllByUser() {
+//        return partyBookingService.getAllByUser();
+//    }
 
     @GetMapping("/get-id/{id}")
     public ResponseEntity<ResponseObj> getById(@PathVariable Long id){
         return partyBookingService.getById(id);
     }
 
-    @GetMapping("/get-party-booking-for-customer-id/{id}")
-    @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long id){
-        return partyBookingService.getById_ForCustomer(id);
-    }
+//    @GetMapping("/get-party-booking-for-customer-id/{id}")
+//    @PreAuthorize("hasAuthority('CUSTOMER')")
+//    public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long id){
+//        return partyBookingService.getById_ForCustomer(id);
+//    }
 
-    @PostMapping("/create")
-    public ResponseEntity<?> create(@Valid @RequestBody PartyBookingRequest partyBookingRequest){
-        return partyBookingService.create(partyBookingRequest);
-    }
-
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id,@Valid @RequestBody PartyBookingRequest partyBookingRequest){
-        return partyBookingService.update(id, partyBookingRequest);
-    }
+//    @PostMapping("/create")
+//    public ResponseEntity<?> create(@Valid @RequestBody PartyBookingRequest partyBookingRequest){
+//        return partyBookingService.create(partyBookingRequest);
+//    }
+//
+//    @PutMapping("/update/{id}")
+//    public ResponseEntity<?> update(@PathVariable Long id,@Valid @RequestBody PartyBookingRequest partyBookingRequest){
+//        return partyBookingService.update(id, partyBookingRequest);
+//    }
 
     @PutMapping("/party-booking-cancel/{bookingId}")
     public ResponseEntity<ResponseObj> Cancel(@PathVariable Long bookingId){
@@ -87,10 +87,6 @@ public class PartyBookingController {
         return partyBookingService.delete(id);
     }
 
-    @PatchMapping("/update-theme-in-venue/{partyBookingId}/{themeInVenueId}")
-    public ResponseEntity<ResponseObj> updateThemeInVenue(@PathVariable Long partyBookingId, @PathVariable Long themeInVenueId) {
-        return partyBookingService.updateThemeInVenue(partyBookingId, themeInVenueId);
-    }
     @PatchMapping("/update-package-in-venue/{partyBookingId}/{packageInVenueId}")
     public ResponseEntity<ResponseObj> updatePackageInVenue(@PathVariable Long partyBookingId, @PathVariable Long packageInVenueId){
         return partyBookingService.updatePackageInVenue(partyBookingId, packageInVenueId);
