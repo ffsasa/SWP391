@@ -88,38 +88,36 @@ public class VenueController {
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PostMapping(value = "/create-venue", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> create(@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
+    public ResponseEntity<ResponseObj> create(@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
                                     @RequestPart String venueName,
                                     @RequestPart String venueDescription,
-                                    @RequestPart String location,
-                                    @RequestPart String capacity) {
-        try {
-            int parsedCapacity = Integer.parseInt(capacity);
-            return venueService.create(fileImg, venueName, venueDescription, location, parsedCapacity);
-        } catch (NumberFormatException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid capacity", null));
-        }
+                                    @RequestPart String street,
+                                    @RequestPart String ward,
+                                    @RequestPart String district,
+                                    @RequestPart String city){
+            return venueService.create(fileImg, venueName, venueDescription, street, ward, district, city);
     }
 
-//    @PutMapping("/set-active-venue/{id}")
-//    public ResponseEntity<ResponseObj> setActiveVenue(@PathVariable Long id){
-//        return venueService.activeVenue(id);
-//    }
+    public ResponseEntity<ResponseObj> addPackage(Long venueId, Long packageId){
+        return venueService.addPackage(venueId, packageId);
+    }
+
+    @PutMapping("/set-active-venue/{id}")
+    public ResponseEntity<ResponseObj> setActiveVenue(@PathVariable Long id){
+        return venueService.activeVenue(id);
+    }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PutMapping(value = "/update-venue/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> update(@PathVariable Long id,
-                                    @RequestPart(name = "fileImg", required = false) MultipartFile fileImg,
+    public ResponseEntity<ResponseObj> update(@PathVariable Long id,
+                                    @RequestPart (name = "fileImg", required = false) MultipartFile fileImg,
                                     @RequestPart String venueName,
                                     @RequestPart String venueDescription,
-                                    @RequestPart String location,
-                                    @RequestPart String capacity) {
-        try {
-            int parsedCapacity = Integer.parseInt(capacity);
-            return venueService.update(id, fileImg, venueName, venueDescription, location, parsedCapacity);
-        } catch (NumberFormatException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid capacity", null));
-        }
+                                    @RequestPart String street,
+                                    @RequestPart String ward,
+                                    @RequestPart String district,
+                                    @RequestPart String city) {
+            return venueService.update(id, fileImg, venueName, venueDescription, street, ward, district, city);
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
@@ -128,13 +126,4 @@ public class VenueController {
         return venueService.delete(id);
     }
 
-//    @PostMapping("/add-theme")
-//    public ResponseEntity<ResponseObj> addTheme(@RequestParam Long venueId, @RequestParam Long themeId) {
-//        return venueService.addTheme(venueId, themeId);
-//    }
-//
-//    @PostMapping("/add-package")
-//    public ResponseEntity<ResponseObj> addPackage(@RequestParam Long venueId, @RequestParam Long packageId) {
-//        return venueService.addPackage(venueId, packageId);
-//    }
 }
