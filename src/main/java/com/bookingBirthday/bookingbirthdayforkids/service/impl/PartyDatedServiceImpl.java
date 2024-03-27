@@ -8,6 +8,7 @@ import com.bookingBirthday.bookingbirthdayforkids.repository.PartyDatedRepositor
 import com.bookingBirthday.bookingbirthdayforkids.repository.SlotInRoomRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.UpgradeServiceRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.PartyDatedService;
+import com.bookingBirthday.bookingbirthdayforkids.util.TotalPriceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -122,7 +123,7 @@ public class PartyDatedServiceImpl implements PartyDatedService {
                 for (UpgradeService upgradeService : upgradeServiceList){
                     upPricing = upPricing + upgradeService.getPricing();
                 }
-                float totalPricingPackage = getTotalPricingPackage(partyBooking);
+                float totalPricingPackage = TotalPriceUtil.getTotalPricingPackage(partyBooking);
                 partyBooking.setPricingTotal(totalPricingPackage + upPricing);
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBooking));
             } else {
@@ -135,16 +136,5 @@ public class PartyDatedServiceImpl implements PartyDatedService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "PartyDated does not exist", null));
     }
 
-    private static float getTotalPricingPackage(PartyBooking partyBooking) {
-        float totalPricingPackage = 0;
-        for (PackageInBooking packageInBooking : partyBooking.getPackageInBookings()){
-            if(packageInBooking.getPackageInVenue().getApackage().getPackageType().equals(TypeEnum.DECORATION)){
-                totalPricingPackage += packageInBooking.getPackageInVenue().getApackage().getPricing();
-            }
-            else {
-                totalPricingPackage += (packageInBooking.getPackageInVenue().getApackage().getPricing()* partyBooking.getParticipantAmount());
-            }
-        }
-        return totalPricingPackage;
-    }
+
 }
