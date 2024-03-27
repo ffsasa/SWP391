@@ -4,6 +4,7 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.request.PartyBookingReques
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.UpgradeServiceRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.*;
+import com.bookingBirthday.bookingbirthdayforkids.model.Package;
 import com.bookingBirthday.bookingbirthdayforkids.repository.*;
 import com.bookingBirthday.bookingbirthdayforkids.service.PartyBookingService;
 import com.bookingBirthday.bookingbirthdayforkids.util.AuthenUtil;
@@ -39,37 +40,42 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     @Autowired
     ReviewRepository reviewRepository;
 
-//    @Override
-//    public ResponseEntity<ResponseObj> getAllByUser() {
-//        try {
-//            Long userId = AuthenUtil.getCurrentUserId();
-//            if (userId == null) {
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
-//            }
-//            List<PartyBooking> partyBookingList = partyBookingRepository.findAllByIsActiveIsTrueAndAccountId(userId);
-//            for (PartyBooking partyBooking : partyBookingList) {
-//                SlotInRoom slotInRoom = partyBooking.getPartyDated().getSlotInRoom();
-//                partyBooking.setSlotInRoomObject(slotInRoom);
-//                partyBooking.setPartyDated(partyBooking.getPartyDated());
-//                Venue venue = partyBooking.getThemeInVenue().getVenue();
-////                venue.setSlotInRoomList(null);
-//                partyBooking.setVenue(venue);
-//
-//                float pricingUpgradeService = 0;
-//                for (UpgradeService upgradeService : partyBooking.getUpgradeServices()) {
-//                    pricingUpgradeService += upgradeService.getServices().getPricing() * upgradeService.getCount();
-//                }
-//
-//                partyBooking.setPricingTotal(partyBooking.getPackageInVenue().getApackage().getPricing() + pricingUpgradeService);
-//            }
-//            if (partyBookingList.isEmpty()) {
-//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
-//            }
-//            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-//        }
-//    }
+    //Sửa
+    @Override
+    public ResponseEntity<ResponseObj> getAllByUser() {
+        try {
+            Long userId = AuthenUtil.getCurrentUserId();
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+            }
+            List<PartyBooking> partyBookingList = partyBookingRepository.findAllByIsActiveIsTrueAndAccountId(userId);
+            for (PartyBooking partyBooking : partyBookingList) {
+                SlotInRoom slotInRoom = partyBooking.getPartyDated().getSlotInRoom();
+                partyBooking.setSlotInRoomObject(slotInRoom);
+                partyBooking.setPartyDated(partyBooking.getPartyDated());
+                partyBooking.setVenueObject(slotInRoom.getRoom().getVenue());
+
+                float pricing = 0;
+                for (UpgradeService upgradeService : partyBooking.getUpgradeServices()) {
+                    pricing += upgradeService.getServices().getPricing() * upgradeService.getCount();
+                }
+
+                for (PackageInBooking packageInBooking : partyBooking.getPackageInBookings()) {
+                    if ()
+                    Package aPackage = packageInBooking.getPackageInVenue().getApackage();
+                    pricing += aPackage.getPricing();
+                }
+
+                partyBooking.setPricingTotal(pricing);
+            }
+            if (partyBookingList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+            }
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
 
     @Override
     public ResponseEntity<ResponseObj> getAll() {

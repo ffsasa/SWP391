@@ -26,7 +26,8 @@ public interface PartyBookingService {
 
     public ResponseEntity<ResponseObj> delete(Long id);
 
-//    public ResponseEntity<ResponseObj> getAllByUser();
+    //Sửa
+    public ResponseEntity<ResponseObj> getAllByUser();
 
     public ResponseEntity<ResponseObj> Cancel(Long bookingId);
 
