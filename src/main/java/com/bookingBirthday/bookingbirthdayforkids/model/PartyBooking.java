@@ -33,10 +33,6 @@ public class PartyBooking extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private StatusEnum status;
 
-    @ManyToOne
-    @JoinColumn(name = "themeInVenue_id")
-    private ThemeInVenue themeInVenue;
-
     @Transient
     @JsonProperty("slotInVenueObject")
     private SlotInRoom slotInRoomObject;

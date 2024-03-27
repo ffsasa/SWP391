@@ -26,73 +26,42 @@ public class InquiryQuestionServiceImpl implements InquiryQuestionService {
     PartyBookingRepository partyBookingRepository;
 
     @Autowired
-    ThemeInVenueRepository themeInVenueRepository;
-    @Autowired
     PackageInVenueRepository packageInVenueRepository;
     public InquiryQuestionServiceImpl() {
         super();
     }
 
-    @Override
-    public ResponseEntity<ResponseObj> sendInquiryForChangeThemeInVenue(Long bookingId, Long themeInVenueId) {
-        Long userId = AuthenUtil.getCurrentUserId();
-        if(userId == null){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
-        }
 
-        Optional<ThemeInVenue> themeInVenueOptional = themeInVenueRepository.findById(themeInVenueId);
-        String themeName = themeInVenueOptional.get().getTheme().getThemeName();
 
-        Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(bookingId);
-        PartyBooking partyBooking = partyBookingOptional.get();
-        ThemeInVenue themeInVenue = partyBooking.getThemeInVenue();
-
-        Account account = accountRepository.findById(userId).get();
-        Inquiry inquiry = new Inquiry();
-        String question = "Tại booking (id = " + bookingId + ") ngày " + partyBooking.getPartyDated().getDate()
-                + " khung giờ từ " + partyBooking.getPartyDated().getSlotInRoom().getSlot().getTimeStart()
-                + " đến " + partyBooking.getPartyDated().getSlotInRoom().getSlot().getTimeEnd()
-                + " tại địa điểm " + themeInVenue.getVenue().getVenueName().toUpperCase()
-                + ". Tôi muốn thay đổi chủ đề bữa tiệc thành " + themeName.toUpperCase();
-        inquiry.setInquiryQuestion(question);
-        inquiry.setActive(true);
-        inquiry.setStatus(InquiryStatus.PENDING);
-        inquiry.setCreateAt(LocalDateTime.now());
-        inquiry.setUpdateAt(LocalDateTime.now());
-        inquiry.setAccount(account);
-        inquiryRepository.save(inquiry);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObj(HttpStatus.CREATED.toString(), "Create Inquiry Successful", question));
-    }
-
-    @Override
-    public ResponseEntity<ResponseObj> sendInquiryForChangePackageInVenue(Long bookingId, Long packageInVenueId) {
-        Long userId = AuthenUtil.getCurrentUserId();
-        if(userId == null){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
-        }
-
-        Optional<PackageInVenue> packageInVenueOptional = packageInVenueRepository.findById(packageInVenueId);
-        String packageName = packageInVenueOptional.get().getApackage().getPackageName();
-
-        Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(bookingId);
-        PartyBooking partyBooking = partyBookingOptional.get();
-        ThemeInVenue themeInVenue = partyBooking.getThemeInVenue();
-
-        Account account = accountRepository.findById(userId).get();
-        Inquiry inquiry = new Inquiry();
-        String question = "Tại booking (id = " + bookingId + ") ngày " + partyBooking.getPartyDated().getDate() + " khung giờ từ " + partyBooking.getPartyDated().getSlotInRoom().getSlot().getTimeStart()
-                + " đến " + partyBooking.getPartyDated().getSlotInRoom().getSlot().getTimeEnd()
-                + " tại địa điểm " + themeInVenue.getVenue().getVenueName().toUpperCase()
-                + ". Tôi muốn thay đổi gói dịch vụ bữa tiệc thành " + packageName.toUpperCase();
-        inquiry.setInquiryQuestion(question);
-        inquiry.setActive(true);
-        inquiry.setStatus(InquiryStatus.PENDING);
-        inquiry.setCreateAt(LocalDateTime.now());
-        inquiry.setUpdateAt(LocalDateTime.now());
-        inquiry.setAccount(account);
-        inquiryRepository.save(inquiry);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObj(HttpStatus.CREATED.toString(), "Create Inquiry Successful", question));
-    }
+//    @Override
+//    public ResponseEntity<ResponseObj> sendInquiryForChangePackageInVenue(Long bookingId, Long packageInVenueId) {
+//        Long userId = AuthenUtil.getCurrentUserId();
+//        if(userId == null){
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+//        }
+//
+//        Optional<PackageInVenue> packageInVenueOptional = packageInVenueRepository.findById(packageInVenueId);
+//        String packageName = packageInVenueOptional.get().getApackage().getPackageName();
+//
+//        Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(bookingId);
+//        PartyBooking partyBooking = partyBookingOptional.get();
+//        ThemeInVenue themeInVenue = partyBooking.getThemeInVenue();
+//
+//        Account account = accountRepository.findById(userId).get();
+//        Inquiry inquiry = new Inquiry();
+//        String question = "Tại booking (id = " + bookingId + ") ngày " + partyBooking.getPartyDated().getDate() + " khung giờ từ " + partyBooking.getPartyDated().getSlotInRoom().getSlot().getTimeStart()
+//                + " đến " + partyBooking.getPartyDated().getSlotInRoom().getSlot().getTimeEnd()
+//                + " tại địa điểm " + themeInVenue.getVenue().getVenueName().toUpperCase()
+//                + ". Tôi muốn thay đổi gói dịch vụ bữa tiệc thành " + packageName.toUpperCase();
+//        inquiry.setInquiryQuestion(question);
+//        inquiry.setActive(true);
+//        inquiry.setStatus(InquiryStatus.PENDING);
+//        inquiry.setCreateAt(LocalDateTime.now());
+//        inquiry.setUpdateAt(LocalDateTime.now());
+//        inquiry.setAccount(account);
+//        inquiryRepository.save(inquiry);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObj(HttpStatus.CREATED.toString(), "Create Inquiry Successful", question));
+//    }
 
     @Override
     public ResponseEntity<ResponseObj> create(InquiryQuestionRequest inquiryRequest) {

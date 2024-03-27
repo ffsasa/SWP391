@@ -16,9 +16,9 @@ public class DashboardController {
     @Autowired
     private DashboardService dashboardService;
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @GetMapping("/get")
-    public ResponseEntity<ResponseObj> getDashboard() {
-        return dashboardService.getDashboard();
-    }
+//    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+//    @GetMapping("/get")
+//    public ResponseEntity<ResponseObj> getDashboard() {
+//        return dashboardService.getDashboard();
+//    }
 }

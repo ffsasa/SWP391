@@ -32,13 +32,12 @@ public interface VenueService {
 //
     public ResponseEntity<ResponseObj> getPackageInVenueByVenue(Long venueId);
 //
-    public ResponseEntity<ResponseObj> getThemeInVenueByVenue(Long venueId);
 //
 //    public ResponseEntity<ResponseObj> getSlotInVenueById(Long venueId);
 //
 //    public ResponseEntity<ResponseObj> getAllSlotHaveNotAddByVenue(Long venueId);
 //
-    public ResponseEntity<ResponseObj> getAllThemeHaveNotAddByVenue(Long venueId);
+
 //
     public ResponseEntity<ResponseObj> getAllPackageHaveNotAddByVenune(Long venueId);
 //

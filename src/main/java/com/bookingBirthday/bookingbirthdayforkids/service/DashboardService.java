@@ -5,5 +5,5 @@ import org.springframework.http.ResponseEntity;
 
 public interface DashboardService {
 
-    public ResponseEntity<ResponseObj> getDashboard();
+//    public ResponseEntity<ResponseObj> getDashboard();
 }

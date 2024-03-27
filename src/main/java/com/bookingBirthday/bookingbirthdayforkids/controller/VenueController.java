@@ -70,10 +70,6 @@ public class VenueController {
         return venueService.getPackageInVenueByVenue(id);
     }
 
-    @GetMapping("/get-theme-by-venue/{id}")
-    public ResponseEntity<ResponseObj> getThemeByVenue(@PathVariable Long id) {
-        return venueService.getThemeInVenueByVenue(id);
-    }
 
 //    @GetMapping("/get-slot-in-venue-by-venue/{id}")
 //    public ResponseEntity<ResponseObj> getSlotInVenueByVenue(@PathVariable Long id) {
@@ -84,10 +80,7 @@ public class VenueController {
 //    public ResponseEntity<ResponseObj> getSlotNotAddInVenue(@PathVariable Long id) {
 //        return venueService.getAllSlotHaveNotAddByVenue(id);
 //    }
-    @GetMapping("/get-theme-not-add-in-venue/{id}")
-    public ResponseEntity<ResponseObj> getThemeNotAddInVenue(@PathVariable Long id) {
-        return venueService.getAllThemeHaveNotAddByVenue(id);
-    }
+
     @GetMapping("/get-package-not-add-in-venue/{id}")
     public ResponseEntity<ResponseObj> getPackageNotAddInVenue(@PathVariable Long id) {
         return venueService.getAllPackageHaveNotAddByVenune(id);
