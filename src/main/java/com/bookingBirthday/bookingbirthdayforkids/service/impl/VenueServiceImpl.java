@@ -147,6 +147,7 @@ public class VenueServiceImpl implements VenueService {
         }
     }
 
+    //sửa
     @Override
     public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city) {
         if (venueRepository.existsByVenueName(venueName)) {
@@ -172,6 +173,8 @@ public class VenueServiceImpl implements VenueService {
         }
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", venue));
     }
+
+    //sửa
 
     public ResponseEntity<ResponseObj> activeVenue(Long id) {
         Optional<Venue> venue = venueRepository.findById(id);
@@ -205,6 +208,7 @@ public class VenueServiceImpl implements VenueService {
     }
 
 
+    //sửa
     @Override
     public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city) {
         Optional<Venue> venue = venueRepository.findById(id);
@@ -269,6 +273,7 @@ public class VenueServiceImpl implements VenueService {
 
 
 
+    //sửa
     @Override
     public ResponseEntity<ResponseObj> addPackage(Long venueId, Long packageId) {
         try{

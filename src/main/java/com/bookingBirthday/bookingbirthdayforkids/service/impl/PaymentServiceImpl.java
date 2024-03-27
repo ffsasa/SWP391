@@ -60,6 +60,7 @@ public class PaymentServiceImpl implements PaymentService {
         partyBookingRepository.save(partyBooking.get());
     }
 
+    //sửa
     public String payWithVNPAYOnline(Long id, Long paymentMethodId,HttpServletRequest request) throws UnsupportedEncodingException{
         Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(id);
 

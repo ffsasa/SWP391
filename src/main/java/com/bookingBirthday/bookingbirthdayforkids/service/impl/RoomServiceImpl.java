@@ -129,6 +129,7 @@ public class RoomServiceImpl implements RoomService {
 
     }
 
+    //thêm
     @Override
     public ResponseEntity<ResponseObj> checkSlotInRoom(LocalDateTime date) {
         try {
