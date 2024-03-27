@@ -1,7 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.service;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.PackageInVenueRequest;
-import com.bookingBirthday.bookingbirthdayforkids.dto.request.SlotInVenueRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import org.springframework.http.ResponseEntity;
 

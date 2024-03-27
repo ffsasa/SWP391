@@ -3,9 +3,9 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.SlotRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.*;
+import com.bookingBirthday.bookingbirthdayforkids.repository.RoomRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.SlotInRoomRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.SlotRepository;
-import com.bookingBirthday.bookingbirthdayforkids.repository.VenueRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.SlotService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class SlotServiceImpl implements SlotService {
     @Autowired
     SlotRepository slotRepository;
     @Autowired
-    VenueRepository venueRepository;
+    RoomRepository roomRepository;
     @Autowired
     SlotInRoomRepository slotInRoomRepository;
     @Override
@@ -185,8 +185,8 @@ public class SlotServiceImpl implements SlotService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> addSlotInVenueByVenueId(Long venueId, List<Long> slotId) {
-        Venue venue = venueRepository.findById(venueId).get();
+    public ResponseEntity<ResponseObj> addSlotInRoomByRoomId(Long roomId, List<Long> slotId) {
+        Room room = roomRepository.findById(roomId).get();
         SlotInRoom slotInRoom = new SlotInRoom();
         ResponseEntity<ResponseObj> response = null;
         for (Long addSlot : slotId){
@@ -195,13 +195,13 @@ public class SlotServiceImpl implements SlotService {
                 response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Slot not found", null));
                 continue;
             }
-            SlotInRoom existingSlotInRoom = slotInRoomRepository.findByVenueAndSlot(venue, slot);
+            SlotInRoom existingSlotInRoom = slotInRoomRepository.findByRoomAndSlot(room, slot);
             if (existingSlotInRoom != null) {
-                response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in venue already exists", null));
+                response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in room already exists", null));
                 continue;
             }
             slotInRoom = new SlotInRoom();
-            slotInRoom.setVenue(venue);
+            slotInRoom.setRoom(room);
             slotInRoom.setSlot(slot);
             slotInRoom.setActive(true);
             slotInRoom.setCreateAt(LocalDateTime.now());

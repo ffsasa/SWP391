@@ -1,10 +1,12 @@
 package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 
-import com.bookingBirthday.bookingbirthdayforkids.dto.request.SlotInVenueRequest;
+import com.bookingBirthday.bookingbirthdayforkids.dto.request.SlotInRoomRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
+import com.bookingBirthday.bookingbirthdayforkids.model.Room;
 import com.bookingBirthday.bookingbirthdayforkids.model.Slot;
 import com.bookingBirthday.bookingbirthdayforkids.model.SlotInRoom;
 import com.bookingBirthday.bookingbirthdayforkids.model.Venue;
+import com.bookingBirthday.bookingbirthdayforkids.repository.RoomRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.SlotInRoomRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.SlotRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.VenueRepository;
@@ -24,23 +26,25 @@ public class SlotInRoomServiceImpl implements SlotInRoomService {
     @Autowired
     VenueRepository venueRepository;
     @Autowired
+    RoomRepository roomRepository;
+    @Autowired
     SlotInRoomRepository slotInRoomRepository;
     @Override
-    public ResponseEntity<ResponseObj> create(SlotInVenueRequest slotInVenueRequest) {
-        Optional<Slot> slot = slotRepository.findById(slotInVenueRequest.getSlot_id());
-        Optional<Venue> venue = venueRepository.findById(slotInVenueRequest.getVenue_id());
+    public ResponseEntity<ResponseObj> create(SlotInRoomRequest slotInRoomRequest) {
+        Optional<Slot> slot = slotRepository.findById(slotInRoomRequest.getSlot_id());
+        Optional<Room> room = roomRepository.findById(slotInRoomRequest.getRoom_id());
         if (!slot.isPresent()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot does not exist", null));
         }
-        if(!venue.isPresent()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Venue does not exist", null));
+        if(!room.isPresent()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Room does not exist", null));
         }
-        if(slotInRoomRepository.existsBySlotIdAndVenueId(slotInVenueRequest.getSlot_id(), slotInVenueRequest.getVenue_id())){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in venue existed", null));
+        if(slotInRoomRepository.existsBySlotIdAndRoomId(slotInRoomRequest.getSlot_id(), slotInRoomRequest.getRoom_id())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in room existed", null));
         }
         SlotInRoom slotInRoom = new SlotInRoom();
         slotInRoom.setSlot(slot.get());
-        slotInRoom.setVenue(venue.get());
+        slotInRoom.setRoom(room.get());
         slotInRoom.setCreateAt(LocalDateTime.now());
         slotInRoom.setActive(true);
         slotInRoom.setUpdateAt(LocalDateTime.now());
@@ -49,27 +53,27 @@ public class SlotInRoomServiceImpl implements SlotInRoomService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> disableSlotInVenue(Long id) {
-        Optional<SlotInRoom> slotInVenue = slotInRoomRepository.findById(id);
-        if(slotInVenue.isPresent()){
-            slotInVenue.get().setActive(false);
-            slotInRoomRepository.save(slotInVenue.get());
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Disable successful", slotInVenue));
+    public ResponseEntity<ResponseObj> disableSlotInRoom(Long id) {
+        Optional<SlotInRoom> slotInRoom = slotInRoomRepository.findById(id);
+        if(slotInRoom.isPresent()){
+            slotInRoom.get().setActive(false);
+            slotInRoomRepository.save(slotInRoom.get());
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Disable successful", slotInRoom));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in venue does not exist", null));
     }
 
     @Override
-    public ResponseEntity<ResponseObj> activeSlotInVenue(Long id) {
-        Optional<SlotInRoom> slotInVenue = slotInRoomRepository.findById(id);
-        if(slotInVenue.isPresent()){
-            if (!slotInVenue.get().getVenue().isActive())
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Venue is not active. You can not enable slotInVenue", null));
+    public ResponseEntity<ResponseObj> activeSlotInRoom(Long id) {
+        Optional<SlotInRoom> slotInRoom = slotInRoomRepository.findById(id);
+        if(slotInRoom.isPresent()){
+            if (!slotInRoom.get().getRoom().isActive())
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Room is not active. You can not enable slotInVenue", null));
 
-            slotInVenue.get().setActive(true);
-            slotInVenue.get().setUpdateAt(LocalDateTime.now());
-            slotInRoomRepository.save(slotInVenue.get());
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Active successful", slotInVenue));
+            slotInRoom.get().setActive(true);
+            slotInRoom.get().setUpdateAt(LocalDateTime.now());
+            slotInRoomRepository.save(slotInRoom.get());
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Active successful", slotInRoom));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in venue does not exist", null));
     }

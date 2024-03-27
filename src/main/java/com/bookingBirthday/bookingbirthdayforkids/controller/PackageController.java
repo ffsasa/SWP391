@@ -2,6 +2,7 @@ package com.bookingBirthday.bookingbirthdayforkids.controller;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.PackageServiceRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
+import com.bookingBirthday.bookingbirthdayforkids.model.TypeEnum;
 import com.bookingBirthday.bookingbirthdayforkids.service.PackageService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -49,14 +50,15 @@ public class PackageController {
                                     @RequestPart(name = "packageName") String packageName,
                                     @RequestPart(name = "packageDescription") String packageDescription,
                                     @RequestPart(name = "percent") String percent,
-                                    @RequestPart(name = "packageServiceRequests") String packageServiceRequestsStr) throws JsonProcessingException {
+                                    @RequestPart(name = "packageServiceRequests") String packageServiceRequestsStr,
+                                    @RequestPart(name = "packageType") TypeEnum typeEnum) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             float parsePercent = Float.parseFloat(percent);
             if(parsePercent > 0.5 || parsePercent < 0.1)
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Percent ranges from 0.1-0.5", null));
             List<PackageServiceRequest> packageServiceRequests = objectMapper.readValue(packageServiceRequestsStr, new TypeReference<List<PackageServiceRequest>>(){});
-            return packageService.create(fileImg, packageName, packageDescription, parsePercent,packageServiceRequests);
+            return packageService.create(fileImg, packageName, packageDescription, parsePercent, packageServiceRequests, typeEnum);
         }catch (NumberFormatException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid percent", null));
         }
