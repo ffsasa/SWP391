@@ -195,13 +195,13 @@ public class SlotServiceImpl implements SlotService {
                 response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Slot not found", null));
                 continue;
             }
-            SlotInRoom existingSlotInRoom = slotInRoomRepository.findByVenueAndSlot(venue, slot);
-            if (existingSlotInRoom != null) {
-                response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in venue already exists", null));
-                continue;
-            }
+//            SlotInRoom existingSlotInRoom = slotInRoomRepository.findByVenueAndSlot(venue, slot);
+//            if (existingSlotInRoom != null) {
+//                response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in venue already exists", null));
+//                continue;
+//            }
             slotInRoom = new SlotInRoom();
-            slotInRoom.setVenue(venue);
+//            slotInRoom.setVenue(venue);
             slotInRoom.setSlot(slot);
             slotInRoom.setActive(true);
             slotInRoom.setCreateAt(LocalDateTime.now());

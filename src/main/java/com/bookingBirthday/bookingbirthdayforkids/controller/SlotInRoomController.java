@@ -1,6 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.controller;
 
-import com.bookingBirthday.bookingbirthdayforkids.dto.request.SlotInVenueRequest;
+import com.bookingBirthday.bookingbirthdayforkids.dto.request.SlotInRoomRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.service.SlotInRoomService;
 import jakarta.validation.Valid;
@@ -17,19 +17,19 @@ public class SlotInRoomController {
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PostMapping("/create")
-    public ResponseEntity<ResponseObj> create(@Valid @RequestBody SlotInVenueRequest slotInVenueRequest){
-        return slotinRoomService.create(slotInVenueRequest);
+    public ResponseEntity<ResponseObj> create(@Valid @RequestBody SlotInRoomRequest slotInRoomRequest){
+        return slotinRoomService.create(slotInRoomRequest);
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @DeleteMapping("/disable/{id}")
     public ResponseEntity<ResponseObj> disableSlotInVenue(@PathVariable Long id){
-        return slotinRoomService.disableSlotInVenue(id);
+        return slotinRoomService.disableSlotInRoom(id);
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PutMapping("/active/{id}")
     public ResponseEntity<ResponseObj> activeSlotInVenue(@PathVariable Long id){
-        return slotinRoomService.activeSlotInVenue(id);
+        return slotinRoomService.activeSlotInRoom(id);
     }
 }

@@ -106,9 +106,7 @@ public class PartyDatedServiceImpl implements PartyDatedService {
             if(partyBooking != null){
                 SlotInRoom slotInRoom = partyBooking.getPartyDated().getSlotInRoom();
                 partyBooking.setSlotInRoomObject(slotInRoom);
-                Venue venue = slotInRoom.getVenue();
-//                venue.setSlotInRoomList(null);
-                partyBooking.setVenue(venue);
+                Room room = slotInRoom.getRoom();
                 partyBooking.setIsPayment(false);
                 for(Payment payment: partyBooking.getPaymentList()){
                     if(payment.getStatus().equals("SUCCESS")){
@@ -123,7 +121,7 @@ public class PartyDatedServiceImpl implements PartyDatedService {
                 for (UpgradeService upgradeService1 : upgradeService){
                     Upricing = Upricing + upgradeService1.getPricing();
                 }
-                partyBooking.setPricingTotal(partyBooking.getPackageInVenue().getApackage().getPricing()+Upricing);
+//                partyBooking.setPricingTotal(partyBooking.getPackageInVenue().getApackage().getPricing()+Upricing);
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBooking));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "PartyDated can be deleted or does not exist", null));
