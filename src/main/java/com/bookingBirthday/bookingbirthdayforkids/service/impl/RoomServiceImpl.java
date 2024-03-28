@@ -6,6 +6,7 @@ import com.bookingBirthday.bookingbirthdayforkids.model.Room;
 import com.bookingBirthday.bookingbirthdayforkids.model.Services;
 import com.bookingBirthday.bookingbirthdayforkids.model.Venue;
 import com.bookingBirthday.bookingbirthdayforkids.repository.RoomRepository;
+import com.bookingBirthday.bookingbirthdayforkids.repository.SlotRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.VenueRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +30,7 @@ public class RoomServiceImpl implements RoomService {
     VenueRepository venueRepository;
     @Autowired
     FirebaseService firebaseService;
+
     @Override
     public ResponseEntity<ResponseObj> getAll() {
         List<Room> roomList = roomRepository.findAllByIsActiveIsTrue();
@@ -100,6 +103,8 @@ public class RoomServiceImpl implements RoomService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
+
+
 
     @Override
     public ResponseEntity<ResponseObj> delete(Long id) {

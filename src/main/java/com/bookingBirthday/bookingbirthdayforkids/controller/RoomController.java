@@ -28,13 +28,14 @@ public class RoomController {
         return roomService.getById(id);
     }
 
+
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PostMapping(value = "/create-room", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> create(@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
                                     @RequestPart String roomName,
                                     @RequestPart String venueId,
                                     @RequestPart String capacity,
-                                    @RequestPart String pricing){
+                                    @RequestPart String pricing) {
         try {
             float parsedPricing = Float.parseFloat(pricing);
             Long parsedVenueId = Long.parseLong(venueId);
@@ -43,8 +44,8 @@ public class RoomController {
         } catch (NumberFormatException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid pricing", null));
         }
-
     }
+
 
 
     @PutMapping("/update/{id}")
