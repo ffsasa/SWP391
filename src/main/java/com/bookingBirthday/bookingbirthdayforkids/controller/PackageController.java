@@ -51,14 +51,15 @@ public class PackageController {
                                     @RequestPart(name = "packageDescription") String packageDescription,
                                     @RequestPart(name = "percent") String percent,
                                     @RequestPart(name = "packageServiceRequests") String packageServiceRequestsStr,
-                                    @RequestPart(name = "packageType") TypeEnum typeEnum) throws JsonProcessingException {
+                                    @RequestPart(name = "packageType") String typeEnum) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             float parsePercent = Float.parseFloat(percent);
+            TypeEnum parseTypeEnum = TypeEnum.valueOf(typeEnum);
             if(parsePercent > 0.5 || parsePercent < 0.1)
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Percent ranges from 0.1-0.5", null));
             List<PackageServiceRequest> packageServiceRequests = objectMapper.readValue(packageServiceRequestsStr, new TypeReference<List<PackageServiceRequest>>(){});
-            return packageService.create(fileImg, packageName, packageDescription, parsePercent, packageServiceRequests, typeEnum);
+            return packageService.create(fileImg, packageName, packageDescription, parsePercent, packageServiceRequests, parseTypeEnum);
         }catch (NumberFormatException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid percent", null));
         }
