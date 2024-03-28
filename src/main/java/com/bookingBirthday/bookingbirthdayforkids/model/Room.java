@@ -28,9 +28,10 @@ public class Room extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "venue_id")
+    @JsonIgnore
     private Venue venue;
 
     @OneToMany(mappedBy = "room")
-    @JsonIgnore
+//    @JsonIgnore
     private List<SlotInRoom> slotInRoomList;
 }
