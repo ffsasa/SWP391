@@ -7,6 +7,7 @@ import com.bookingBirthday.bookingbirthdayforkids.model.*;
 import com.bookingBirthday.bookingbirthdayforkids.repository.*;
 import com.bookingBirthday.bookingbirthdayforkids.service.PaymentService;
 import com.bookingBirthday.bookingbirthdayforkids.util.AuthenUtil;
+import com.bookingBirthday.bookingbirthdayforkids.util.TotalPriceUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,7 @@ public class PaymentServiceImpl implements PaymentService {
         partyBookingRepository.save(partyBooking.get());
     }
 
+    //sửa
     public String payWithVNPAYOnline(Long id, Long paymentMethodId,HttpServletRequest request) throws UnsupportedEncodingException{
         Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(id);
 
@@ -76,11 +78,12 @@ public class PaymentServiceImpl implements PaymentService {
                 Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
 
                 Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
-//                int vnp_Amount = (int) partyBooking.get().getPackageInBookings()..getPricing();
+                float totalPrice = TotalPriceUtil.getTotalPricingPackage(partyBooking.get());
+                int vnp_Amount = (int) totalPrice;
 
-//                for(UpgradeService upgradeService : partyBooking.get().getUpgradeServices()){
-//                    vnp_Amount += (int) (upgradeService.getServices().getPricing() * upgradeService.getCount());
-//                }
+                for(UpgradeService upgradeService : partyBooking.get().getUpgradeServices()){
+                    vnp_Amount += (int) (upgradeService.getServices().getPricing() * upgradeService.getCount());
+                }
 
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
                 String vnp_CreateDate = formatter.format(cld.getTime());

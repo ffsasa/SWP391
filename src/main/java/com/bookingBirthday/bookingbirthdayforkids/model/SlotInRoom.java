@@ -33,5 +33,6 @@ public class SlotInRoom extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "room_id")
+    @JsonIgnore
     private Room room;
 }
