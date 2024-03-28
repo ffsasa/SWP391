@@ -28,6 +28,8 @@ public interface VenueService {
     public ResponseEntity<ResponseObj> addPackage(Long venueId, Long packageId);
 
     public ResponseEntity<ResponseObj> getPackageInVenueByVenue(Long venueId);
+
+    public ResponseEntity<ResponseObj> getAllPartyBookingByVenue(Long venueId);
 //
 //
 //    public ResponseEntity<ResponseObj> getSlotInVenueById(Long venueId);

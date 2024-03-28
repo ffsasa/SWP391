@@ -24,15 +24,6 @@ public class RoomController {
         return roomService.getById(id);
     }
 
-    @GetMapping("/get-slot-not-add-in-room/{id}")
-    public ResponseEntity<ResponseObj> getSlotNotAddInRoom(@PathVariable Long id) {
-        return roomService.getSlotNotAddInRoomById(id);
-    }
-
-    @GetMapping("/get-slot-in-room/{id}")
-    public ResponseEntity<ResponseObj> getSlotAddInRoom(@PathVariable Long id) {
-        return roomService.getSlotInRoomById(id);
-    }
     @PostMapping("/create")
     public ResponseEntity<ResponseObj> create(@RequestBody RoomRequest roomRequest) {
         return roomService.create(roomRequest);

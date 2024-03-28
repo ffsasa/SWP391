@@ -97,8 +97,6 @@ public class RoomServiceImpl implements RoomService {
         }
     }
 
-    //thêm
-
     public ResponseEntity<ResponseObj> getSlotNotAddInRoomById(Long roomId){
         try {
             Optional<Room> room = roomRepository.findById(roomId);
