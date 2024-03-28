@@ -42,7 +42,7 @@ public class ServicesController {
     }
 
     @GetMapping("/get-service-by-type")
-    public ResponseEntity<ResponseObj> getServiceByType(@RequestParam(name = "serviceType") TypeEnum typeEnum){
+    public ResponseEntity<ResponseObj> getServiceByType(@PathVariable(name = "serviceType") TypeEnum typeEnum){
         return servicesService.getAllServiceByType(typeEnum);
     }
 

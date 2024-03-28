@@ -74,6 +74,29 @@ public class VenueServiceImpl implements VenueService {
     }
 
 
+    public ResponseEntity<ResponseObj> getAllPartyBookingByVenue(Long venueId) {
+        try {
+            Optional<Venue> venue = venueRepository.findById(venueId);
+            if (venue.isPresent()) {
+                List<Room> roomList = venue.get().getRoomList();
+                List<PartyBooking> partyBookingList = new ArrayList<>();
+                for (Room room : roomList) {
+                    List<SlotInRoom> slotInRoomList = room.getSlotInRoomList();
+                    for (SlotInRoom slotInRoom : slotInRoomList) {
+                        List<PartyDated> partyDatedList = slotInRoom.getPartyDatedList();
+                        for (PartyDated partyDated : partyDatedList) {
+                            partyBookingList.add(partyDated.getPartyBooking());
+                        }
+                    }
+                }
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", partyBookingList));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
     @Override
     public ResponseEntity<ResponseObj> getPackageInVenueByVenue(Long venueId) {
         try {
