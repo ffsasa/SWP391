@@ -2,9 +2,9 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.RoomRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
-import com.bookingBirthday.bookingbirthdayforkids.model.Room;
-import com.bookingBirthday.bookingbirthdayforkids.model.Services;
-import com.bookingBirthday.bookingbirthdayforkids.model.Venue;
+import com.bookingBirthday.bookingbirthdayforkids.model.*;
+import com.bookingBirthday.bookingbirthdayforkids.model.Package;
+import com.bookingBirthday.bookingbirthdayforkids.repository.PartyDatedRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.RoomRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.SlotRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.VenueRepository;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,9 +27,11 @@ public class RoomServiceImpl implements RoomService {
 
     @Autowired
     VenueRepository venueRepository;
-    @Autowired
-    FirebaseService firebaseService;
 
+    @Autowired
+    SlotRepository slotRepository;
+    @Autowired
+    PartyDatedRepository partyDatedRepository;
     @Override
     public ResponseEntity<ResponseObj> getAll() {
         List<Room> roomList = roomRepository.findAllByIsActiveIsTrue();
@@ -54,34 +55,26 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> create(MultipartFile fileImg, String roomName, Long venueId, int capacity, float parsedPricing) {
-        if(roomRepository.existsRoomByRoomName(roomName)){
-            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(),"Room name has already exist", null));
-        }
-        Optional<Venue> venue = venueRepository.findById(venueId);
-        if(!venue.isPresent()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue does not exist", null));
-        }
-        Room room = new Room();
+    public ResponseEntity<ResponseObj> create(RoomRequest roomRequest) {
         try {
-            if (fileImg != null) {
-                String img = firebaseService.uploadImage(fileImg);
-                room.setRoomName(roomName);
-                room.setVenue(venue.get());
-                room.setCapacity(capacity);
-                room.setRoomImgUrl(img);
-                room.setPricing(parsedPricing);
-                room.setActive(true);
-                room.setCreateAt(LocalDateTime.now());
-                room.setUpdateAt(LocalDateTime.now());
-                roomRepository.save(room);
+            Optional<Venue> venue = venueRepository.findById(roomRequest.getVenueId());
+            if (venue.isPresent()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
             }
-
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Image is invalid", null));
-
+            Room room = new Room();
+            room.setVenue(venue.get());
+            room.setRoomName(roomRequest.getRoomName());
+            room.setRoomImgUrl(room.getRoomImgUrl());
+            room.setCapacity(roomRequest.getCapacity());
+            room.setPricing(roomRequest.getPricing());
+            room.setActive(true);
+            room.setCreateAt(LocalDateTime.now());
+            room.setUpdateAt(LocalDateTime.now());
+            roomRepository.save(room);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObj(HttpStatus.CREATED.toString(), "Room created successfully", room));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", room));
     }
     @Override
     public ResponseEntity<ResponseObj> update(Long id, RoomRequest roomRequest) {
@@ -104,7 +97,45 @@ public class RoomServiceImpl implements RoomService {
         }
     }
 
+    public ResponseEntity<ResponseObj> getSlotNotAddInRoomById(Long roomId){
+        try {
+            Optional<Room> room = roomRepository.findById(roomId);
+            if (room.isPresent()) {
+                List<SlotInRoom> slotInRoomList = room.get().getSlotInRoomList();
+                List<Slot> slotAddedList = new ArrayList<>();
+                for (SlotInRoom slotInRoom : slotInRoomList) {
+                    slotAddedList.add(slotInRoom.getSlot());
+                }
+                List<Slot> slotList = slotRepository.findAll();
+                List<Slot> slotNotAddList = new ArrayList<>();
+                for (Slot slot : slotList) {
+                    if (!slotAddedList.contains(slot)) {
+                        slotNotAddList.add(slot);
+                    }
+                }
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", slotNotAddList));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This theme does not exist", null));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
 
+
+    @Override
+    public ResponseEntity<ResponseObj> getSlotInRoomById(Long roomId) {
+        try {
+            Optional<Room> room = roomRepository.findById(roomId);
+            if (room.isPresent()) {
+                List<SlotInRoom> slotInRoomList = room.get().getSlotInRoomList();
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", slotInRoomList));
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This room does not exist", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
 
     @Override
     public ResponseEntity<ResponseObj> delete(Long id) {
@@ -125,6 +156,45 @@ public class RoomServiceImpl implements RoomService {
 
     }
 
+    //thêm
+    @Override
+    public ResponseEntity<ResponseObj> checkSlotInRoom(LocalDateTime date) {
+        try {
+            LocalDateTime currentDateTime = LocalDateTime.now();;
+            LocalDateTime chooseDateTime = date.withHour(0).withMinute(0).withSecond(0);
+
+            if (currentDateTime.isAfter(chooseDateTime.plusHours(6)) ) {
+                List<SlotInRoom> slotInRoomList = new ArrayList<>();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "The date has expired", slotInRoomList));
+            }
+            List<Room> roomList = roomRepository.findAllByIsActiveIsTrue();
+            if (roomList.isEmpty())
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+
+            List<PartyDated> partyDatedList = partyDatedRepository.findByDateAndIsActiveIsTrue(date.toLocalDate());
+
+            for (Room room : roomList) {
+                List<SlotInRoom> slotInRoomList = room.getSlotInRoomList();
+                List<SlotInRoom> slotInRoomListValidate = new ArrayList<>();
+                for (SlotInRoom slotInRoom : slotInRoomList) {
+                    if (slotInRoom.isActive()) {
+                        slotInRoomListValidate.add(slotInRoom);
+                    }
+                }
+                for (SlotInRoom slotInRoom : slotInRoomListValidate) {
+                    for (PartyDated partyDated : partyDatedList) {
+                        if (partyDated.getSlotInRoom().equals(slotInRoom)) {
+                            slotInRoom.setStatus(true);
+                        }
+                    }
+                }
+                room.setSlotInRoomList(slotInRoomListValidate);
+            }
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", roomList));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
 
 //    @Override
 //    public ResponseEntity<ResponseObj> checkSlotInVenueForHost(LocalDate date) {
