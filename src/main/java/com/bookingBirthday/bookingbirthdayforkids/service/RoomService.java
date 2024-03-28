@@ -15,6 +15,8 @@ public interface RoomService {
 
     public ResponseEntity<ResponseObj> checkSlotInRoom(LocalDateTime date);
 
+    public ResponseEntity<ResponseObj> getSlotNotAddInRoomById(Long roomId);
+
     public ResponseEntity<ResponseObj> create(RoomRequest roomRequest);
 
     public ResponseEntity<ResponseObj> update(Long id, RoomRequest roomRequest);

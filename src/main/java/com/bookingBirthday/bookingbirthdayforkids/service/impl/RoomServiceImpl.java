@@ -2,12 +2,11 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.RoomRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
-import com.bookingBirthday.bookingbirthdayforkids.model.PartyDated;
-import com.bookingBirthday.bookingbirthdayforkids.model.Room;
-import com.bookingBirthday.bookingbirthdayforkids.model.SlotInRoom;
-import com.bookingBirthday.bookingbirthdayforkids.model.Venue;
+import com.bookingBirthday.bookingbirthdayforkids.model.*;
+import com.bookingBirthday.bookingbirthdayforkids.model.Package;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PartyDatedRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.RoomRepository;
+import com.bookingBirthday.bookingbirthdayforkids.repository.SlotRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.VenueRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +28,8 @@ public class RoomServiceImpl implements RoomService {
     @Autowired
     VenueRepository venueRepository;
 
+    @Autowired
+    SlotRepository slotRepository;
     @Autowired
     PartyDatedRepository partyDatedRepository;
     @Override
@@ -95,6 +96,34 @@ public class RoomServiceImpl implements RoomService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
+
+    //thêm
+
+    public ResponseEntity<ResponseObj> getSlotNotAddInRoomById(Long roomId){
+        try {
+            Optional<Room> room = roomRepository.findById(roomId);
+            if (room.isPresent()) {
+                List<SlotInRoom> slotInRoomList = room.get().getSlotInRoomList();
+                List<Slot> slotAddedList = new ArrayList<>();
+                for (SlotInRoom slotInRoom : slotInRoomList) {
+                    slotAddedList.add(slotInRoom.getSlot());
+                }
+                List<Slot> slotList = slotRepository.findAll();
+                List<Slot> slotNotAddList = new ArrayList<>();
+                for (Slot slot : slotList) {
+                    if (!slotAddedList.contains(slot)) {
+                        slotNotAddList.add(slot);
+                    }
+                }
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", slotNotAddList));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This theme does not exist", null));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
 
     @Override
     public ResponseEntity<ResponseObj> getSlotInRoomById(Long roomId) {
