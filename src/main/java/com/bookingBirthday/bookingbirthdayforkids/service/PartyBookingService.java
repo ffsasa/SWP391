@@ -22,7 +22,7 @@ public interface PartyBookingService {
 
     public ResponseEntity<ResponseObj> create(PartyBookingRequest partyBookingRequest);
 
-//    public ResponseEntity<ResponseObj> update(Long id, PartyBookingRequest partyBookingRequest);
+    public ResponseEntity<ResponseObj> update(Long id, PartyBookingRequest partyBookingRequest);
 
     public ResponseEntity<ResponseObj> delete(Long id);
 

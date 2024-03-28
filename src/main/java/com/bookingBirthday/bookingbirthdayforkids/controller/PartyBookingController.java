@@ -52,10 +52,10 @@ public class PartyBookingController {
 //        return partyBookingService.getById_ForCustomer(id);
 //    }
 
-//    @PostMapping("/create")
-//    public ResponseEntity<?> create(@Valid @RequestBody PartyBookingRequest partyBookingRequest){
-//        return partyBookingService.create(partyBookingRequest);
-//    }
+    @PostMapping("/create")
+    public ResponseEntity<?> create(@Valid @RequestBody PartyBookingRequest partyBookingRequest){
+        return partyBookingService.create(partyBookingRequest);
+    }
 //
 //    @PutMapping("/update/{id}")
 //    public ResponseEntity<?> update(@PathVariable Long id,@Valid @RequestBody PartyBookingRequest partyBookingRequest){

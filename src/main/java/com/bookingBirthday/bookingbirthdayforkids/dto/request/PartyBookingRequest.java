@@ -26,8 +26,6 @@ public class PartyBookingRequest {
     @Min(value = 1, message = "Capacity value must be greater than or equal to 1")
     private int participantAmount;
 
-    @NotNull(message = "Theme ID cannot be null")
-    private Long themeInVenueId;
     @NotNull(message = "Package Decoration ID cannot be null")
     private Long packageInVenueDecoId;
     @NotNull(message = "Package Food ID cannot be null")
