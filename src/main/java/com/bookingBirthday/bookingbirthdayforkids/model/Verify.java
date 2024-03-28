@@ -4,9 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -14,33 +17,21 @@ import java.util.Date;
 @NoArgsConstructor
 public class Verify{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String token;
-    private Date expirationTime;
-    private static final int EXPIRATION_TIME = 15;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreatedDate
+    private LocalDateTime createdDate;
+
+    @OneToOne(targetEntity = Account.class, fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false, name = "account_id")
     private Account account;
 
-    public Verify(String token, Account account) {
-        super();
-        this.token = token;
+    public void Confirmation(Account account) {
         this.account = account;
-        this.expirationTime = this.getTokenExpirationTime();
-    }
-
-    public Verify (String token) {
-        super();
-        this.token = token;
-        this.expirationTime = this.getTokenExpirationTime();
-    }
-
-    public Date getTokenExpirationTime() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(new Date().getTime());
-        calendar.add(Calendar.MINUTE, EXPIRATION_TIME);
-        return new Date(calendar.getTime().getTime());
+        this.createdDate = LocalDateTime.now();
+        this.token = UUID.randomUUID().toString();
     }
 }
