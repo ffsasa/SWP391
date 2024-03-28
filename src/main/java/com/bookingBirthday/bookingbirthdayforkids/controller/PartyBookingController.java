@@ -35,11 +35,11 @@ public class PartyBookingController {
         return partyBookingService.getAllForHost();
     }
 
-//    @PreAuthorize("hasAuthority('CUSTOMER')")
-//    @GetMapping("/get-all-by-user")
-//    public ResponseEntity<ResponseObj> getAllByUser() {
-//        return partyBookingService.getAllByUser();
-//    }
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @GetMapping("/get-all-by-user")
+    public ResponseEntity<ResponseObj> getAllByUser() {
+        return partyBookingService.getAllByUser();
+    }
 
     @GetMapping("/get-id/{id}")
     public ResponseEntity<ResponseObj> getById(@PathVariable Long id){
