@@ -236,29 +236,29 @@ public class VenueServiceImpl implements VenueService {
 
 
     //sửa
-    @Override
-    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city) {
-        Optional<Venue> venue = venueRepository.findById(id);
-        if (!venue.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This restaurant does not exist", null));
-        }
-        try {
-
-            venue.get().setVenueName(venueName == null ? venue.get().getVenueName() : venueName);
-            venue.get().setVenueDescription(venueDescription == null ? venue.get().getVenueDescription() : venueDescription);
-            venue.get().setVenueImgUrl(imgFile == null ? venue.get().getVenueImgUrl() : firebaseService.uploadImage(imgFile));
-            venue.get().setStreet(street == null ? venue.get().getStreet() : street);
-            venue.get().setWard(ward == null ? venue.get().getWard() : ward);
-            venue.get().setDistrict(district == null ? venue.get().getDistrict() : district);
-            venue.get().setCity(city == null ? venue.get().getCity() : city);
-            venue.get().setUpdateAt(LocalDateTime.now());
-            venueRepository.save(venue.get());
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", venue));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
-    }
+//    @Override
+//    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city) {
+//        Optional<Venue> venue = venueRepository.findById(id);
+//        if (!venue.isPresent()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This restaurant does not exist", null));
+//        }
+//        try {
+//
+//            venue.get().setVenueName(venueName == null ? venue.get().getVenueName() : venueName);
+//            venue.get().setVenueDescription(venueDescription == null ? venue.get().getVenueDescription() : venueDescription);
+//            venue.get().setVenueImgUrl(imgFile == null ? venue.get().getVenueImgUrl() : firebaseService.uploadImage(imgFile));
+//            venue.get().setStreet(street == null ? venue.get().getStreet() : street);
+//            venue.get().setWard(ward == null ? venue.get().getWard() : ward);
+//            venue.get().setDistrict(district == null ? venue.get().getDistrict() : district);
+//            venue.get().setCity(city == null ? venue.get().getCity() : city);
+//            venue.get().setUpdateAt(LocalDateTime.now());
+//            venueRepository.save(venue.get());
+//            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", venue));
+//
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+//        }
+//    }
 
     //sửa
 

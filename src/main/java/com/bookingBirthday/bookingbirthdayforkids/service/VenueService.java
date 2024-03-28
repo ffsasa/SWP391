@@ -22,7 +22,7 @@ public interface VenueService {
 
     public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city);
 
-    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city);
+//    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city);
 
     public ResponseEntity<ResponseObj> delete(Long id);
     public ResponseEntity<ResponseObj> addPackage(Long venueId, Long packageId);
