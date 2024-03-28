@@ -18,18 +18,15 @@ public interface VenueService {
 
     public ResponseEntity<ResponseObj> getById_ForCustomer(Long id);
 
-//    public ResponseEntity<ResponseObj> activeVenue(Long id);
+    public ResponseEntity<ResponseObj> activeVenue(Long id);
 
-    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String venueName, String venueDescription, String location, int capacity);
+    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city);
 
-    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String venueName, String venueDescription, String location, int capacity);
+    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city);
 
     public ResponseEntity<ResponseObj> delete(Long id);
-//
-//    public ResponseEntity<ResponseObj> addTheme(Long venueId, Long themeId);
-//
-//    public ResponseEntity<ResponseObj> addPackage(Long venueId, Long packageId);
-//
+    public ResponseEntity<ResponseObj> addPackage(Long venueId, Long packageId);
+
     public ResponseEntity<ResponseObj> getPackageInVenueByVenue(Long venueId);
 //
 //

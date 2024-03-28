@@ -37,6 +37,6 @@ public class Venue extends BaseEntity{
     private List<PackageInVenue> packageInVenueList;
     
     @OneToMany(mappedBy = "venue")
-    @JsonIgnore
+//    @JsonIgnore
     private List<Room> roomList;
 }
