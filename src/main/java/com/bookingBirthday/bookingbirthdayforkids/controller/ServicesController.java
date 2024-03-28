@@ -52,10 +52,11 @@ public class ServicesController {
                                     @RequestPart(name = "serviceName") String serviceName,
                                     @RequestPart(name = "serviceDescription") String description,
                                     @RequestPart(name = "pricing") String pricing,
-                                    @RequestPart(name = "serviceType") TypeEnum typeEnum) throws JsonProcessingException {
+                                    @RequestPart(name = "serviceType") String typeEnum) throws JsonProcessingException {
         try {
             float parsedPricing = Float.parseFloat(pricing);
-            return servicesService.create( fileImg, serviceName, description, parsedPricing, typeEnum);
+            TypeEnum parseTypeEnum = TypeEnum.valueOf(typeEnum);
+            return servicesService.create( fileImg, serviceName, description, parsedPricing, parseTypeEnum);
         } catch (NumberFormatException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid pricing", null));
         }
@@ -74,10 +75,11 @@ public class ServicesController {
                                     @RequestPart(name = "serviceName") String serviceName,
                                     @RequestPart(name = "serviceDescription") String description,
                                     @RequestPart(name = "pricing") String pricing,
-                                    @RequestPart(name = "serviceType") TypeEnum typeEnum) throws JsonProcessingException {
+                                    @RequestPart(name = "serviceType") String typeEnum) throws JsonProcessingException {
         try {
             float parsedPricing = Float.parseFloat(pricing);
-            return servicesService.update(id, fileImg, serviceName, description, parsedPricing, typeEnum);
+            TypeEnum parseTypeEnum = TypeEnum.valueOf(typeEnum);
+            return servicesService.update(id, fileImg, serviceName, description, parsedPricing, parseTypeEnum);
         } catch (NumberFormatException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid pricing", null));
         }
