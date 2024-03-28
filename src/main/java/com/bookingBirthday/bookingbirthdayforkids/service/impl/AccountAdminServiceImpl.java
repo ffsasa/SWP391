@@ -6,8 +6,10 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.Account;
 import com.bookingBirthday.bookingbirthdayforkids.model.Role;
 import com.bookingBirthday.bookingbirthdayforkids.model.RoleEnum;
+import com.bookingBirthday.bookingbirthdayforkids.model.Venue;
 import com.bookingBirthday.bookingbirthdayforkids.repository.AccountRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.RoleRepository;
+import com.bookingBirthday.bookingbirthdayforkids.repository.VenueRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.AccountAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,6 +33,8 @@ public class AccountAdminServiceImpl implements AccountAdminService {
     RoleRepository roleRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    VenueRepository venueRepository;
 
     @Override
     public ResponseEntity<ResponseObj> getAllCustomer() {
@@ -88,8 +92,11 @@ public class AccountAdminServiceImpl implements AccountAdminService {
         account.setCreateAt(LocalDateTime.now());
         account.setUpdateAt(LocalDateTime.now());
         account.setRole(role);
-
         accountRepository.save(account);
+        Venue venue = new Venue();
+        venue.setAccount(account);
+        venueRepository.save(venue);
+
         RegisterResponse accountResponse = new RegisterResponse();
         accountResponse.setId(account.getId());
         accountResponse.setUsername(account.getUsername());

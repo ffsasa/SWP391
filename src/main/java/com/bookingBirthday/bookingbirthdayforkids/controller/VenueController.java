@@ -91,7 +91,7 @@ public class VenueController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PostMapping(value = "/create-venue", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/update-venue", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseObj> create(@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
                                     @RequestPart String venueName,
                                     @RequestPart String venueDescription,
@@ -111,18 +111,18 @@ public class VenueController {
         return venueService.activeVenue(id);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PutMapping(value = "/update-venue/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ResponseObj> update(@PathVariable Long id,
-                                    @RequestPart (name = "fileImg", required = false) MultipartFile fileImg,
-                                    @RequestPart String venueName,
-                                    @RequestPart String venueDescription,
-                                    @RequestPart String street,
-                                    @RequestPart String ward,
-                                    @RequestPart String district,
-                                    @RequestPart String city) {
-            return venueService.update(id, fileImg, venueName, venueDescription, street, ward, district, city);
-    }
+//    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+//    @PutMapping(value = "/update-venue/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<ResponseObj> update(@PathVariable Long id,
+//                                    @RequestPart (name = "fileImg", required = false) MultipartFile fileImg,
+//                                    @RequestPart String venueName,
+//                                    @RequestPart String venueDescription,
+//                                    @RequestPart String street,
+//                                    @RequestPart String ward,
+//                                    @RequestPart String district,
+//                                    @RequestPart String city) {
+//            return venueService.update(id, fileImg, venueName, venueDescription, street, ward, district, city);
+//    }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @DeleteMapping("/delete/{id}")
