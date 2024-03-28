@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -207,30 +208,30 @@ public class RoomServiceImpl implements RoomService {
         }
     }
 
-//    @Override
-//    public ResponseEntity<ResponseObj> checkSlotInVenueForHost(LocalDate date) {
-//        try {
-//            List<Venue> venueList = venueRepository.findAll();
-//            if (venueList.isEmpty())
-//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List venue is empty", null));
-//
-//            List<PartyDated> partyDatedList = partyDatedRepository.findByDateAndIsActiveIsTrue(date);
-//
-//            for (Venue venue : venueList) {
-//                List<SlotInRoom> slotInRoomList = venue.getSlotInRoomList();
-//                for (SlotInRoom slotInRoom : slotInRoomList) {
-//
-//                    for (PartyDated partyDated : partyDatedList) {
-//                        if (partyDated.getSlotInRoom().equals(slotInRoom)) {
-//                            slotInRoom.setPartyDated(partyDated);
-//                            slotInRoom.setStatus(true);
-//                        }
-//                    }
-//                }
-//            }
-//            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", venueList));
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-//        }
-//    }
+    @Override
+    public ResponseEntity<ResponseObj> checkSlotInRoomForHost(LocalDate date) {
+        try {
+            List<Room> roomList = roomRepository.findAll();
+            if (roomList.isEmpty())
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List room is empty", null));
+
+            List<PartyDated> partyDatedList = partyDatedRepository.findByDateAndIsActiveIsTrue(date);
+
+            for (Room room : roomList) {
+                List<SlotInRoom> slotInRoomList = room.getSlotInRoomList();
+                for (SlotInRoom slotInRoom : slotInRoomList) {
+
+                    for (PartyDated partyDated : partyDatedList) {
+                        if (partyDated.getSlotInRoom().equals(slotInRoom)) {
+                            slotInRoom.setPartyDated(partyDated);
+                            slotInRoom.setStatus(true);
+                        }
+                    }
+                }
+            }
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", roomList));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
 }
