@@ -20,7 +20,7 @@ public interface PartyBookingService {
 
     public ResponseEntity<ResponseObj> getById_ForCustomer(Long id);
 
-//    public ResponseEntity<ResponseObj> create(PartyBookingRequest partyBookingRequest);
+    public ResponseEntity<ResponseObj> create(PartyBookingRequest partyBookingRequest);
 
 //    public ResponseEntity<ResponseObj> update(Long id, PartyBookingRequest partyBookingRequest);
 

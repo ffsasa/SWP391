@@ -28,10 +28,12 @@ public class PartyBookingRequest {
 
     @NotNull(message = "Theme ID cannot be null")
     private Long themeInVenueId;
-    @NotNull(message = "Package ID cannot be null")
-    private Long packageInVenueId;
-    @NotNull(message = "Slot in venue ID cannot be null")
-    private Long slotInVenueId;
+    @NotNull(message = "Package Decoration ID cannot be null")
+    private Long packageInVenueDecoId;
+    @NotNull(message = "Package Food ID cannot be null")
+    private Long packageInVenueFoodId;
+    @NotNull(message = "Slot in room ID cannot be null")
+    private Long slotInRoomId;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDate Date;
 
