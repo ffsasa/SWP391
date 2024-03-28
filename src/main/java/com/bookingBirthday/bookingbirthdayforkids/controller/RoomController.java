@@ -28,6 +28,11 @@ public class RoomController {
         return roomService.getById(id);
     }
 
+    @GetMapping("get-slot-not-add-in-rom/{id}")
+    public ResponseEntity<ResponseObj> getSlotNotAddInRoom(@PathVariable Long id){
+        return roomService.getSlotNotAddInRoomById(id);
+    }
+
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PostMapping(value = "/create-room", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> create(@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
@@ -46,8 +51,17 @@ public class RoomController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody RoomRequest roomRequest) {
-        return roomService.update(id, roomRequest);
+    public ResponseEntity<ResponseObj> update(@PathVariable Long id,@RequestPart(name = "fileImg", required = false ) MultipartFile fileImg,
+                                              @RequestPart String roomName,
+                                              @RequestPart String capacity,
+                                              @RequestPart String pricing) {
+            try {
+                float parsedPricing = Float.parseFloat(pricing);
+                int parsedCapacity = Integer.parseInt(capacity);
+                return roomService.update(id, fileImg, roomName,parsedCapacity, parsedPricing);
+            } catch (NumberFormatException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid pricing", null));
+            }
     }
 
     @DeleteMapping("/delete/{id}")
