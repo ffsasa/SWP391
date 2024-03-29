@@ -93,6 +93,37 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageList));
     }
 
+    public ResponseEntity<ResponseObj> getByIdForCustomer(Long venueId, Long id) {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
+        }
+
+        Optional<Account> account = accountRepository.findById(userId);
+        if (!account.isPresent()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
+        }
+
+        Role role = roleRepository.findByName(RoleEnum.CUSTOMER);
+        if (!account.get().getRole().equals(role)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a customer", null));
+        }
+
+        Optional<Venue> venue = venueRepository.findById(venueId);
+        if (!venue.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
+        }
+
+        Optional<Package> apackage = packageRepository.findById(id);
+        if (apackage.isPresent() && apackage.get().getVenue().getId().equals(venueId) && apackage.get().isActive()) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", apackage));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This package does not exist or is inactive", null));
+        }
+    }
+
+//fix
+
     @Override
     public ResponseEntity<ResponseObj> getByIdForHost(Long venueId, Long id) {
         Long userId = AuthenUtil.getCurrentUserId();
@@ -123,37 +154,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
     }
 
     //fix
-    public ResponseEntity<ResponseObj> getByIdForCustomer(Long venueId, Long id) {
-        Long userId = AuthenUtil.getCurrentUserId();
-        if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
-        }
 
-        Optional<Account> account = accountRepository.findById(userId);
-        if (!account.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
-        }
-
-        Role role = roleRepository.findByName(RoleEnum.CUSTOMER);
-        if (!account.get().getRole().equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a customer", null));
-        }
-
-        Optional<Venue> venue = venueRepository.findById(venueId);
-        if (!venue.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
-        }
-
-        Optional<Package> apackage = packageRepository.findById(id);
-        if (apackage.isPresent() && apackage.get().getVenue().getId().equals(venueId) && apackage.get().isActive()) {
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", apackage));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This package does not exist or is inactive", null));
-        }
-    }
-
-
-    //fix
     @Override
     public ResponseEntity<ResponseObj> create(Long venueId, MultipartFile imgFile, String packageName, String packageDescription, float percent, List<PackageServiceRequest> packageServiceRequestList, TypeEnum typeEnum) {
         Long userId = AuthenUtil.getCurrentUserId();

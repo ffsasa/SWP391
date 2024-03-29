@@ -18,47 +18,49 @@ public class SlotController {
 
     @GetMapping("/get-all-slot-for-customer/{venueId}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> getAllSlotForCustomer(@PathVariable Long venueId){
+    public ResponseEntity<ResponseObj> getAllSlotForCustomer(@PathVariable Long venueId) {
         return slotService.getAllSlotForCustomer(venueId);
     }
 
     @GetMapping("/get-all-slot-for-host/{accountId}")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getAllSlotForHost(@PathVariable Long accountId){
+    public ResponseEntity<ResponseObj> getAllSlotForHost(@PathVariable Long accountId) {
         return slotService.getAllSlotForHost(accountId);
-    }
-
-    @GetMapping("/get-id-for-host/{accountId}/{id}")
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getByIdForHost(@PathVariable Long accountId, @PathVariable Long id){
-        return slotService.getByIdForHost(accountId, id);
     }
 
     @GetMapping("/get-id-for-customer/{venueId}/{id}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> getByIdForCustomer(@PathVariable Long venueId, @PathVariable Long id){
-        return slotService.getByIdForCustomer(venueId,id);
+    public ResponseEntity<ResponseObj> getByIdForCustomer(@PathVariable Long venueId, @PathVariable Long id) {
+        return slotService.getByIdForCustomer(venueId, id);
     }
+
+    @GetMapping("/get-id-for-host/{accountId}/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    public ResponseEntity<ResponseObj> getByIdForHost(@PathVariable Long accountId, @PathVariable Long id) {
+        return slotService.getByIdForHost(accountId, id);
+    }
+
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PostMapping("/create")
-    public ResponseEntity<ResponseObj> create(@RequestBody SlotRequest slotRequest){
+    public ResponseEntity<ResponseObj> create(@RequestBody SlotRequest slotRequest) {
         return slotService.create(slotRequest);
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PutMapping("/update/{id}")
-    public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody SlotRequest slotRequest){
+    public ResponseEntity<ResponseObj> update(@PathVariable Long id, @RequestBody SlotRequest slotRequest) {
         return slotService.update(id, slotRequest);
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
+    public ResponseEntity<ResponseObj> delete(@PathVariable Long id) {
         return slotService.delete(id);
     }
+
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PostMapping(value = "/add-slot-in-room-by-slot-id")
-    public ResponseEntity<?> addSlotInRoomBySlotId(@RequestParam Long roomId, @RequestBody List<Long> slotId){
+    public ResponseEntity<?> addSlotInRoomBySlotId(@RequestParam Long roomId, @RequestBody List<Long> slotId) {
         return slotService.addSlotInRoomByRoomId(roomId, slotId);
     }
 }

@@ -35,6 +35,11 @@ public class PackageController {
         return packageService.getAllForHost(venueId);
     }
 
+    @GetMapping("/get-package-for-customer/{venueId}/{packageId}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<ResponseObj> getByIdForCustomer(@PathVariable Long venueId, @PathVariable Long packageId) {
+        return packageService.getByIdForCustomer(venueId, packageId);
+    }
 
     @GetMapping("/get-package-for-host/{venueId}/{packageId}")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
@@ -42,11 +47,6 @@ public class PackageController {
         return packageService.getByIdForHost(venueId, packageId);
     }
 
-    @GetMapping("/get-package-for-customer/{venueId}/{packageId}")
-    @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> getByIdForCustomer(@PathVariable Long venueId, @PathVariable Long packageId) {
-        return packageService.getByIdForCustomer(venueId, packageId);
-    }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PostMapping(value = "/create-package", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
