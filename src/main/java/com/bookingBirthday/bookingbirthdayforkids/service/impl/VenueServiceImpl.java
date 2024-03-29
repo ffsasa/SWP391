@@ -7,6 +7,7 @@ import com.bookingBirthday.bookingbirthdayforkids.repository.*;
 import com.bookingBirthday.bookingbirthdayforkids.service.SlotInRoomService;
 import com.bookingBirthday.bookingbirthdayforkids.service.VenueService;
 import com.bookingBirthday.bookingbirthdayforkids.util.AuthenUtil;
+import com.bookingBirthday.bookingbirthdayforkids.util.TotalPriceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +32,6 @@ public class VenueServiceImpl implements VenueService {
 
     @Autowired
     FirebaseService firebaseService;
-
-    @Autowired
-    PackageInVenueRepository packageInVenueRepository;
 
     @Autowired
     SlotRepository slotRepository;
@@ -92,7 +90,7 @@ public class VenueServiceImpl implements VenueService {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue doest not have any booking", null));
                 } else {
                     for (PartyBooking partyBooking : partyBookingList) {
-                        partyBooking.setVe(partyBooking.getSlotInRoom().getRoom().getVenue());
+                        partyBooking.setVenueObject(partyBooking.getSlotInRoom().getRoom().getVenue());
 
                         float pricing = 0;
                         for (UpgradeService upgradeService : partyBooking.getUpgradeServices()) {
