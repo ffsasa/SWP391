@@ -74,6 +74,7 @@ public class VenueServiceImpl implements VenueService {
     }
 
 
+    @Override
     public ResponseEntity<ResponseObj> getAllPartyBookingByVenue(Long venueId) {
         try {
             Optional<Venue> venue = venueRepository.findById(venueId);
@@ -83,15 +84,29 @@ public class VenueServiceImpl implements VenueService {
                 for (Room room : roomList) {
                     List<SlotInRoom> slotInRoomList = room.getSlotInRoomList();
                     for (SlotInRoom slotInRoom : slotInRoomList) {
-                        List<PartyDated> partyDatedList = slotInRoom.getPartyDatedList();
-                        for (PartyDated partyDated : partyDatedList) {
-                            partyBookingList.add(partyDated.getPartyBooking());
-                        }
+                        List<PartyBooking> partyBookings = slotInRoom.getPartyBookingList();
+                        partyBookingList.addAll(partyBookings);
                     }
                 }
-                if(partyBookingList.isEmpty()){
+                if (partyBookingList.isEmpty()) {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue doest not have any booking", null));
-                }else{
+                } else {
+                    for (PartyBooking partyBooking : partyBookingList) {
+                        partyBooking.setVe(partyBooking.getSlotInRoom().getRoom().getVenue());
+
+                        float pricing = 0;
+                        for (UpgradeService upgradeService : partyBooking.getUpgradeServices()) {
+                            pricing += upgradeService.getServices().getPricing() * upgradeService.getCount();
+                        }
+
+                        pricing += TotalPriceUtil.getTotalPricingPackage(partyBooking);
+
+                        partyBooking.setPricingTotal(pricing);
+
+                        for (Payment payment : partyBooking.getPaymentList()) {
+                            partyBooking.setIsPayment(payment.getStatus().equals("SUCCESS"));
+                        }
+                    }
                     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", partyBookingList));
                 }
             } else {
@@ -101,65 +116,7 @@ public class VenueServiceImpl implements VenueService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
-    @Override
-    public ResponseEntity<ResponseObj> getPackageInVenueByVenue(Long venueId) {
-        try {
-            Optional<Venue> venue = venueRepository.findById(venueId);
-            if (venue.isPresent()) {
-                List<PackageInVenue> packageInVenuesList = venue.get().getPackageInVenueList();
-                List<PackageInVenue> packageInVenuesListValidate = new ArrayList<>();
-                for (PackageInVenue packageInVenue : packageInVenuesList) {
-                    if (packageInVenue.isActive()) {
-                        packageInVenuesListValidate.add(packageInVenue);
-                    }
-                }
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", packageInVenuesListValidate));
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This venue does not exist", null));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
-    }
 
-    @Override
-    public ResponseEntity<ResponseObj> getAllPackageHaveNotAddByVenune(Long venueId) {
-        try {
-            Optional<Venue> venue = venueRepository.findById(venueId);
-            if (venue.isPresent()) {
-                List<PackageInVenue> packageInVenueList = venue.get().getPackageInVenueList();
-                List<Package> packageAddedList = new ArrayList<>();
-                for (PackageInVenue packageInVenue : packageInVenueList) {
-                    packageAddedList.add(packageInVenue.getApackage());
-                }
-                List<Package> packageList = packageRepository.findAll();
-                List<Package> packageNotAddList = new ArrayList<>();
-                for (Package apacakge : packageList) {
-                    if (!packageAddedList.contains(apacakge)) {
-                        packageNotAddList.add(apacakge);
-                    }
-                }
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", packageNotAddList));
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This theme does not exist", null));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
-    }
-
-    @Override
-    public ResponseEntity<ResponseObj> getById(Long id) {
-        try {
-            Optional<Venue> venue = venueRepository.findById(id);
-            if (venue.isPresent()) {
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", venue));
-            }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
-    }
 
     @Override
     public ResponseEntity<ResponseObj> getById_ForCustomer(Long id) {
@@ -178,14 +135,14 @@ public class VenueServiceImpl implements VenueService {
     @Override
     public ResponseEntity<ResponseObj> customize(Long id, MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city) {
         Long userId = AuthenUtil.getCurrentUserId();
-        if(userId == null){
+        if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
         }
         Account account = accountRepository.findById(userId).get();
         Optional<Venue> venue = venueRepository.findById(id);
 
-        if (venue.isPresent()){
-            if (!venue.get().getAccount().getId().equals(account.getId())){
+        if (venue.isPresent()) {
+            if (!venue.get().getAccount().getId().equals(account.getId())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to impact this venue", null));
             }
             try {
@@ -214,7 +171,6 @@ public class VenueServiceImpl implements VenueService {
     }
 
     //sửa
-
     public ResponseEntity<ResponseObj> activeVenue(Long id) {
         Optional<Venue> venue = venueRepository.findById(id);
         if (!venue.isPresent()) {
@@ -222,9 +178,9 @@ public class VenueServiceImpl implements VenueService {
         }
         try {
             List<Room> roomList = venue.get().getRoomList();
-            for(Room room : roomList){
+            for (Room room : roomList) {
                 List<SlotInRoom> slotInRoomList = room.getSlotInRoomList();
-                for(SlotInRoom slotInRoom : slotInRoomList){
+                for (SlotInRoom slotInRoom : slotInRoomList) {
                     slotInRoom.setUpdateAt(LocalDateTime.now());
                     slotInRoom.setActive(true);
                 }
@@ -243,29 +199,36 @@ public class VenueServiceImpl implements VenueService {
 
 
     //sửa
-//    @Override
-//    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city) {
-//        Optional<Venue> venue = venueRepository.findById(id);
-//        if (!venue.isPresent()) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This restaurant does not exist", null));
-//        }
-//        try {
-//
-//            venue.get().setVenueName(venueName == null ? venue.get().getVenueName() : venueName);
-//            venue.get().setVenueDescription(venueDescription == null ? venue.get().getVenueDescription() : venueDescription);
-//            venue.get().setVenueImgUrl(imgFile == null ? venue.get().getVenueImgUrl() : firebaseService.uploadImage(imgFile));
-//            venue.get().setStreet(street == null ? venue.get().getStreet() : street);
-//            venue.get().setWard(ward == null ? venue.get().getWard() : ward);
-//            venue.get().setDistrict(district == null ? venue.get().getDistrict() : district);
-//            venue.get().setCity(city == null ? venue.get().getCity() : city);
-//            venue.get().setUpdateAt(LocalDateTime.now());
-//            venueRepository.save(venue.get());
-//            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", venue));
-//
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-//        }
-//    }
+    @Override
+    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city) {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+        }
+        Account account = accountRepository.findById(userId).get();
+        Optional<Venue> venue = venueRepository.findById(id);
+        if (venue.isPresent()) {
+            if (!venue.get().getAccount().getId().equals(account.getId())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "You are not permission update this venue.", null));
+            }
+            try {
+                venue.get().setVenueName((venueName == null || venue.get().getVenueName().equals(venueName)) ? venue.get().getVenueName() : venueName);
+                venue.get().setVenueDescription((venueDescription == null || venue.get().getVenueDescription().equals(venueDescription)) ? venue.get().getVenueDescription() : venueDescription);
+                venue.get().setVenueImgUrl(imgFile == null ? venue.get().getVenueImgUrl() : firebaseService.uploadImage(imgFile));
+                venue.get().setStreet((street == null || venue.get().getStreet().equals(street)) ? venue.get().getStreet() : street);
+                venue.get().setWard((ward == null || venue.get().getWard().equals(ward)) ? venue.get().getWard() : ward);
+                venue.get().setDistrict((district == null || venue.get().getDistrict().equals(district)) ? venue.get().getDistrict() : district);
+                venue.get().setCity((city == null || venue.get().getCity().equals(city)) ? venue.get().getCity() : city);
+                venue.get().setUpdateAt(LocalDateTime.now());
+                venueRepository.save(venue.get());
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", venue));
+
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue does not exist", venue));
+    }
 
     //sửa
 
@@ -286,12 +249,15 @@ public class VenueServiceImpl implements VenueService {
                     room.setActive(false);
                     roomRepository.save(room);
                 }
-
-                List<PackageInVenue> packageInVenueList = venue.get().getPackageInVenueList();
-                for (PackageInVenue packageInVenue : packageInVenueList) {
-                    packageInVenue.setDeleteAt(LocalDateTime.now());
-                    packageInVenue.setActive(false);
-                    packageInVenueRepository.save(packageInVenue);
+                List<Package> packageList = venue.get().getPackageList();
+                for (Package aPackage : packageList){
+                    List<PackageService> packageServiceList = aPackage.getPackageServiceList();
+                    for (PackageService packageService : packageServiceList){
+                        packageService.setActive(false);
+                        packageService.setDeleteAt(LocalDateTime.now());
+                    }
+                    aPackage.setActive(false);
+                    aPackage.setDeleteAt(LocalDateTime.now());
                 }
                 venue.get().setDeleteAt(LocalDateTime.now());
                 venue.get().setActive(false);
@@ -301,34 +267,6 @@ public class VenueServiceImpl implements VenueService {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
-    }
-
-
-
-    //sửa
-    @Override
-    public ResponseEntity<ResponseObj> addPackage(Long venueId, Long packageId) {
-        try{
-            Optional<Package> aPackage = packageRepository.findById(packageId);
-            Optional<Venue> venue = venueRepository.findById(venueId);
-            if(!aPackage.isPresent()){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This package does not exist", null));
-            }
-            if(venue.isPresent()){
-                PackageInVenue packageInVenue = new PackageInVenue();
-                packageInVenue.setApackage(aPackage.get());
-                packageInVenue.setVenue(venue.get());
-                packageInVenue.setActive(true);
-                packageInVenue.setCreateAt(LocalDateTime.now());
-                packageInVenue.setUpdateAt(LocalDateTime.now());
-                packageInVenueRepository.save(packageInVenue);
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Add package in venue successfully", null));
-            }else{
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
-            }
-        }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
