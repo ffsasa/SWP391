@@ -9,7 +9,8 @@ import java.util.List;
 
 @Repository
 public interface SlotRepository extends JpaRepository<Slot, Long> {
-    List<Slot> findAllByIsActiveIsTrue();
-
     List<Slot> findAllByAccountId(Long accountId);
+
+    List<Slot> findAllByVenueId(Long venueId);
+    List<Slot> findAllByIsActiveIsTrueAndVenueId(Long venueId);
 }
