@@ -86,7 +86,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         if (!venue.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
         }
-        List<Package> packageList = packageRepository.findAllByVenueId();
+        List<Package> packageList = packageRepository.findAllByVenueId(venue.get().getId());
         if (packageList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "No active packages found for this venue", null));
         }
