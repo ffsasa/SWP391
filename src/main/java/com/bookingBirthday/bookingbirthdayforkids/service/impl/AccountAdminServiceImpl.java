@@ -95,6 +95,7 @@ public class AccountAdminServiceImpl implements AccountAdminService {
         accountRepository.save(account);
         Venue venue = new Venue();
         venue.setAccount(account);
+        venue.setActive(true);
         venueRepository.save(venue);
 
         RegisterResponse accountResponse = new RegisterResponse();

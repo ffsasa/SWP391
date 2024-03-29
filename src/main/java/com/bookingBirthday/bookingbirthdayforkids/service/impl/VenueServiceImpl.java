@@ -6,6 +6,7 @@ import com.bookingBirthday.bookingbirthdayforkids.model.Package;
 import com.bookingBirthday.bookingbirthdayforkids.repository.*;
 import com.bookingBirthday.bookingbirthdayforkids.service.SlotInRoomService;
 import com.bookingBirthday.bookingbirthdayforkids.service.VenueService;
+import com.bookingBirthday.bookingbirthdayforkids.util.AuthenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,10 +29,6 @@ public class VenueServiceImpl implements VenueService {
     @Autowired
     PackageRepository packageRepository;
 
-
-    @Autowired
-    PartyDatedRepository partyDatedRepository;
-
     @Autowired
     FirebaseService firebaseService;
 
@@ -46,6 +43,9 @@ public class VenueServiceImpl implements VenueService {
 
     @Autowired
     SlotInRoomRepository slotInRoomRepository;
+
+    @Autowired
+    AccountRepository accountRepository;
 
     @Override
     public ResponseEntity<ResponseObj> getAll() {
@@ -176,29 +176,41 @@ public class VenueServiceImpl implements VenueService {
 
     //sửa
     @Override
-    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city) {
-        if (venueRepository.existsByVenueName(venueName)) {
-            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(), "Venue name has already exist", null));
+    public ResponseEntity<ResponseObj> customize(Long id, MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city) {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if(userId == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
         }
-        Venue venue = new Venue();
-        try {
-            if (imgFile != null) {
-                String img = firebaseService.uploadImage(imgFile);
-                venue.setVenueName(venueName);
-                venue.setVenueDescription(venueDescription);
-                venue.setVenueImgUrl(img);
-                venue.setStreet(street);
-                venue.setDistrict(district);
-                venue.setWard(ward);
-                venue.setCity(city);
-                venue.setActive(false);
-                venue.setCreateAt(LocalDateTime.now());
-                venueRepository.save(venue);
+        Account account = accountRepository.findById(userId).get();
+        Optional<Venue> venue = venueRepository.findById(id);
+
+        if (venue.isPresent()){
+            if (!venue.get().getAccount().getId().equals(account.getId())){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to impact this venue", null));
             }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Image is invalid", null));
+            try {
+                if (imgFile != null) {
+                    String img = firebaseService.uploadImage(imgFile);
+                    if (venueRepository.existsByVenueName(venueName)) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Venue name has already exist", null));
+                    }
+                    venue.get().setVenueName(venueName);
+                    venue.get().setVenueDescription(venueDescription);
+                    venue.get().setVenueImgUrl(img);
+                    venue.get().setStreet(street);
+                    venue.get().setDistrict(district);
+                    venue.get().setWard(ward);
+                    venue.get().setCity(city);
+                    venue.get().setActive(false);
+                    venue.get().setCreateAt(LocalDateTime.now());
+                    venueRepository.save(venue.get());
+                    return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", venue));
+                }
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Image is invalid", null));
+            }
         }
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", venue));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
     }
 
     //sửa
@@ -220,11 +232,6 @@ public class VenueServiceImpl implements VenueService {
                 room.setActive(true);
             }
 
-            List<PackageInVenue> packageInVenueList = venue.get().getPackageInVenueList();
-            for(PackageInVenue packageInVenue : packageInVenueList){
-                packageInVenue.setUpdateAt(LocalDateTime.now());
-                packageInVenue.setActive(true);
-            }
             venue.get().setActive(true);
             venueRepository.save(venue.get());
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Set venue active successful", venue));
