@@ -20,7 +20,7 @@ public interface VenueService {
 
     public ResponseEntity<ResponseObj> activeVenue(Long id);
 
-    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city);
+    public ResponseEntity<ResponseObj> customize(Long id, MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city);
 
 //    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city);
 

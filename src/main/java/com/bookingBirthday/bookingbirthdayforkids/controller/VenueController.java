@@ -91,15 +91,16 @@ public class VenueController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PostMapping(value = "/update-venue", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ResponseObj> create(@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
+    @PostMapping(value = "/customize-venue/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseObj> customize(@PathVariable Long id,
+                                    @RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
                                     @RequestPart String venueName,
                                     @RequestPart String venueDescription,
                                     @RequestPart String street,
                                     @RequestPart String ward,
                                     @RequestPart String district,
                                     @RequestPart String city){
-            return venueService.create(fileImg, venueName, venueDescription, street, ward, district, city);
+            return venueService.customize(id, fileImg, venueName, venueDescription, street, ward, district, city);
     }
 
     public ResponseEntity<ResponseObj> addPackage(Long venueId, Long packageId){
