@@ -91,17 +91,16 @@ public class RoomController {
 
 
     @PreAuthorize("hasAuthority('HOST')")
-    @PostMapping(value = "/create-room", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> create(@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
+    @PostMapping(value = "/create-room/venueId{}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> create(@PathVariable Long venueId,
+                                    @RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
                                     @RequestPart String roomName,
-                                    @RequestPart String venueId,
                                     @RequestPart String capacity,
                                     @RequestPart String pricing) {
         try {
             float parsedPricing = Float.parseFloat(pricing);
-            Long parsedVenueId = Long.parseLong(venueId);
             int parsedCapacity = Integer.parseInt(capacity);
-            return roomService.create(fileImg, roomName, parsedVenueId, parsedCapacity, parsedPricing);
+            return roomService.create(fileImg, roomName, venueId, parsedCapacity, parsedPricing);
         } catch (NumberFormatException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid pricing", null));
         }
@@ -109,14 +108,14 @@ public class RoomController {
 
     @PutMapping("/update/{venueId}/{roomId}")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> update(@PathVariable Long venueId, @PathVariable Long id, @RequestPart(name = "fileImg", required = false) MultipartFile fileImg,
+    public ResponseEntity<ResponseObj> update(@PathVariable Long venueId, @PathVariable Long roomId, @RequestPart(name = "fileImg", required = false) MultipartFile fileImg,
                                               @RequestPart String roomName,
                                               @RequestPart String capacity,
                                               @RequestPart String pricing) {
         try {
             float parsedPricing = Float.parseFloat(pricing);
             int parsedCapacity = Integer.parseInt(capacity);
-            return roomService.update(id, venueId, fileImg, roomName, parsedCapacity, parsedPricing);
+            return roomService.update(roomId, venueId, fileImg, roomName, parsedCapacity, parsedPricing);
         } catch (NumberFormatException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid pricing", null));
         }
