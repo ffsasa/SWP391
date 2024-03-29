@@ -1,11 +1,14 @@
 package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
-import com.bookingBirthday.bookingbirthdayforkids.model.Review;
-import com.bookingBirthday.bookingbirthdayforkids.model.Services;
-import com.bookingBirthday.bookingbirthdayforkids.model.TypeEnum;
+import com.bookingBirthday.bookingbirthdayforkids.model.*;
+import com.bookingBirthday.bookingbirthdayforkids.repository.AccountRepository;
+import com.bookingBirthday.bookingbirthdayforkids.repository.RoleRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.ServicesRepository;
+import com.bookingBirthday.bookingbirthdayforkids.repository.VenueRepository;
 import com.bookingBirthday.bookingbirthdayforkids.service.ServicesService;
+import com.bookingBirthday.bookingbirthdayforkids.util.AuthenUtil;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,17 +24,33 @@ import java.util.Optional;
 public class ServicesServicesImpl implements ServicesService {
     @Autowired
     ServicesRepository servicesRepository;
+
+    @Autowired
+    VenueRepository venueRepository;
     @Autowired
     FirebaseService firebaseService;
 
+    @Autowired
+    AccountRepository accountRepository;
+
+    @Autowired
+    RoleRepository roleRepository;
+
     @Override
-    public ResponseEntity<ResponseObj> getAll(){
+    public ResponseEntity<ResponseObj> getAllServiceByVenue(Long venueId) {
         try {
+            Optional<Venue> venue = venueRepository.findById(venueId);
             List<Services> servicesList = servicesRepository.findAllByIsActiveIsTrue();
-            if (servicesList.isEmpty()) {
+            List<Services> servicesListAccount = new ArrayList<>();
+            for (Services services : servicesList) {
+                if (services.getAccount().getId().equals(venue.get().getAccount().getId())) {
+                    servicesListAccount.add(services);
+                }
+            }
+            if (servicesListAccount.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
             }
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", servicesList));
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", servicesListAccount));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
@@ -39,56 +59,94 @@ public class ServicesServicesImpl implements ServicesService {
     //thêm
 
     @Override
-    public ResponseEntity<ResponseObj> getAllServiceByType(TypeEnum typeEnum){
+    public ResponseEntity<ResponseObj> getAllServiceByTypeByVenue(TypeEnum typeEnum, Long venueId) {
         try {
+            Optional<Venue> venue = venueRepository.findById(venueId);
+            List<Services> servicesListAccountByType = new ArrayList<>();
             List<Services> servicesList = servicesRepository.findAllByServiceTypeAndIsActiveIsTrue(typeEnum);
-            if (servicesList.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+            for (Services services : servicesList) {
+                if (services.getAccount().getId().equals(venue.get().getAccount().getId())) {
+                    servicesListAccountByType.add(services);
+                }
             }
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", servicesList));
+            if (servicesListAccountByType.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+            }
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", servicesListAccountByType));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
 
-
+    @Override
+    public ResponseEntity<ResponseObj> getAllServiceTypeByHost(TypeEnum typeEnum) {
+        try {
+            Long useId = AuthenUtil.getCurrentUserId();
+            Optional<Account> account = accountRepository.findById(useId);
+            List<Services> servicesListType = servicesRepository.findAllByServiceType(typeEnum);
+            List<Services> servicesListTypeByHost = new ArrayList<>();
+            for (Services services : servicesListType) {
+                if (services.getAccount().getId().equals(account)) {
+                    servicesListTypeByHost.add(services);
+                }
+            }
+            if (servicesListTypeByHost.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+            }
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", servicesListTypeByHost));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
 
     @Override
-    public ResponseEntity<ResponseObj> getAllForHost(){
+    public ResponseEntity<ResponseObj> getAllForHost() {
         try {
+            Long userId = AuthenUtil.getCurrentUserId();
+            Optional<Account> account = accountRepository.findById(userId);
+            List<Services> servicesListByHost = new ArrayList<>();
             List<Services> servicesList = servicesRepository.findAll();
-            if (servicesList.isEmpty()) {
+            for (Services services : servicesList) {
+                if (services.getAccount().getId().equals(account)) {
+                    servicesListByHost.add(services);
+                }
+            }
+            if (servicesListByHost.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
             }
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", servicesList));
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", servicesListByHost));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
 
     @Override
-    public  ResponseEntity<ResponseObj> getById_ForCustomer(Long id){
-        try{
-            Optional<Services> services = servicesRepository.findById(id);
-            if(services.isPresent() && services.get().isActive() == true){
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", services));
-            }else{
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This service not exist", null));
+    public ResponseEntity<ResponseObj> getServiceByIdForCustomeByVenue(Long venueId, Long serviceId) {
+        try {
+            Optional<Venue> venue = venueRepository.findById(venueId);
+            Optional<Services> services = servicesRepository.findById(serviceId);
+            if(services.get().getAccount().getId().equals(venue.get().getAccount().getId())){
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", services.get()));
             }
-        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Service does not exist", null));
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getById(Long id){
+    public ResponseEntity<ResponseObj> getByIdByHost(Long id) {
         try {
-            Optional<Services> services = servicesRepository.findById(id);
-            if(services.isPresent())
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), null, services));
-            else
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Service does not exist", null));
-        } catch (Exception e){
+            Long useId = AuthenUtil.getCurrentUserId();
+            Optional<Account> account = accountRepository.findById(useId);
+            List<Services> servicesList = account.get().getServicesList();
+            for(Services services : servicesList){
+                if(services.getId().equals(id)){
+                    return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), null, services));
+                }
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Service does not exist", null));
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
@@ -96,16 +154,23 @@ public class ServicesServicesImpl implements ServicesService {
     //sửa
 
     @Override
-    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String serviceName, String description, float pricing, TypeEnum typeEnum){
-        if(servicesRepository.existsServiceByServiceName(serviceName)){
-            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(),"Service name has already exist", null));
+    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String serviceName, String description, float pricing, TypeEnum typeEnum) {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
         }
+        Account account = accountRepository.findById(userId).get();
+        Role role = roleRepository.findByName(RoleEnum.HOST);
+        if (!role.equals(account.getRole())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission create service", null));
+        }
+
         Services services = new Services();
         try {
             if (imgFile != null) {
                 String img = "";
-                switch (typeEnum){
-                    case FOOD:
+                switch (typeEnum) {
+                    case FOOD, DECORATION:
                         img = firebaseService.uploadImage(imgFile);
                         services.setServiceName(serviceName);
                         services.setServiceDescription(description);
@@ -114,23 +179,12 @@ public class ServicesServicesImpl implements ServicesService {
                         services.setActive(true);
                         services.setCreateAt(LocalDateTime.now());
                         services.setUpdateAt(LocalDateTime.now());
+                        services.setAccount(account);
                         servicesRepository.save(services);
-                        break;
-                    case DECORATION:
-                        img = firebaseService.uploadImage(imgFile);
-                        services.setServiceName(serviceName);
-                        services.setServiceDescription(description);
-                        services.setPricing(pricing);
-                        services.setServiceImgUrl(img);
-                        services.setActive(true);
-                        services.setCreateAt(LocalDateTime.now());
-                        services.setUpdateAt(LocalDateTime.now());
-                        servicesRepository.save(services);
-                        break;
                 }
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Image is invalid", null));
 
         }
@@ -140,49 +194,56 @@ public class ServicesServicesImpl implements ServicesService {
 
     //sửa
     @Override
-    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String serviceName, String description, float pricing,TypeEnum typeEnum){
+    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String serviceName, String description, float pricing, TypeEnum typeEnum) {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+        }
+        Account account = accountRepository.findById(userId).get();
         Optional<Services> services = servicesRepository.findById(id);
         if (!services.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This service does not exist", null));
+        } else if (!services.get().getAccount().getId().equals(account.getId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This service is not yours so you cannot update it", null));
         }
         try {
-
             switch (typeEnum) {
-                case FOOD:
+                case FOOD, DECORATION:
                     services.get().setServiceName(serviceName == null ? services.get().getServiceName() : serviceName);
                     services.get().setServiceDescription(description == null ? services.get().getServiceDescription() : description);
                     services.get().setServiceImgUrl(imgFile == null ? services.get().getServiceImgUrl() : firebaseService.uploadImage(imgFile));
                     services.get().setPricing(pricing == 0 ? services.get().getPricing() : pricing);
                     services.get().setUpdateAt(LocalDateTime.now());
+                    services.get().setAccount(account);
                     servicesRepository.save(services.get());
-                    break;
-                case DECORATION:
-                    services.get().setServiceName(serviceName == null ? services.get().getServiceName() : serviceName);
-                    services.get().setServiceDescription(description == null ? services.get().getServiceDescription() : description);
-                    services.get().setServiceImgUrl(imgFile == null ? services.get().getServiceImgUrl() : firebaseService.uploadImage(imgFile));
-                    services.get().setPricing(pricing == 0 ? services.get().getPricing() : pricing);
-                    services.get().setUpdateAt(LocalDateTime.now());
-                    servicesRepository.save(services.get());
-                   break;
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", services));
+
 
     }
 
     @Override
     public ResponseEntity<ResponseObj> delete(Long id) {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+        }
+        Account account = accountRepository.findById(userId).get();
+        Optional<Services> services = servicesRepository.findById(id);
+        if (!services.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This service does not exist", null));
+        } else if (!services.get().getAccount().getId().equals(account.getId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This service is not yours so you cannot update it", null));
+        }
         try {
-            Optional<Services> services = servicesRepository.findById(id);
-            if (services.isPresent()) {
-                services.get().setActive(false);
-                services.get().setDeleteAt(LocalDateTime.now());
-                servicesRepository.save(services.get());
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Delete successful", null));
-            } else
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This services does not exist", null));
+            services.get().setActive(false);
+            services.get().setDeleteAt(LocalDateTime.now());
+            services.get().setAccount(account);
+            servicesRepository.save(services.get());
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Delete successful", null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }

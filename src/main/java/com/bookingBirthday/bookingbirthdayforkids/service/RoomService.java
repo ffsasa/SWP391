@@ -9,21 +9,28 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public interface RoomService {
-    public ResponseEntity<ResponseObj> getAll();
+    public ResponseEntity<ResponseObj> getAllRoomInVenueByCustomer(Long venueId);
 
-    public ResponseEntity<ResponseObj> getById(Long id);
+    public ResponseEntity<ResponseObj> getAllRoomInVenueByHost(Long venueId);
 
-    public ResponseEntity<ResponseObj> getSlotInRoomById(Long roomId);
+    public ResponseEntity<ResponseObj> getRoomInVenueByIdForCustomer(Long roomId, Long venueId);
 
-    public ResponseEntity<ResponseObj> getSlotNotAddInRoomById(Long roomId);
+    public ResponseEntity<ResponseObj> getRoomInVenueByIdForHost(Long roomId, Long venueId);
 
-    public ResponseEntity<ResponseObj> checkSlotInRoom(LocalDateTime date);
+    public ResponseEntity<ResponseObj> getSlotInRoomByIdForCustomer(Long roomId, Long venueId);
+
+    public ResponseEntity<ResponseObj> getSlotInRoomByIdForHost(Long roomId, Long venueId);
+
+    public ResponseEntity<ResponseObj> getSlotNotAddInRoomByIdForHost(Long roomId, Long venueId);
+
+    public ResponseEntity<ResponseObj> checkSlotInRoomForCustomer(LocalDateTime date, Long venueId);
+
 
     public ResponseEntity<ResponseObj> checkSlotInRoomForHost(LocalDate date);
 
     public ResponseEntity<ResponseObj> create(MultipartFile fileImg, String roomName, Long venueId, int capacity, float parsedPricing);
 
-    public ResponseEntity<ResponseObj> update(Long id, MultipartFile fileImg, String roomName,int capacity, float parsedPricing);
+    public ResponseEntity<ResponseObj> update(Long id, Long venueId, MultipartFile fileImg, String roomName,int capacity, float parsedPricing);
 
-    public ResponseEntity<ResponseObj> delete(Long id);
+    public ResponseEntity<ResponseObj> delete(Long roomId, Long venueId);
 }
