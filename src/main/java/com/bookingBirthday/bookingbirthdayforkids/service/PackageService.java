@@ -9,19 +9,21 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface PackageService {
-    public ResponseEntity<ResponseObj> getAll();
+    public ResponseEntity<ResponseObj> getAllForCustomer(Long venueId);
 
-    public ResponseEntity<ResponseObj> getAllForHost();
+    public ResponseEntity<ResponseObj> getAllForHost(Long venueId);
 
-    public ResponseEntity<ResponseObj> getById(Long id);
+    public ResponseEntity<ResponseObj> getByIdForHost(Long venueId, Long id);
 
-    public ResponseEntity<ResponseObj> getById_ForCustomer(Long id);
+    public ResponseEntity<ResponseObj> getByIdForCustomer(Long venueId, Long id);
 
-    ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, String packageDescription, float percent,List<PackageServiceRequest> packageServiceRequestList, TypeEnum typeEnum);
-    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String packageName, String packageDescription);
-    public ResponseEntity<ResponseObj> updatePercentPackage(Long id, float percent);
+    ResponseEntity<ResponseObj> create(Long venueId, MultipartFile imgFile, String packageName, String packageDescription, float percent, List<PackageServiceRequest> packageServiceRequestList, TypeEnum typeEnum);
 
-    public ResponseEntity<ResponseObj> delete(Long id);
-    public ResponseEntity<ResponseObj> addPackageInVenueByVenueId(Long venueId, List<Long> packageIdList);
+    public ResponseEntity<ResponseObj> update(Long venueId, Long id, MultipartFile imgFile, String packageName, String packageDescription);
+
+    public ResponseEntity<ResponseObj> updatePercentPackage(Long venueId, Long id, float percent);
+
+    public ResponseEntity<ResponseObj> delete(Long venueId, Long id);
+//    public ResponseEntity<ResponseObj> addPackageInVenueByVenueId(Long venueId, List<Long> packageIdList);
 
 }

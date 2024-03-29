@@ -4,7 +4,6 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.request.PackageServiceRequ
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.Package;
 import com.bookingBirthday.bookingbirthdayforkids.model.PackageService;
-import com.bookingBirthday.bookingbirthdayforkids.model.PartyDated;
 import com.bookingBirthday.bookingbirthdayforkids.model.Services;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PackageRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PackageServiceRepository;
