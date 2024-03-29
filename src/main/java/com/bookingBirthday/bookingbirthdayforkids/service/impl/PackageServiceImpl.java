@@ -398,46 +398,5 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         } else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Package does not exist", null));
     }
-
-
-//    @Override
-//    public ResponseEntity<ResponseObj> addPackageInVenueByVenueId(Long venueId, List<Long> packageIdList) {
-//        Long userId = AuthenUtil.getCurrentUserId();
-//        if (userId == null) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
-//        }
-//        Account account = accountRepository.findById(userId).get();
-//        Optional<Venue> venue = venueRepository.findById(venueId);
-//        ResponseEntity<ResponseObj> response = null;
-//        if (venue.isPresent()) {
-//            if (!venue.get().getAccount().getId().equals(account.getId())) {
-//                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission impact this venue", null));
-//            }
-//            PackageInVenue packageInVenue = new PackageInVenue();
-//            for (Long addPackage : packageIdList) {
-//                Package aPackage = packageRepository.findById(addPackage.longValue()).orElse(null);
-//                if (addPackage == null) {
-//                    response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Package not found", null));
-//                    continue;
-//                }
-//                PackageInVenue existingPackageInVenue = packageInVenueRepository.findByVenueAndApackage(venue.get(), aPackage);
-//                if (existingPackageInVenue != null) {
-//                    response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package in venue already exists", null));
-//                    continue;
-//                }
-//                packageInVenue = new PackageInVenue();
-//                packageInVenue.setVenue(venue.get());
-//                packageInVenue.setApackage(aPackage);
-//                packageInVenue.setActive(true);
-//                packageInVenue.setCreateAt(LocalDateTime.now());
-//                packageInVenue.setUpdateAt(LocalDateTime.now());
-//                packageInVenueRepository.save(packageInVenue);
-//            }
-//            if (response == null) {
-//                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", packageInVenue));
-//            }
-//        }
-//        return response;
-//    }
 }
 

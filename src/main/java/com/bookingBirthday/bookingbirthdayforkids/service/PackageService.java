@@ -24,6 +24,4 @@ public interface PackageService {
     public ResponseEntity<ResponseObj> updatePercentPackage(Long venueId, Long id, float percent);
 
     public ResponseEntity<ResponseObj> delete(Long venueId, Long id);
-//    public ResponseEntity<ResponseObj> addPackageInVenueByVenueId(Long venueId, List<Long> packageIdList);
-
 }
