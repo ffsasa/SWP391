@@ -4,6 +4,7 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.request.PartyBookingReques
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.UpgradeServiceRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.*;
+import com.bookingBirthday.bookingbirthdayforkids.model.Package;
 import com.bookingBirthday.bookingbirthdayforkids.repository.*;
 import com.bookingBirthday.bookingbirthdayforkids.service.PartyBookingService;
 import com.bookingBirthday.bookingbirthdayforkids.util.AuthenUtil;
@@ -38,6 +39,8 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     PackageInBookingRepository packageInBookingRepository;
     @Autowired
     SlotRepository slotRepository;
+    @Autowired
+    PackageRepository packageRepository;
 
     //Sửa
     @Override
@@ -228,15 +231,10 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 partyBooking.get().setPricingTotal(pricing);
 
                 for (Payment payment : partyBooking.get().getPaymentList()) {
-                    if (payment.getStatus().equals("SUCCESS")) {
-                        partyBooking.get().setIsPayment(true);
-                    } else {
-                        partyBooking.get().setIsPayment(false);
-                    }
+                    partyBooking.get().setIsPayment(payment.getStatus().equals("SUCCESS"));
                 }
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBooking));
             }
-
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This party booking does not exist", null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
@@ -251,41 +249,35 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             if (userId == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
             }
-            Account account = accountRepository.findById(userId).get();
+            Optional<Account> account = accountRepository.findById(userId);
 
-            Optional<PackageInVenue> packageInVenueDeco = packageInVenueRepository.findById(partyBookingRequest.getPackageInVenueDecoId());
-            Optional<PackageInVenue> packageInVenueFood = packageInVenueRepository.findById(partyBookingRequest.getPackageInVenueFoodId());
+            Optional<Package> packageDeco = packageRepository.findById(partyBookingRequest.getPackageInVenueDecoId());
+            Optional<Package> packageFood = packageRepository.findById(partyBookingRequest.getPackageInVenueFoodId());
             Optional<SlotInRoom> slotInRoom = slotInRoomRepository.findById(partyBookingRequest.getSlotInRoomId());
             if (slotInRoom.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in room does not exist", null));
             }
-            if (packageInVenueDeco.isEmpty() || packageInVenueFood.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package in venue does not exist", null));
+            if (packageDeco.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package deco does not exist", null));
+            }
+            if (packageFood.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package food does not exist", null));
             }
 
+            //PartyBooking
             PartyBooking partyBooking = new PartyBooking();
             partyBooking.setKidName(partyBookingRequest.getKidName());
             partyBooking.setKidDOB(partyBookingRequest.getKidDOB());
             partyBooking.setEmail(partyBookingRequest.getEmail());
             partyBooking.setPhone(partyBookingRequest.getPhone());
             partyBooking.setStatus(StatusEnum.PENDING);
+            partyBooking.setDate(partyBookingRequest.getDate());
             partyBooking.setActive(true);
             partyBooking.setParticipantAmount(partyBookingRequest.getParticipantAmount());
             partyBooking.setCreateAt(LocalDateTime.now());
             partyBooking.setUpdateAt(LocalDateTime.now());
-            partyBooking.setAccount(account);
-            partyBookingRepository.save(partyBooking);
-
-            //PartyDated
-            PartyDated partyDate = new PartyDated();
-            partyDate.setDate(partyBookingRequest.getDate());
-            partyDate.setSlotInRoom(slotInRoom.get());
-            partyDate.setActive(true);
-            partyDate.setCreateAt(LocalDateTime.now());
-            partyDate.setUpdateAt(LocalDateTime.now());
-            partyDatedRepository.save(partyDate);
-
-            partyBooking.setPartyDated(partyDate);
+            partyBooking.setAccount(account.get());
+            partyBooking.setSlotInRoom(slotInRoom.get());
             partyBookingRepository.save(partyBooking);
 
             //UpgradeService
@@ -308,16 +300,8 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             }
 
             //Package
-            Optional<PackageInVenue> packageDeco = packageInVenueRepository.findById(partyBookingRequest.getPackageInVenueDecoId());
-            if (packageDeco.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package in venue does not exist", null));
-            }
-            Optional<PackageInVenue> packageFood = packageInVenueRepository.findById(partyBookingRequest.getPackageInVenueFoodId());
-            if (packageFood.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package in venue does not exist", null));
-            }
             PackageInBooking packageInBookingDeco = new PackageInBooking();
-            packageInBookingDeco.setPackageInVenue(packageDeco.get());
+            packageInBookingDeco.setAPackage(packageDeco.get());
             packageInBookingDeco.setActive(true);
             packageInBookingDeco.setCreateAt(LocalDateTime.now());
             packageInBookingDeco.setUpdateAt(LocalDateTime.now());
@@ -325,7 +309,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             packageInBookingRepository.save(packageInBookingDeco);
 
             PackageInBooking packageInBookingFood = new PackageInBooking();
-            packageInBookingFood.setPackageInVenue(packageFood.get());
+            packageInBookingFood.setAPackage(packageFood.get());
             packageInBookingFood.setActive(true);
             packageInBookingFood.setCreateAt(LocalDateTime.now());
             packageInBookingFood.setUpdateAt(LocalDateTime.now());
@@ -596,6 +580,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
         }
     }
 
+    //sửa
     @Override
     public ResponseEntity<ResponseObj> Cancel(Long bookingId) {
         Long userId = AuthenUtil.getCurrentUserId();
@@ -611,7 +596,6 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 partyBooking.get().setStatus(StatusEnum.CANCELLED);
                 partyBooking.get().setDeleteAt(LocalDateTime.now());
                 partyBooking.get().setActive(false);
-                partyBooking.get().getPartyDated().setActive(false);
                 partyBookingRepository.save(partyBooking.get());
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Cancel successfully", partyBooking));
             }
@@ -619,6 +603,8 @@ public class PartyBookingServiceImpl implements PartyBookingService {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Cancel failed", null));
     }
 
+
+    //sửa
     @Override
     @Transactional
     public ResponseEntity<ResponseObj> cancelBookingForHost(Long bookingId) {
@@ -629,7 +615,6 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     partyBooking.get().setStatus(StatusEnum.CANCELLED);
                     partyBooking.get().setDeleteAt(LocalDateTime.now());
                     partyBooking.get().setActive(false);
-                    partyBooking.get().getPartyDated().setActive(false);
                     partyBookingRepository.save(partyBooking.get());
 
                     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Cancel successful", null));
@@ -667,6 +652,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     }
 
 
+    //sửa
     @Override
     @Transactional
     public ResponseEntity<ResponseObj> cancelBookingForCustomer(Long bookingId) {
@@ -683,7 +669,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                         partyBooking.get().setStatus(StatusEnum.CANCELLED);
                         partyBooking.get().setDeleteAt(LocalDateTime.now());
                         partyBooking.get().setActive(false);
-                        partyBooking.get().getPartyDated().setActive(false);
+//                        partyBooking.get().getPartyDated().setActive(false);
                         partyBookingRepository.save(partyBooking.get());
 
                         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Cancel successful", null));
