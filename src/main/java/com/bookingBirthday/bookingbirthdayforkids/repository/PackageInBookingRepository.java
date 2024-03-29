@@ -1,7 +1,6 @@
 package com.bookingBirthday.bookingbirthdayforkids.repository;
 
 import com.bookingBirthday.bookingbirthdayforkids.model.PackageInBooking;
-import com.bookingBirthday.bookingbirthdayforkids.model.PackageInVenue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

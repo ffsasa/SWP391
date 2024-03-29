@@ -13,9 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User does not exist", null));
             }
             List<PartyBooking> partyBookingList = partyBookingRepository.findAllByIsActiveIsTrueAndAccountId(userId);
             for (PartyBooking partyBooking : partyBookingList) {
@@ -81,7 +81,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User does not exist", null));
             }
             List<Slot> slotList = slotRepository.findAllByAccountId(userId);
 
@@ -126,7 +126,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User does not exist", null));
             }
 
             List<Slot> slotList = slotRepository.findAllByAccountId(userId);
@@ -176,7 +176,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User does not exist", null));
             }
 
             Optional<PartyBooking> partyBooking = partyBookingRepository.findById(partyBookingId);
@@ -199,7 +199,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     }
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBooking.get()));
                 }
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to impact this venue", null));
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to impact this booking", null));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Party booking not found", null));
         } catch (Exception e) {
@@ -208,16 +208,16 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getById_ForCustomer(Long id) {
+    public ResponseEntity<ResponseObj> getById_ForCustomer(Long partyBookingId) {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User does not exist", null));
             }
-            Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
+            Optional<PartyBooking> partyBooking = partyBookingRepository.findById(partyBookingId);
             if (partyBooking.isPresent() && partyBooking.get().isActive()) {
                 if (!partyBooking.get().getAccount().getId().equals(userId)) {
-                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to see this party", null));
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to see this booking", null));
                 }
                 partyBooking.get().setVenueObject(partyBooking.get().getSlotInRoom().getRoom().getVenue());
 
@@ -247,12 +247,15 @@ public class PartyBookingServiceImpl implements PartyBookingService {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User does not exist", null));
             }
             Optional<Account> account = accountRepository.findById(userId);
+            if (account.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Account does not exist", null));
+            }
 
-            Optional<Package> packageDeco = packageRepository.findById(partyBookingRequest.getPackageInVenueDecoId());
-            Optional<Package> packageFood = packageRepository.findById(partyBookingRequest.getPackageInVenueFoodId());
+            Optional<Package> packageDeco = packageRepository.findById(partyBookingRequest.getPackageDecoId());
+            Optional<Package> packageFood = packageRepository.findById(partyBookingRequest.getPackageFoodId());
             Optional<SlotInRoom> slotInRoom = slotInRoomRepository.findById(partyBookingRequest.getSlotInRoomId());
             if (slotInRoom.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in room does not exist", null));
@@ -323,17 +326,16 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> updateUpgradeService(Long id, PartyBookingRequest partyBookingRequest) {
+    public ResponseEntity<ResponseObj> updateUpgradeService(Long partyBookingId, PartyBookingRequest partyBookingRequest) {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User does not exist", null));
             }
 
-            Account account = accountRepository.findById(userId).get();
-            Optional<PartyBooking> existPartyBooking = partyBookingRepository.findById(id);
+            Optional<PartyBooking> existPartyBooking = partyBookingRepository.findById(partyBookingId);
             if (existPartyBooking.isPresent()) {
-                if (!existPartyBooking.get().getAccount().getId().equals(account.getId())) {
+                if (!existPartyBooking.get().getAccount().getId().equals(userId)) {
                     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to update this booking", null));
                 }
 
@@ -375,15 +377,49 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 }
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", existPartyBooking));
             }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This party booking does not exist", null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "User does not exist", null));
     }
 
     @Override
-    public ResponseEntity<ResponseObj> updateDate(Long id, PartyBookingRequest partyBookingRequest) {
-        return null;
+    public ResponseEntity<ResponseObj> updateOrganizationTime(Long partyBookingId, LocalDate date, Long slotInRoomId) {
+        try {
+            Long userId = AuthenUtil.getCurrentUserId();
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User does not exist", null));
+            }
+
+            Optional<PartyBooking> existPartyBooking = partyBookingRepository.findById(partyBookingId);
+            if (existPartyBooking.isPresent()) {
+                if (!existPartyBooking.get().getAccount().getId().equals(userId)) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to update this booking", null));
+                }
+
+                Optional<SlotInRoom> optionalSlotInRoom = slotInRoomRepository.findById(slotInRoomId);
+                if (optionalSlotInRoom.isEmpty()) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in room does not exist", null));
+                }
+
+                if (!existPartyBooking.get().getSlotInRoom().getRoom().getVenue().getId().equals(optionalSlotInRoom.get().getRoom().getVenue().getId())) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in room does not exist in this Venue", null));
+                }
+
+                if (date != null) {
+                    existPartyBooking.get().setSlotInRoom(optionalSlotInRoom.get());
+                    existPartyBooking.get().setDate(date);
+                    existPartyBooking.get().setUpdateAt(LocalDateTime.now());
+                    partyBookingRepository.save(existPartyBooking.get());
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Date does not exist", null));
+                }
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", existPartyBooking));
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This party booking does not exist", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
     }
 
     @Override
@@ -391,38 +427,47 @@ public class PartyBookingServiceImpl implements PartyBookingService {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User does not exist", null));
             }
 
-            Account account = accountRepository.findById(userId).get();
             Optional<PartyBooking> existPartyBooking = partyBookingRepository.findById(id);
-//            if (existPartyBooking.isPresent()) {
-//                if (!existPartyBooking.get().getAccount().getId().equals(account.getId())) {
-//                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to update this booking", null));
-//                }
-//
-//                // PackageDeco
-//                if (partyBookingRequest.getPackageInVenueDecoId() != null && partyBookingRequest.getPackageInVenueFoodId() != null) {
-//                    List<PackageInBooking> optionalPackageInBookingDeco = packageInBookingRepository.findByPartyBookingId(id);
-//                    if (optionalPackageInBookingDeco.isPresent() && optionalPackageInBookingFood.isPresent()) {
-//                        List<PackageInBooking> packageInVenues = new ArrayList<>();
-//                        packageInVenues.add(optionalPackageInBookingDeco.get());
-//                        packageInVenues.add(optionalPackageInBookingFood.get());
-//                        existPartyBooking.get().getPackageInBookings().get();
-//                    } else {
-//                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package in venue does not exist", null));
-//                    }
-//                } else {
-//                    existPartyBooking.get().setPackageInVenue(existPartyBooking.get().getPackageInVenue());
-//                }
-//                partyBookingRepository.save(existPartyBooking.get());
-//
-//                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", existPartyBooking));
-//            }
+            if (existPartyBooking.isPresent()) {
+                if (!existPartyBooking.get().getAccount().getId().equals(userId)) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to update this booking", null));
+                }
+
+                List<PackageInBooking> packageInBookingList = existPartyBooking.get().getPackageInBookings();
+                for (PackageInBooking packageInBooking : packageInBookingList) {
+                    Optional<Package> packageDeco = packageRepository.findById(partyBookingRequest.getPackageDecoId());
+                    Optional<Package> packageFood = packageRepository.findById(partyBookingRequest.getPackageFoodId());
+                    if (packageDeco.isEmpty()) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package deco does not exist", null));
+                    }
+                    if (packageFood.isEmpty()) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package food does not exist", null));
+                    }
+
+                    if (packageInBooking.getAPackage().getPackageType().equals(TypeEnum.DECORATION)) {
+                        if (!packageInBooking.getAPackage().getId().equals(partyBookingRequest.getPackageDecoId())) {
+                            packageInBooking.setAPackage(packageDeco.get());
+                            packageInBooking.setUpdateAt(LocalDateTime.now());
+                            packageInBookingRepository.save(packageInBooking);
+                        }
+                    }
+                    if (packageInBooking.getAPackage().getPackageType().equals(TypeEnum.FOOD)) {
+                        if (!packageInBooking.getAPackage().getId().equals(partyBookingRequest.getPackageFoodId())) {
+                            packageInBooking.setAPackage(packageFood.get());
+                            packageInBooking.setUpdateAt(LocalDateTime.now());
+                            packageInBookingRepository.save(packageInBooking);
+                        }
+                    }
+                }
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", existPartyBooking));
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This party booking does not exist", null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "User does not exist", null));
     }
 
     @Override
@@ -430,13 +475,12 @@ public class PartyBookingServiceImpl implements PartyBookingService {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User does not exist", null));
             }
 
-            Account account = accountRepository.findById(userId).get();
             Optional<PartyBooking> existPartyBooking = partyBookingRepository.findById(id);
             if (existPartyBooking.isPresent()) {
-                if (!existPartyBooking.get().getAccount().getId().equals(account.getId())) {
+                if (!existPartyBooking.get().getAccount().getId().equals(userId)) {
                     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to update this booking", null));
                 }
 
@@ -444,6 +488,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 existPartyBooking.get().setKidDOB(partyBookingRequest.getKidDOB() == null ? existPartyBooking.get().getKidDOB() : partyBookingRequest.getKidDOB());
                 existPartyBooking.get().setEmail(partyBookingRequest.getEmail() == null ? existPartyBooking.get().getEmail() : partyBookingRequest.getEmail());
                 existPartyBooking.get().setPhone(partyBookingRequest.getPhone() == null ? existPartyBooking.get().getPhone() : partyBookingRequest.getPhone());
+                existPartyBooking.get().setParticipantAmount(partyBookingRequest.getParticipantAmount() == 0 ? existPartyBooking.get().getParticipantAmount() : partyBookingRequest.getParticipantAmount());
                 existPartyBooking.get().setUpdateAt(LocalDateTime.now());
 
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", existPartyBooking));
@@ -455,172 +500,82 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     }
 
 
-//    @Override
-//    public ResponseEntity<ResponseObj> update(Long id, PartyBookingRequest partyBookingRequest) {
-//        try {
-//            Long userId = AuthenUtil.getCurrentUserId();
-//            if (userId == null) {
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
-//            }
-//
-//            Account account = accountRepository.findById(userId).get();
-//            Optional<PartyBooking> existPartyBooking = partyBookingRepository.findById(id);
-//            if (existPartyBooking.isPresent()) {
-//                if (!existPartyBooking.get().getAccount().getId().equals(account.getId())) {
-//                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to update this booking", null));
-//                }
-//
-//                existPartyBooking.get().setKidName(partyBookingRequest.getKidName() == null ? existPartyBooking.get().getKidName() : partyBookingRequest.getKidName());
-//                existPartyBooking.get().setKidDOB(partyBookingRequest.getKidDOB() == null ? existPartyBooking.get().getKidDOB() : partyBookingRequest.getKidDOB());
-//                existPartyBooking.get().setEmail(partyBookingRequest.getEmail() == null ? existPartyBooking.get().getEmail() : partyBookingRequest.getEmail());
-//                existPartyBooking.get().setPhone(partyBookingRequest.getPhone() == null ? existPartyBooking.get().getPhone() : partyBookingRequest.getPhone());
-//                existPartyBooking.get().setUpdateAt(LocalDateTime.now());
-//
-//                // PartyDated
-//                Optional<PartyDated> existPartyDated = partyDatedRepository.findPartyDatedByPartyBookingId(id);
-//                if (partyBookingRequest.getDate() != null || partyBookingRequest.getSlotInRoomId() != null) {
-//                    Optional<SlotInRoom> optionalSlotInRoom = slotInRoomRepository.findById(partyBookingRequest.getSlotInRoomId());
-//                    if (optionalSlotInRoom.isPresent()) {
-//                        existPartyDated.get().setSlotInRoom(optionalSlotInRoom.get());
-//                    } else {
-//                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in venue does not exist", null));
-//                    }
-//                    existPartyDated.get().setDate(partyBookingRequest.getDate());
-//                    existPartyDated.get().setActive(true);
-//                    existPartyDated.get().setCreateAt(LocalDateTime.now());
-//                    existPartyDated.get().setUpdateAt(LocalDateTime.now());
-//                    partyDatedRepository.save(existPartyDated.get());
-//                }
-//
-//                // PackageDeco
-//                if (partyBookingRequest.getPackageInVenueDecoId() != null || partyBookingRequest.getPackageInVenueFoodId() != null) {
-//                    Optional<PackageInVenue> optionalPackageInVenue = packageInVenueRepository.findById(partyBookingRequest.getPackageInVenueDecoId());
-//                    if (optionalPackageInVenue.isPresent()) {
-//                        PackageInVenue packageInVenue = optionalPackageInVenue.get();
-//                        existPartyBooking.get().setPackageInBookings(packageInVenue);
-//                    } else {
-//                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package in venue does not exist", null));
-//                    }
-//                } else {
-//                    existPartyBooking.get().setPackageInVenue(existPartyBooking.get().getPackageInVenue());
-//                }
-//                partyBookingRepository.save(existPartyBooking.get());
-//                //PackageFood
-//                if (partyBookingRequest.getPackageInVenueFoodId() != null) {
-//                    Optional<PackageInVenue> optionalPackageInVenue = packageInVenueRepository.findById(partyBookingRequest.getPackageInVenueId());
-//                    if (optionalPackageInVenue.isPresent()) {
-//                        PackageInVenue packageInVenue = optionalPackageInVenue.get();
-//                        existPartyBooking.get().setPackageInVenue(packageInVenue);
-//                    } else {
-//                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package in venue does not exist", null));
-//                    }
-//                } else {
-//                    existPartyBooking.get().setPackageInVenue(existPartyBooking.get().getPackageInVenue());
-//                }
-//                partyBookingRepository.save(existPartyBooking.get());
-//
-//                // Upgrade
-//                List<UpgradeServiceRequest> dataUpgrade = partyBookingRequest.getDataUpgrade();
-//                if (dataUpgrade != null) {
-//                    for (UpgradeServiceRequest data : dataUpgrade) {
-//                        Long serviceId = data.getServiceId();
-//                        int count = data.getCount();
-//
-//                        Optional<Services> services = servicesRepository.findById(serviceId);
-//                        if (services.isEmpty()) {
-//                            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This service does not exist", null));
-//                        }
-//
-//                        Optional<UpgradeService> existingUpgradeService = upgradeServiceRepository.findByPartyBookingAndServices(existPartyBooking.get(), services.get());
-//                        if (existingUpgradeService.isPresent()) {
-//                            UpgradeService upgradeService = existingUpgradeService.get();
-//                            upgradeService.setCount(count);
-//                            upgradeService.setPricing(count * services.get().getPricing());
-//                            upgradeService.setActive(true);
-//                            upgradeService.setCreateAt(LocalDateTime.now());
-//                            upgradeService.setUpdateAt(LocalDateTime.now());
-//                            upgradeService.setPartyBooking(existPartyBooking.get());
-//                            upgradeService.setServices(services.get());
-//                            upgradeServiceRepository.save(upgradeService);
-//                        } else {
-//                            UpgradeService newUpgradeService = new UpgradeService();
-//                            newUpgradeService.setCount(count);
-//                            newUpgradeService.setPricing(count * services.get().getPricing());
-//                            newUpgradeService.setActive(true);
-//                            newUpgradeService.setCreateAt(LocalDateTime.now());
-//                            newUpgradeService.setUpdateAt(LocalDateTime.now());
-//                            newUpgradeService.setPartyBooking(existPartyBooking.get());
-//                            newUpgradeService.setServices(services.get());
-//                            upgradeServiceRepository.save(newUpgradeService);
-//                        }
-//                    }
-//                }
-//                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", existPartyBooking));
-//            }
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-//        }
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "User does not exist", null));
-//    }
-
-
+    //sửa
     @Override
-    public ResponseEntity<ResponseObj> delete(Long id) {
+    public ResponseEntity<ResponseObj> cancelBooking_ForCustomer(Long bookingId) {
         try {
-            Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
+            Long userId = AuthenUtil.getCurrentUserId();
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User does not exist", null));
+            }
+            Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
             if (partyBooking.isPresent()) {
-                partyBooking.get().setActive(false);
-                partyBooking.get().setDeleteAt(LocalDateTime.now());
-                partyBookingRepository.save(partyBooking.get());
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Delete successful", null));
-            } else
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This party booking does not exist", null));
+                if (partyBooking.get().getAccount().getId().equals(userId)) {
+                    if (partyBooking.get().getStatus() == StatusEnum.PENDING) {
+                        partyBooking.get().getPackageInBookings().forEach(packageInBooking -> {
+                            packageInBooking.setActive(false);
+                            packageInBooking.setDeleteAt(LocalDateTime.now());
+                            packageInBookingRepository.save(packageInBooking);
+                        });
+                        partyBooking.get().getUpgradeServices().forEach(upgradeService -> {
+                            upgradeService.setActive(false);
+                            upgradeService.setDeleteAt(LocalDateTime.now());
+                            upgradeServiceRepository.save(upgradeService);
+                        });
+                        partyBooking.get().setStatus(StatusEnum.CANCELLED);
+                        partyBooking.get().setDeleteAt(LocalDateTime.now());
+                        partyBooking.get().setActive(false);
+                        partyBookingRepository.save(partyBooking.get());
+
+                        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Cancel successful", null));
+                    } else {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Cannot cancel booking with current status", null));
+                    }
+                }
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to cancel this booking", null));
+
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Party booking not found", null));
+            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
 
-    //sửa
-    @Override
-    public ResponseEntity<ResponseObj> Cancel(Long bookingId) {
-        Long userId = AuthenUtil.getCurrentUserId();
-        if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
-        }
-        Account account = accountRepository.findById(userId).get();
-        Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
-        if (partyBooking.isPresent()) {
-            if (!partyBooking.get().getAccount().getId().equals(account.getId())) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to cancel this party booking", null));
-            } else {
-                partyBooking.get().setStatus(StatusEnum.CANCELLED);
-                partyBooking.get().setDeleteAt(LocalDateTime.now());
-                partyBooking.get().setActive(false);
-                partyBookingRepository.save(partyBooking.get());
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Cancel successfully", partyBooking));
-            }
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Cancel failed", null));
-    }
-
 
     //sửa
     @Override
-    @Transactional
-    public ResponseEntity<ResponseObj> cancelBookingForHost(Long bookingId) {
+    public ResponseEntity<ResponseObj> cancelBooking_ForHost(Long bookingId) {
         try {
+            Long userId = AuthenUtil.getCurrentUserId();
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User does not exist", null));
+            }
             Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
             if (partyBooking.isPresent()) {
-                if (partyBooking.get().getStatus() == StatusEnum.PENDING || partyBooking.get().getStatus() == StatusEnum.CONFIRMED) {
-                    partyBooking.get().setStatus(StatusEnum.CANCELLED);
-                    partyBooking.get().setDeleteAt(LocalDateTime.now());
-                    partyBooking.get().setActive(false);
-                    partyBookingRepository.save(partyBooking.get());
+                if (partyBooking.get().getSlotInRoom().getSlot().getAccount().getId().equals(userId)) {
+                    if (partyBooking.get().getStatus() == StatusEnum.PENDING || partyBooking.get().getStatus() == StatusEnum.CONFIRMED) {
+                        partyBooking.get().getPackageInBookings().forEach(packageInBooking -> {
+                            packageInBooking.setActive(false);
+                            packageInBooking.setDeleteAt(LocalDateTime.now());
+                            packageInBookingRepository.save(packageInBooking);
+                        });
+                        partyBooking.get().getUpgradeServices().forEach(upgradeService -> {
+                            upgradeService.setActive(false);
+                            upgradeService.setDeleteAt(LocalDateTime.now());
+                            upgradeServiceRepository.save(upgradeService);
+                        });
+                        partyBooking.get().setStatus(StatusEnum.CANCELLED);
+                        partyBooking.get().setDeleteAt(LocalDateTime.now());
+                        partyBooking.get().setActive(false);
+                        partyBookingRepository.save(partyBooking.get());
 
-                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Cancel successful", null));
-                } else {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Cannot cancel booking with current status", null));
+                        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Cancel successful", null));
+                    } else {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Cannot cancel booking with current status", null));
+                    }
                 }
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to cancel this booking", null));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Party booking not found", null));
             }
@@ -630,55 +585,65 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     }
 
     @Override
-    @Transactional
-    public ResponseEntity<ResponseObj> completeBookingForHost(Long bookingId) {
-        Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
-        if (partyBooking.isPresent()) {
-            LocalTime currentTime = LocalTime.now();
-            Time timeStart = Time.valueOf(partyBooking.get().getPartyDated().getSlotInRoom().getSlot().getTimeStart());
-            LocalTime localTimeStart = timeStart.toLocalTime();
-            if (partyBooking.get().getStatus() == StatusEnum.CONFIRMED && currentTime.isAfter(localTimeStart.plusHours(1))) {
-                partyBooking.get().setStatus(StatusEnum.COMPLETED);
-                partyBooking.get().setUpdateAt(LocalDateTime.now());
-                partyBookingRepository.save(partyBooking.get());
-
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Party booking completed successfully", null));
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Cannot complete booking at this time", null));
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Party booking not found", null));
-        }
-    }
-
-
-    //sửa
-    @Override
-    @Transactional
-    public ResponseEntity<ResponseObj> cancelBookingForCustomer(Long bookingId) {
+    public ResponseEntity<ResponseObj> deleteBooking_ForHost(Long bookingId) {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User does not exist", null));
             }
-            Account account = accountRepository.findById(userId).get();
             Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
             if (partyBooking.isPresent()) {
-                if (partyBooking.get().getAccount().getId().equals(account.getId())) {
-                    if (partyBooking.get().getStatus() == StatusEnum.PENDING) {
-                        partyBooking.get().setStatus(StatusEnum.CANCELLED);
-                        partyBooking.get().setDeleteAt(LocalDateTime.now());
-                        partyBooking.get().setActive(false);
-//                        partyBooking.get().getPartyDated().setActive(false);
+                if (partyBooking.get().getSlotInRoom().getSlot().getAccount().getId().equals(userId)) {
+                    partyBooking.get().getPackageInBookings().forEach(packageInBooking -> {
+                        packageInBooking.setActive(false);
+                        packageInBooking.setDeleteAt(LocalDateTime.now());
+                        packageInBookingRepository.save(packageInBooking);
+                    });
+                    partyBooking.get().getUpgradeServices().forEach(upgradeService -> {
+                        upgradeService.setActive(false);
+                        upgradeService.setDeleteAt(LocalDateTime.now());
+                        upgradeServiceRepository.save(upgradeService);
+                    });
+                    partyBooking.get().setDeleteAt(LocalDateTime.now());
+                    partyBooking.get().setActive(false);
+                    partyBookingRepository.save(partyBooking.get());
+
+                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Delete successful", null));
+                }
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to cancel this booking", null));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Party booking not found", null));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> completeBooking_ForHost(Long bookingId) {
+
+        try {
+            Long userId = AuthenUtil.getCurrentUserId();
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User does not exist", null));
+            }
+            Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
+            if (partyBooking.isPresent()) {
+                if (partyBooking.get().getSlotInRoom().getSlot().getAccount().getId().equals(userId)) {
+                    LocalTime currentTime = LocalTime.now();
+                    Time timeStart = Time.valueOf(partyBooking.get().getSlotInRoom().getSlot().getTimeStart());
+                    LocalTime localTimeStart = timeStart.toLocalTime();
+                    if (partyBooking.get().getStatus() == StatusEnum.CONFIRMED && currentTime.isAfter(localTimeStart.plusHours(1))) {
+                        partyBooking.get().setStatus(StatusEnum.COMPLETED);
+                        partyBooking.get().setUpdateAt(LocalDateTime.now());
                         partyBookingRepository.save(partyBooking.get());
 
-                        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Cancel successful", null));
+                        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Party booking completed successfully", null));
                     } else {
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Cannot cancel booking with current status", null));
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Cannot complete booking at this time", null));
                     }
                 }
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to cancel this party", null));
-
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to cancel this booking", null));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Party booking not found", null));
             }
@@ -697,30 +662,5 @@ public class PartyBookingServiceImpl implements PartyBookingService {
         Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(bookingId);
         partyBookingOptional.get().setStatus(partyBooking.getStatus());
         partyBookingRepository.save(partyBookingOptional.get());
-    }
-
-    @Override
-    public ResponseEntity<ResponseObj> updatePackageInVenue(Long partyBookingId, Long packageInVenueId) {
-        try {
-            Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(partyBookingId);
-            if (partyBookingOptional.isPresent()) {
-                PartyBooking partyBooking = partyBookingOptional.get();
-
-                Optional<PackageInVenue> packageInVenue = packageInVenueRepository.findById(packageInVenueId);
-                if (packageInVenue.isPresent()) {
-                    PackageInVenue newPackageInVenue = packageInVenue.get();
-//                    partyBooking.setPackageInVenue(newPackageInVenue);
-                    partyBookingRepository.save(partyBooking);
-
-                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Update successful", null));
-                } else {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Package in venue not found", null));
-                }
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Party booking not found", null));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-        }
     }
 }

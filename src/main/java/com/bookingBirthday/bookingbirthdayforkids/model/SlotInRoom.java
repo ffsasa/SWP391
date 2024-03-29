@@ -11,8 +11,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 @Builder
+@Entity
 public class SlotInRoom extends BaseEntity{
 
     @Transient

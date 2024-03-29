@@ -25,11 +25,11 @@ public class PartyBookingCronJob {
         List<PartyBooking> confirmedBookings = partyBookingService.findConfirmedBookings();
         for (PartyBooking booking : confirmedBookings) {
             try {
-                Time time = Time.valueOf(booking.getPartyDated().getSlotInRoom().getSlot().getTimeEnd());
+                Time time = Time.valueOf(booking.getSlotInRoom().getSlot().getTimeEnd());
 
                 LocalTime localTime = time.toLocalTime();
 
-                LocalDateTime localDateTime = LocalDateTime.of(booking.getPartyDated().getDate(), localTime);
+                LocalDateTime localDateTime = LocalDateTime.of(booking.getDate(), localTime);
 
                 if (currentTime.isAfter(localDateTime.plusMinutes(15))) {
                     booking.setStatus(StatusEnum.COMPLETED);
