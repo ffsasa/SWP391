@@ -7,14 +7,16 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PartyBookingRepository extends JpaRepository<PartyBooking, Long> {
     List<PartyBooking> findAllByIsActiveIsTrue();
-    List<PartyBooking> findAllByIsActiveIsTrueAndStatus(StatusEnum statusEnum);
     List<PartyBooking> findAllByIsActiveIsTrueAndAccountId(Long id);
 
     List<PartyBooking> findAllByStatus(StatusEnum statusEnum );
 
     List<PartyBooking> findAllByDateAndIsActiveIsTrue(LocalDate date);
+
+    Optional<PartyBooking> findByIdAndIsActiveIsTrue(Long id);
 }
