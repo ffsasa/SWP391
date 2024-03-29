@@ -28,4 +28,8 @@ public class Slot extends BaseEntity {
     @OneToMany(mappedBy = "slot")
     @JsonIgnore
     private List<SlotInRoom> slotInRoom;
+
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    private Account account;
 }
