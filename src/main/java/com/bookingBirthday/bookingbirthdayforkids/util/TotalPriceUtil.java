@@ -8,11 +8,11 @@ public class TotalPriceUtil {
     public static float getTotalPricingPackage(PartyBooking partyBooking) {
         float totalPricingPackage = 0;
         for (PackageInBooking packageInBooking : partyBooking.getPackageInBookings()){
-            if(packageInBooking.getPackageInVenue().getApackage().getPackageType().equals(TypeEnum.DECORATION)){
-                totalPricingPackage += packageInBooking.getPackageInVenue().getApackage().getPricing();
+            if(packageInBooking.getAPackage().getPackageType().equals(TypeEnum.DECORATION)){
+                totalPricingPackage += packageInBooking.getAPackage().getPricing();
             }
             else {
-                totalPricingPackage += (packageInBooking.getPackageInVenue().getApackage().getPricing()* partyBooking.getParticipantAmount());
+                totalPricingPackage += (packageInBooking.getAPackage().getPricing()* partyBooking.getParticipantAmount());
             }
         }
         return totalPricingPackage;
