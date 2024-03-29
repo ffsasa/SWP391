@@ -5,6 +5,7 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public interface RoomService {
@@ -14,11 +15,15 @@ public interface RoomService {
 
     public ResponseEntity<ResponseObj> getSlotInRoomById(Long roomId);
 
+    public ResponseEntity<ResponseObj> getSlotNotAddInRoomById(Long roomId);
+
     public ResponseEntity<ResponseObj> checkSlotInRoom(LocalDateTime date);
+
+    public ResponseEntity<ResponseObj> checkSlotInRoomForHost(LocalDate date);
 
     public ResponseEntity<ResponseObj> create(MultipartFile fileImg, String roomName, Long venueId, int capacity, float parsedPricing);
 
-    public ResponseEntity<ResponseObj> update(Long id, RoomRequest roomRequest);
+    public ResponseEntity<ResponseObj> update(Long id, MultipartFile fileImg, String roomName,int capacity, float parsedPricing);
 
     public ResponseEntity<ResponseObj> delete(Long id);
 }

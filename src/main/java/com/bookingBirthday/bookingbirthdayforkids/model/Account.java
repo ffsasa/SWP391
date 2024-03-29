@@ -45,6 +45,18 @@ public class Account extends BaseEntity implements UserDetails {
     @JsonIgnore
     private List<PartyBooking> partyBookingList;
 
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Services> servicesList;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Slot> slotList;
+
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Venue venue;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.getName().name()));

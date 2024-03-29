@@ -16,27 +16,24 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 public class Venue extends BaseEntity{
-    @NotBlank(message = "Venue name cannot be blank")
     private String venueName;
     @Column(name = "venue_description",columnDefinition = "TEXT")
-    @NotBlank(message = "Description cannot be blank")
     private String venueDescription;
     @Column(name = "venue_img_url",columnDefinition = "TEXT")
     private String venueImgUrl;
-    @NotBlank(message = "Street cannot be blank")
     private String street;
-    @NotBlank(message = "Ward cannot be blank")
     private String ward;
-    @NotBlank(message = "District cannot be blank")
     private String district;
-    @NotBlank(message = "City cannot be blank")
     private String city;
-
-    @OneToMany(mappedBy = "venue")
-    @JsonIgnore
-    private List<PackageInVenue> packageInVenueList;
     
     @OneToMany(mappedBy = "venue")
 //    @JsonIgnore
     private List<Room> roomList;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "account_id", referencedColumnName = "id")
+    private Account account;
+
+    @OneToMany(mappedBy = "venue")
+    private List<Package> packageList;
 }

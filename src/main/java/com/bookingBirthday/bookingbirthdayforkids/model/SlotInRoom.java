@@ -19,17 +19,13 @@ public class SlotInRoom extends BaseEntity{
     @JsonProperty("status")
     private boolean status;
 
-    @Transient
-    @JsonProperty("partyDated")
-    private PartyDated partyDated;
-
     @ManyToOne
     @JoinColumn(name = "slot_id")
     private Slot slot;
 
     @OneToMany(mappedBy = "slotInRoom", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<PartyDated> partyDatedList;
+    private List<PartyBooking> partyBookingList;
 
     @ManyToOne
     @JoinColumn(name = "room_id")

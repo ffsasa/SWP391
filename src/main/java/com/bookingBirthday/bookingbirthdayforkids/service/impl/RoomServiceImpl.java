@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,13 +60,14 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public ResponseEntity<ResponseObj> create(MultipartFile fileImg, String roomName, Long venueId, int capacity, float parsedPricing) {
-        if(roomRepository.existsByRoomName(roomName)){
-            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(),"Room name has already exist", null));
-        }
         Optional<Venue> venue = venueRepository.findById(venueId);
         if(!venue.isPresent()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue does not exist", null));
         }
+        if(roomRepository.existsByRoomNameAndVenue(roomName, venue.get())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(),"This room name has already exist in this venue", null));
+        }
+
         Room room = new Room();
         try {
             if (fileImg != null) {
@@ -88,17 +90,16 @@ public class RoomServiceImpl implements RoomService {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", room));
     }
     @Override
-    public ResponseEntity<ResponseObj> update(Long id, RoomRequest roomRequest) {
+    public ResponseEntity<ResponseObj> update(Long id, MultipartFile fileImg, String roomName, int capacity, float parsedPricing) {
         try {
-            Optional<Room> roomOptional = roomRepository.findById(id);
-            if (roomOptional.isPresent()) {
-                Room room = roomOptional.get();
-                room.setRoomName(roomRequest.getRoomName());
-                room.setRoomImgUrl(roomRequest.getRoomImgUrl());
-                room.setCapacity(roomRequest.getCapacity());
-                room.setPricing(roomRequest.getPricing());
-                room.setUpdateAt(LocalDateTime.now());
-                roomRepository.save(room);
+            Optional<Room> room = roomRepository.findById(id);
+            if (room.isPresent()) {
+                room.get().setRoomImgUrl(fileImg == null ? room.get().getRoomImgUrl() : firebaseService.uploadImage(fileImg));
+                room.get().setRoomName(roomName == null ? room.get().getRoomName() : roomName);
+                room.get().setCapacity(capacity == 0 ? room.get().getCapacity() : capacity);
+                room.get().setPricing(parsedPricing == 0 ? room.get().getPricing() : parsedPricing);
+                room.get().setUpdateAt(LocalDateTime.now());
+                roomRepository.save(room.get());
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Room updated successfully", room));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Room not found", null));
@@ -207,30 +208,30 @@ public class RoomServiceImpl implements RoomService {
         }
     }
 
-//    @Override
-//    public ResponseEntity<ResponseObj> checkSlotInVenueForHost(LocalDate date) {
-//        try {
-//            List<Venue> venueList = venueRepository.findAll();
-//            if (venueList.isEmpty())
-//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List venue is empty", null));
-//
-//            List<PartyDated> partyDatedList = partyDatedRepository.findByDateAndIsActiveIsTrue(date);
-//
-//            for (Venue venue : venueList) {
-//                List<SlotInRoom> slotInRoomList = venue.getSlotInRoomList();
-//                for (SlotInRoom slotInRoom : slotInRoomList) {
-//
-//                    for (PartyDated partyDated : partyDatedList) {
-//                        if (partyDated.getSlotInRoom().equals(slotInRoom)) {
-//                            slotInRoom.setPartyDated(partyDated);
-//                            slotInRoom.setStatus(true);
-//                        }
-//                    }
-//                }
-//            }
-//            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", venueList));
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
-//        }
-//    }
+    @Override
+    public ResponseEntity<ResponseObj> checkSlotInRoomForHost(LocalDate date) {
+        try {
+            List<Room> roomList = roomRepository.findAll();
+            if (roomList.isEmpty())
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List room is empty", null));
+
+            List<PartyDated> partyDatedList = partyDatedRepository.findByDateAndIsActiveIsTrue(date);
+
+            for (Room room : roomList) {
+                List<SlotInRoom> slotInRoomList = room.getSlotInRoomList();
+                for (SlotInRoom slotInRoom : slotInRoomList) {
+
+                    for (PartyDated partyDated : partyDatedList) {
+                        if (partyDated.getSlotInRoom().equals(slotInRoom)) {
+                            slotInRoom.setPartyDated(partyDated);
+                            slotInRoom.setStatus(true);
+                        }
+                    }
+                }
+            }
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", roomList));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
 }
