@@ -16,26 +16,28 @@ public class SlotController {
     @Autowired
     SlotService slotService;
 
-    @GetMapping("/get-all")
-    public ResponseEntity<ResponseObj> getAll(){
-        return slotService.getAll();
-    }
-
-    @GetMapping("/get-all-for-host")
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getAllForHost(){
-        return slotService.getAllForHost();
-    }
-
-    @GetMapping("/get-id/{id}")
-    public ResponseEntity<ResponseObj> getById(@PathVariable Long id){
-        return slotService.getById(id);
-    }
-
-    @GetMapping("/get-slot-for-customer-id/{id}")
+    @GetMapping("/get-all-slot-for-customer/{venueId}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long id){
-        return slotService.getById_ForCustomer(id);
+    public ResponseEntity<ResponseObj> getAllSlotForCustomer(@PathVariable Long venueId){
+        return slotService.getAllSlotForCustomer(venueId);
+    }
+
+    @GetMapping("/get-all-slot-for-host/{venueId}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    public ResponseEntity<ResponseObj> getAllSlotForHost(@PathVariable Long venueId){
+        return slotService.getAllSlotForHost(venueId);
+    }
+
+    @GetMapping("/get-id-for-host/{venueId}/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    public ResponseEntity<ResponseObj> getByIdForHost(@PathVariable Long venueId, @PathVariable Long id){
+        return slotService.getByIdForHost(venueId, id);
+    }
+
+    @GetMapping("/get-id-for-customer/{venueId}/{id}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<ResponseObj> getByIdForCustomer(@PathVariable Long venueId, @PathVariable Long id){
+        return slotService.getByIdForCustomer(venueId,id);
     }
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @PostMapping("/create")

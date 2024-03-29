@@ -10,5 +10,6 @@ import java.util.List;
 public interface PackageRepository extends JpaRepository<Package, Long> {
 
     boolean existsByPackageName(String packageName);
-    List<Package> findAllByIsActiveIsTrue();
+    List<Package> findAllByVenueId();
+    List<Package> findAllByVenueIdAndIsActiveIsTrue(Long venueId);
 }
