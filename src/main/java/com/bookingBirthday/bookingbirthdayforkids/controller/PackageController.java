@@ -48,9 +48,15 @@ public class PackageController {
     }
 
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PostMapping(value = "/create-package", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> create(@PathVariable Long venueId, @RequestPart(name = "fileImg", required = true) MultipartFile fileImg, @RequestPart(name = "packageName") String packageName, @RequestPart(name = "packageDescription") String packageDescription, @RequestPart(name = "percent") String percent, @RequestPart(name = "packageServiceRequests") String packageServiceRequestsStr, @RequestPart(name = "packageType") String typeEnum) throws JsonProcessingException {
+    @PreAuthorize("hasAuthority('HOST')")
+    @PostMapping(value = "/create-package/{venueId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> create(@PathVariable Long venueId,
+                                    @RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
+                                    @RequestPart(name = "packageName") String packageName,
+                                    @RequestPart(name = "packageDescription") String packageDescription,
+                                    @RequestPart(name = "percent") String percent,
+                                    @RequestPart(name = "packageServiceRequests") String packageServiceRequestsStr,
+                                    @RequestPart(name = "packageType") String typeEnum) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             float parsePercent = Float.parseFloat(percent);

@@ -156,7 +156,7 @@ public class VenueServiceImpl implements VenueService {
                     venue.get().setDistrict(district);
                     venue.get().setWard(ward);
                     venue.get().setCity(city);
-                    venue.get().setActive(false);
+                    venue.get().setActive(true);
                     venue.get().setCreateAt(LocalDateTime.now());
                     venueRepository.save(venue.get());
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", venue));

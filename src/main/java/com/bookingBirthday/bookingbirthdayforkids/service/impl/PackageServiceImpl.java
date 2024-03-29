@@ -159,35 +159,24 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
     public ResponseEntity<ResponseObj> create(Long venueId, MultipartFile imgFile, String packageName, String packageDescription, float percent, List<PackageServiceRequest> packageServiceRequestList, TypeEnum typeEnum) {
         Long userId = AuthenUtil.getCurrentUserId();
         if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not found", null));
         }
-
         Optional<Account> account = accountRepository.findById(userId);
-        if (!account.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
-        }
-
-        Role role = roleRepository.findByName(RoleEnum.HOST);
-        if (!account.get().getRole().equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a Host", null));
-        }
-
         Optional<Venue> venue = venueRepository.findById(venueId);
         if (!venue.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
         }
 
         if (!venue.get().getAccount().getId().equals(account.get().getId())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "You are not permission", null));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "You are not permission", null));
         }
         Package pack = new Package();
         float packPricing = 0;
         try {
-            String img = "";
             if (imgFile != null) {
                 switch (typeEnum) {
                     case FOOD, DECORATION:
-                        img = firebaseService.uploadImage(imgFile);
+                        String img = firebaseService.uploadImage(imgFile);
                         pack.setPackageName(packageName);
                         pack.setPackageImgUrl(img);
                         pack.setPackageDescription(packageDescription);
