@@ -22,16 +22,16 @@ public class SlotController {
         return slotService.getAllSlotForCustomer(venueId);
     }
 
-    @GetMapping("/get-all-slot-for-host/{venueId}")
+    @GetMapping("/get-all-slot-for-host/{accountId}")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getAllSlotForHost(@PathVariable Long venueId){
-        return slotService.getAllSlotForHost(venueId);
+    public ResponseEntity<ResponseObj> getAllSlotForHost(@PathVariable Long accountId){
+        return slotService.getAllSlotForHost(accountId);
     }
 
-    @GetMapping("/get-id-for-host/{venueId}/{id}")
+    @GetMapping("/get-id-for-host/{accountId}/{id}")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getByIdForHost(@PathVariable Long venueId, @PathVariable Long id){
-        return slotService.getByIdForHost(venueId, id);
+    public ResponseEntity<ResponseObj> getByIdForHost(@PathVariable Long accountId, @PathVariable Long id){
+        return slotService.getByIdForHost(accountId, id);
     }
 
     @GetMapping("/get-id-for-customer/{venueId}/{id}")
