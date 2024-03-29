@@ -33,5 +33,6 @@ public class Venue extends BaseEntity{
     private Account account;
 
     @OneToMany(mappedBy = "venue")
+    @JsonIgnore
     private List<Package> packageList;
 }
