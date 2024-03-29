@@ -17,8 +17,9 @@ import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 public class PartyBooking extends BaseEntity{
     @NotBlank(message = "Kid Name cannot blank")

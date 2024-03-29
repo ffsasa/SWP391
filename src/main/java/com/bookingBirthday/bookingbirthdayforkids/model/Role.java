@@ -11,8 +11,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 @Builder
+@Entity
 public class Role extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private RoleEnum name;

@@ -13,8 +13,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 @Builder
+@Entity
 public class Slot extends BaseEntity {
     @NotNull(message = "TimeStart value cannot be null")
     @NotBlank(message = "TimeStart value cannot be blank")
