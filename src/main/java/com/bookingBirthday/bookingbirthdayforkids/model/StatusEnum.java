@@ -1,5 +1,8 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
+import lombok.Getter;
+
+@Getter
 public enum StatusEnum {
     PENDING(1),
     CONFIRMED(2),
@@ -11,7 +14,4 @@ public enum StatusEnum {
         this.value = value;
     }
 
-    public int getValue() {
-        return this.value;
-    }
 }

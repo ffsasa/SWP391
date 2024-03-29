@@ -20,30 +20,27 @@ public class PartyBookingController {
     @Autowired
     PartyBookingService partyBookingService;
 
-    @GetMapping("/get-all")
-    public ResponseEntity<ResponseObj> getAll() {
-        return partyBookingService.getAll();
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @GetMapping("/get-all-by-user")
+    public ResponseEntity<ResponseObj> getAllByUser() {
+        return partyBookingService.getAllByUser();
     }
+
+    @GetMapping("/get-all-party-booking-for-host")
+    @PreAuthorize("hasAuthority('HOST')")
+    public ResponseEntity<ResponseObj> getAllForHost() {
+        return partyBookingService.getAll_ForHost();
+    }
+
     @GetMapping("/get-all-completed")
+    @PreAuthorize("hasAuthority('HOST')")
     public ResponseEntity<ResponseObj> getAllCompleted() {
         return partyBookingService.getAllCompleted();
     }
 
-    @GetMapping("/get-all-party-booking-for-host")
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getAllForHost() {
-        return partyBookingService.getAllForHost();
-    }
-
-//    @PreAuthorize("hasAuthority('CUSTOMER')")
-//    @GetMapping("/get-all-by-user")
-//    public ResponseEntity<ResponseObj> getAllByUser() {
-//        return partyBookingService.getAllByUser();
-//    }
-
-    @GetMapping("/get-id/{id}")
-    public ResponseEntity<ResponseObj> getById(@PathVariable Long id){
-        return partyBookingService.getById(id);
+    @GetMapping("/get-id-for-host/{partyBookingId}")
+    public ResponseEntity<ResponseObj> getByIdForHost(@PathVariable Long partyBookingId){
+        return partyBookingService.getById_ForHost(partyBookingId);
     }
 
 //    @GetMapping("/get-party-booking-for-customer-id/{id}")
@@ -52,10 +49,10 @@ public class PartyBookingController {
 //        return partyBookingService.getById_ForCustomer(id);
 //    }
 
-//    @PostMapping("/create")
-//    public ResponseEntity<?> create(@Valid @RequestBody PartyBookingRequest partyBookingRequest){
-//        return partyBookingService.create(partyBookingRequest);
-//    }
+    @PostMapping("/create")
+    public ResponseEntity<?> create(@Valid @RequestBody PartyBookingRequest partyBookingRequest){
+        return partyBookingService.create(partyBookingRequest);
+    }
 //
 //    @PutMapping("/update/{id}")
 //    public ResponseEntity<?> update(@PathVariable Long id,@Valid @RequestBody PartyBookingRequest partyBookingRequest){
