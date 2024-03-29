@@ -18,15 +18,22 @@ public interface PartyBookingService {
 
     public ResponseEntity<ResponseObj> getById(Long id);
 
-//    public ResponseEntity<ResponseObj> getById_ForCustomer(Long id);
+    public ResponseEntity<ResponseObj> getById_ForCustomer(Long id);
 
-//    public ResponseEntity<ResponseObj> create(PartyBookingRequest partyBookingRequest);
+    public ResponseEntity<ResponseObj> create(PartyBookingRequest partyBookingRequest);
 
-//    public ResponseEntity<ResponseObj> update(Long id, PartyBookingRequest partyBookingRequest);
+    public ResponseEntity<ResponseObj> updateUpgradeService(Long id, PartyBookingRequest partyBookingRequest);
+
+    public ResponseEntity<ResponseObj> updateDate(Long id, PartyBookingRequest partyBookingRequest);
+
+    public ResponseEntity<ResponseObj> updatePackage(Long id, PartyBookingRequest partyBookingRequest);
+
+    public ResponseEntity<ResponseObj> updateBasicInfo(Long id, PartyBookingRequest partyBookingRequest);
 
     public ResponseEntity<ResponseObj> delete(Long id);
 
-//    public ResponseEntity<ResponseObj> getAllByUser();
+    //Sửa
+    public ResponseEntity<ResponseObj> getAllByUser();
 
     public ResponseEntity<ResponseObj> Cancel(Long bookingId);
 

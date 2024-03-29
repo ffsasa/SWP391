@@ -35,11 +35,11 @@ public class PartyBookingController {
         return partyBookingService.getAllForHost();
     }
 
-//    @PreAuthorize("hasAuthority('CUSTOMER')")
-//    @GetMapping("/get-all-by-user")
-//    public ResponseEntity<ResponseObj> getAllByUser() {
-//        return partyBookingService.getAllByUser();
-//    }
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @GetMapping("/get-all-by-user")
+    public ResponseEntity<ResponseObj> getAllByUser() {
+        return partyBookingService.getAllByUser();
+    }
 
     @GetMapping("/get-id/{id}")
     public ResponseEntity<ResponseObj> getById(@PathVariable Long id){
@@ -52,10 +52,10 @@ public class PartyBookingController {
 //        return partyBookingService.getById_ForCustomer(id);
 //    }
 
-//    @PostMapping("/create")
-//    public ResponseEntity<?> create(@Valid @RequestBody PartyBookingRequest partyBookingRequest){
-//        return partyBookingService.create(partyBookingRequest);
-//    }
+    @PostMapping("/create")
+    public ResponseEntity<?> create(@Valid @RequestBody PartyBookingRequest partyBookingRequest){
+        return partyBookingService.create(partyBookingRequest);
+    }
 //
 //    @PutMapping("/update/{id}")
 //    public ResponseEntity<?> update(@PathVariable Long id,@Valid @RequestBody PartyBookingRequest partyBookingRequest){
