@@ -10,13 +10,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PartyBookingService {
-    public ResponseEntity<ResponseObj> getAll();
+    public ResponseEntity<ResponseObj> getAllByUser();
 
-    public ResponseEntity<ResponseObj> getAllForHost();
+    public ResponseEntity<ResponseObj> getAll_ForHost();
 
-    public void updateCronJob(Long bookingId, PartyBooking partyBooking);
+    public ResponseEntity<ResponseObj> getAllCompleted();
 
-    public ResponseEntity<ResponseObj> getById(Long id);
+    public ResponseEntity<ResponseObj> getById_ForHost(Long partyBookingId);
 
     public ResponseEntity<ResponseObj> getById_ForCustomer(Long id);
 
@@ -32,9 +32,6 @@ public interface PartyBookingService {
 
     public ResponseEntity<ResponseObj> delete(Long id);
 
-    //Sửa
-    public ResponseEntity<ResponseObj> getAllByUser();
-
     public ResponseEntity<ResponseObj> Cancel(Long bookingId);
 
     @Transactional
@@ -49,6 +46,6 @@ public interface PartyBookingService {
     public List<PartyBooking> findConfirmedBookings();
 
     public ResponseEntity<ResponseObj> updatePackageInVenue(Long partyBookingId, Long packageInVenueId);
-    public ResponseEntity<ResponseObj> getAllCompleted();
 
+    public void updateCronJob(Long bookingId, PartyBooking partyBooking);
 }
