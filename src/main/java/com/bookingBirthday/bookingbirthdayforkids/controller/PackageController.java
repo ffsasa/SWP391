@@ -23,13 +23,13 @@ public class PackageController {
     @Autowired
     PackageService packageService;
 
-    @GetMapping("/get-all-package-for-customer/{venueId}/")
+    @GetMapping("/get-all-package-for-customer/{venueId}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
     public ResponseEntity<ResponseObj> getAllForCustomer(@PathVariable Long venueId) {
         return packageService.getAllForCustomer(venueId);
     }
 
-    @GetMapping("/get-all-package-for-host")
+    @GetMapping("/get-all-package-for-host/{venueId}")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     public ResponseEntity<ResponseObj> getAllForHost(@PathVariable Long venueId) {
         return packageService.getAllForHost(venueId);

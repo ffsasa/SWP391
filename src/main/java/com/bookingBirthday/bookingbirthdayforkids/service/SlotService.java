@@ -9,10 +9,10 @@ import java.util.List;
 public interface SlotService {
     public ResponseEntity<ResponseObj> getAllSlotForCustomer(Long venueId);
 
-    public ResponseEntity<ResponseObj> getAllSlotForHost(Long venueId);
+    public ResponseEntity<ResponseObj> getAllSlotForHost(Long accountId);
 
 
-    public ResponseEntity<ResponseObj> getByIdForHost(Long venueId, Long id);
+    public ResponseEntity<ResponseObj> getByIdForHost(Long accountId, Long id);
 
     public ResponseEntity<ResponseObj> getByIdForCustomer(Long venueId, Long id);
 
