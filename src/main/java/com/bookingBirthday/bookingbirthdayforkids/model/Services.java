@@ -40,4 +40,8 @@ public class Services extends BaseEntity{
     @OneToMany(mappedBy = "services", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<UpgradeService> upgradeServiceList;
+
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    private Account account;
 }

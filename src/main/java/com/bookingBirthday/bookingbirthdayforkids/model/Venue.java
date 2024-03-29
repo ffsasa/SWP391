@@ -25,15 +25,15 @@ public class Venue extends BaseEntity{
     private String ward;
     private String district;
     private String city;
-
-    @OneToMany(mappedBy = "venue")
-    @JsonIgnore
-    private List<PackageInVenue> packageInVenueList;
     
     @OneToMany(mappedBy = "venue")
 //    @JsonIgnore
     private List<Room> roomList;
-    @OneToOne
-    @JoinColumn(name = "account_id")
-    Account account;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "account_id", referencedColumnName = "id")
+    private Account account;
+
+    @OneToMany(mappedBy = "venue")
+    private List<Package> packageList;
 }

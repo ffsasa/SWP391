@@ -16,11 +16,11 @@ import lombok.Setter;
 @Entity
 public class PackageInBooking extends BaseEntity{
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "partyBooking_id")
     private PartyBooking partyBooking;
 
-    @ManyToOne()
-    @JoinColumn(name = "packageInVenue_id")
-    private PackageInVenue packageInVenue;
+    @ManyToOne
+    @JoinColumn(name = "package_id")
+    private Package aPackage;
 }

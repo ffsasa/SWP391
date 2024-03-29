@@ -17,7 +17,6 @@ import java.util.List;
 @Entity
 @Builder
 public class Package extends BaseEntity{
-    private long packageCategoryId;
     @NotBlank(message = "Package name cannot blank")
     private String packageName;
     @Column(name = "package_description",columnDefinition = "TEXT")
@@ -32,10 +31,14 @@ public class Package extends BaseEntity{
     private float pricing;
 
     @OneToMany(mappedBy = "apackage", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<PackageService> packageServiceList;
 
-
-    @OneToMany(mappedBy = "apackage", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "aPackage", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<PackageInVenue> packageInVenueList;
+    private List<PackageInBooking> packageInBookingList;
+
+    @ManyToOne
+    @JoinColumn(name = "venue_id")
+    private Venue venue;
 }

@@ -35,6 +35,7 @@ public class PartyBooking extends BaseEntity{
     private StatusEnum status;
     @Min(value = 1, message = "Capacity value must be greater than or equal to 1")
     private int participantAmount;
+    private LocalDate date;
 
     @Transient
     @JsonProperty("slotInVenueObject")
@@ -55,10 +56,6 @@ public class PartyBooking extends BaseEntity{
     @OneToMany(mappedBy = "partyBooking", cascade = CascadeType.ALL)
     private List<UpgradeService> upgradeServices;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "partyDated_id", referencedColumnName = "id")
-    private PartyDated partyDated;
-
     @OneToMany(mappedBy = "partyBooking", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Payment> paymentList;
@@ -67,9 +64,12 @@ public class PartyBooking extends BaseEntity{
     @JsonIgnore
     private List<PackageInBooking> packageInBookings;
 
-
     @OneToOne(mappedBy = "partyBooking", cascade = CascadeType.ALL)
     private Review review;
+
+    @ManyToOne
+    @JoinColumn(name = "slotInRoom_id")
+    private SlotInRoom slotInRoom;
 
     @Transient
     @JsonProperty("pricingTotal")
