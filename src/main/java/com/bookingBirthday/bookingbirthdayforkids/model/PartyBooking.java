@@ -32,7 +32,7 @@ public class PartyBooking extends BaseEntity{
     @Pattern(regexp = "\\d{10}", message = "Invalid phone number format")
     private String phone;
     @Enumerated(EnumType.STRING)
-    private StatusEnum status;
+    public StatusEnum status;
     @Min(value = 1, message = "Capacity value must be greater than or equal to 1")
     private int participantAmount;
     private LocalDate date;

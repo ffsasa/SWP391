@@ -12,13 +12,11 @@ import java.util.List;
 public interface PartyBookingService {
     public ResponseEntity<ResponseObj> getAllByUser();
 
-    public ResponseEntity<ResponseObj> getAll_ForHost(Long venueId);
+    public ResponseEntity<ResponseObj> getAll_ForHost();
 
-    public ResponseEntity<ResponseObj> getAllCompleted(Long VenueId);
+    public ResponseEntity<ResponseObj> getAllCompleted();
 
-    public void updateCronJob(Long bookingId, PartyBooking partyBooking);
-
-    public ResponseEntity<ResponseObj> getById_ForHost(Long id, Long VenueId);
+    public ResponseEntity<ResponseObj> getById_ForHost(Long partyBookingId);
 
     public ResponseEntity<ResponseObj> getById_ForCustomer(Long id);
 
@@ -48,4 +46,6 @@ public interface PartyBookingService {
     public List<PartyBooking> findConfirmedBookings();
 
     public ResponseEntity<ResponseObj> updatePackageInVenue(Long partyBookingId, Long packageInVenueId);
+
+    public void updateCronJob(Long bookingId, PartyBooking partyBooking);
 }

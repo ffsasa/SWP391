@@ -26,10 +26,10 @@ public class PartyBookingController {
         return partyBookingService.getAllByUser();
     }
 
-    @GetMapping("/get-all-party-booking-for-host/{venueId}")
+    @GetMapping("/get-all-party-booking-for-host")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getAllForHost(@PathVariable Long venueId) {
-        return partyBookingService.getAll_ForHost(venueId);
+    public ResponseEntity<ResponseObj> getAllForHost() {
+        return partyBookingService.getAll_ForHost();
     }
 
     @GetMapping("/get-all-completed")
@@ -38,9 +38,9 @@ public class PartyBookingController {
         return partyBookingService.getAllCompleted();
     }
 
-    @GetMapping("/get-id/{id}")
-    public ResponseEntity<ResponseObj> getById(@PathVariable Long id){
-        return partyBookingService.getById(id);
+    @GetMapping("/get-id-for-host/{partyBookingId}")
+    public ResponseEntity<ResponseObj> getByIdForHost(@PathVariable Long partyBookingId){
+        return partyBookingService.getById_ForHost(partyBookingId);
     }
 
 //    @GetMapping("/get-party-booking-for-customer-id/{id}")
