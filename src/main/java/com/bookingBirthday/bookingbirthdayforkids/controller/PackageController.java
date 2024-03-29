@@ -91,10 +91,4 @@ public class PackageController {
     public ResponseEntity<ResponseObj> delete(@PathVariable Long venueId, @PathVariable Long packageId) {
         return packageService.delete(venueId, packageId);
     }
-
-//    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-//    @PostMapping(value = "/add-package-in-venue-by-venue-id")
-//    public ResponseEntity<?> addPackageInVenueByVenueId(@RequestParam Long venueId, @RequestBody List<Long> packageIdList) {
-//        return packageService.addPackageInVenueByVenueId(venueId, packageIdList);
-//    }
 }
