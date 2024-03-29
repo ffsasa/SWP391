@@ -40,6 +40,9 @@ public class ServicesServicesImpl implements ServicesService {
     public ResponseEntity<ResponseObj> getAllServiceByVenue(Long venueId) {
         try {
             Optional<Venue> venue = venueRepository.findById(venueId);
+            if (!venue.isPresent()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Venue does not exist", null));
+            }
             List<Services> servicesList = servicesRepository.findAllByIsActiveIsTrue();
             List<Services> servicesListAccount = new ArrayList<>();
             for (Services services : servicesList) {
@@ -62,6 +65,9 @@ public class ServicesServicesImpl implements ServicesService {
     public ResponseEntity<ResponseObj> getAllServiceByTypeByVenue(TypeEnum typeEnum, Long venueId) {
         try {
             Optional<Venue> venue = venueRepository.findById(venueId);
+            if (!venue.isPresent()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Venue does not exist", null));
+            }
             List<Services> servicesListAccountByType = new ArrayList<>();
             List<Services> servicesList = servicesRepository.findAllByServiceTypeAndIsActiveIsTrue(typeEnum);
             for (Services services : servicesList) {
@@ -125,6 +131,9 @@ public class ServicesServicesImpl implements ServicesService {
         try {
             Optional<Venue> venue = venueRepository.findById(venueId);
             Optional<Services> services = servicesRepository.findById(serviceId);
+            if (!venue.isPresent()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Venue does not exist", null));
+            }
             if(services.get().getAccount().getId().equals(venue.get().getAccount().getId())){
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", services.get()));
             }
