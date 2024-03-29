@@ -61,8 +61,11 @@ public class RoomServiceImpl implements RoomService {
     public ResponseEntity<ResponseObj> getAllRoomInVenueByHost(Long venueId) {
         Long userId = AuthenUtil.getCurrentUserId();
         Optional<Account> account = accountRepository.findById(userId);
-        Venue venue = account.get().getVenue();
-        List<Room> roomList = venue.getRoomList();
+        Optional<Venue> venue = venueRepository.findById(venueId);
+        if(!venue.get().getAccount().getId().equals(account.get().getId())){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue does not exist", null));
+        }
+        List<Room> roomList = venue.get().getRoomList();
         if (roomList.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
 
@@ -91,11 +94,14 @@ public class RoomServiceImpl implements RoomService {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             Optional<Account> account = accountRepository.findById(userId);
-            Venue venue = account.get().getVenue();
-            List<Room> roomList = venue.getRoomList();
+            Optional<Venue> venue = venueRepository.findById(venueId);
+            if(!venue.get().getAccount().getId().equals(account.get().getId())){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue does not exist", null));
+            }
+            List<Room> roomList = venue.get().getRoomList();
             for(Room room : roomList){
                 if(room.getId().equals(roomId)){
-                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), null, room));
+                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", room));
                 }
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Room does not exist", null));
@@ -109,8 +115,11 @@ public class RoomServiceImpl implements RoomService {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             Optional<Account> account = accountRepository.findById(userId);
-            Venue venue = account.get().getVenue();
-            List<Room> roomList = venue.getRoomList();
+            Optional<Venue> venue = venueRepository.findById(venueId);
+            if(!venue.get().getAccount().getId().equals(account.get().getId())){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue does not exist", null));
+            }
+            List<Room> roomList = venue.get().getRoomList();
             for (Room room : roomList) {
                 if (room.getId().equals(roomId)) {
                     List<SlotInRoom> slotInRoomList = room.getSlotInRoomList();
@@ -118,7 +127,7 @@ public class RoomServiceImpl implements RoomService {
                     for (SlotInRoom slotInRoom : slotInRoomList) {
                         slotAddedList.add(slotInRoom.getSlot());
                     }
-                    List<Slot> slotList = account.get().getSlotList();
+                    List<Slot> slotList = venue.get().getAccount().getSlotList();
                     List<Slot> slotNotAddList = new ArrayList<>();
                     for (Slot slot : slotList) {
                         if (!slotAddedList.contains(slot)) {
@@ -140,8 +149,11 @@ public class RoomServiceImpl implements RoomService {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             Optional<Account> account = accountRepository.findById(userId);
-            Venue venue = account.get().getVenue();
-            List<Room> roomList = venue.getRoomList();
+            Optional<Venue> venue = venueRepository.findById(venueId);
+            if(!venue.get().getAccount().getId().equals(account.get().getId())){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue does not exist", null));
+            }
+            List<Room> roomList = venue.get().getRoomList();
             for(Room room : roomList){
                 if(room.getId().equals(roomId)){
                     List<SlotInRoom> slotInRoomList = room.getSlotInRoomList();
@@ -176,11 +188,11 @@ public class RoomServiceImpl implements RoomService {
     public ResponseEntity<ResponseObj> create(MultipartFile fileImg, String roomName, Long venueId, int capacity, float parsedPricing) {
         Long userId = AuthenUtil.getCurrentUserId();
         Optional<Account> account = accountRepository.findById(userId);
-        Venue venue = account.get().getVenue();
-        if (!venue.getId().equals(venueId)) {
+        Optional<Venue> venue = venueRepository.findById(venueId);
+        if (!account.get().getId().equals(venue.get().getAccount().getId())) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue does not exist", null));
         }
-        if (roomRepository.existsByRoomNameAndVenue(roomName, venue)) {
+        if (roomRepository.existsByRoomNameAndVenue(roomName, venue.get())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This room name has already exist in this venue", null));
         }
 
@@ -189,7 +201,7 @@ public class RoomServiceImpl implements RoomService {
             if (fileImg != null) {
                 String img = firebaseService.uploadImage(fileImg);
                 room.setRoomName(roomName);
-                room.setVenue(venue);
+                room.setVenue(venue.get());
                 room.setCapacity(capacity);
                 room.setRoomImgUrl(img);
                 room.setPricing(parsedPricing);
@@ -211,8 +223,11 @@ public class RoomServiceImpl implements RoomService {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             Optional<Account> account = accountRepository.findById(userId);
-            Venue venue = account.get().getVenue();
-            List<Room> roomList = venue.getRoomList();
+            Optional<Venue> venue = venueRepository.findById(venueId);
+            if(!venue.get().getAccount().getId().equals(account.get().getId())){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue does not exist", null));
+            }
+            List<Room> roomList = venue.get().getRoomList();
             for (Room room : roomList) {
                 if (room.getId().equals(id)) {
                     room.setRoomImgUrl(fileImg == null ? room.getRoomImgUrl() : firebaseService.uploadImage(fileImg));
@@ -220,6 +235,7 @@ public class RoomServiceImpl implements RoomService {
                     room.setCapacity(capacity == 0 ? room.getCapacity() : capacity);
                     room.setPricing(parsedPricing == 0 ? room.getPricing() : parsedPricing);
                     room.setUpdateAt(LocalDateTime.now());
+                    room.setVenue(venue.get());
                     roomRepository.save(room);
                     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Room updated successfully", room));
                 }
@@ -235,12 +251,16 @@ public class RoomServiceImpl implements RoomService {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             Optional<Account> account = accountRepository.findById(userId);
-            Venue venue = account.get().getVenue();
-            List<Room> roomList = venue.getRoomList();
+            Optional<Venue> venue = venueRepository.findById(venueId);
+            if(!venue.get().getAccount().getId().equals(account.get().getId())){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue does not exist", null));
+            }
+            List<Room> roomList = venue.get().getRoomList();
             for (Room room : roomList) {
                 if (room.getId().equals(roomId)) {
                     room.setActive(false);
                     room.setDeleteAt(LocalDateTime.now());
+                    room.setVenue(venue.get());
                     roomRepository.save(room);
 
                 }

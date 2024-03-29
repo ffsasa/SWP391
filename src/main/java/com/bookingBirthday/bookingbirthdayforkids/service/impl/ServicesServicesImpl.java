@@ -86,7 +86,7 @@ public class ServicesServicesImpl implements ServicesService {
             List<Services> servicesListType = servicesRepository.findAllByServiceType(typeEnum);
             List<Services> servicesListTypeByHost = new ArrayList<>();
             for (Services services : servicesListType) {
-                if (services.getAccount().getId().equals(account)) {
+                if (services.getAccount().getId().equals(account.get().getId())) {
                     servicesListTypeByHost.add(services);
                 }
             }
@@ -107,7 +107,7 @@ public class ServicesServicesImpl implements ServicesService {
             List<Services> servicesListByHost = new ArrayList<>();
             List<Services> servicesList = servicesRepository.findAll();
             for (Services services : servicesList) {
-                if (services.getAccount().getId().equals(account)) {
+                if (services.getAccount().getId().equals(account.get().getId())) {
                     servicesListByHost.add(services);
                 }
             }
