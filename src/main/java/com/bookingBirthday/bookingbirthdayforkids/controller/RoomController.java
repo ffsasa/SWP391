@@ -89,9 +89,8 @@ public class RoomController {
         return roomService.checkSlotInRoomForHost(parseDate);
     }
 
-
-    @PreAuthorize("hasAuthority('HOST')")
     @PostMapping(value = "/create-room/{venueId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('HOST')")
     public ResponseEntity<?> create(@PathVariable Long venueId,
                                     @RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
                                     @RequestPart String roomName,
