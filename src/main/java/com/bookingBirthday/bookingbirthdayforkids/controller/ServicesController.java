@@ -19,34 +19,47 @@ public class ServicesController {
     @Autowired
     ServicesService servicesService;
 
-    @GetMapping("/getAll-service")
-    public ResponseEntity<ResponseObj> getAll(){
-        return servicesService.getAll();
+    @GetMapping("/getAll-service-for-customer-by-venue/{venueId}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<ResponseObj> getAllForCustomerByVenue(@PathVariable Long venueId){
+        return servicesService.getAllServiceByVenue(venueId);
+    }
+
+    @GetMapping("/getId-service-by-id-for-customer/{venueId}/{serviceId}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<ResponseObj> getByIdForCustomer(@PathVariable Long venueId, @PathVariable Long serviceId){
+        return servicesService.getServiceByIdForCustomeByVenue(venueId, serviceId);
+    }
+
+    @GetMapping("/get-service-by-type-for-customer/{serviceType}/{venueId}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<ResponseObj> getServiceByType(@RequestParam(name = "serviceType") String serviceType, @PathVariable Long venueId){
+        TypeEnum typeEnum = TypeEnum.valueOf(serviceType);
+        return servicesService.getAllServiceByTypeByVenue(typeEnum, venueId);
     }
 
     @GetMapping("/getAll-service-for-host")
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    @PreAuthorize("hasAuthority('HOST')")
     public ResponseEntity<ResponseObj> getAllForHost(){
         return servicesService.getAllForHost();
     }
 
-    @GetMapping("/getId-service/{id}")
-    public ResponseEntity<ResponseObj> getByid(@PathVariable Long id){
-        return servicesService.getById(id);
+
+    @GetMapping("/get-services-id-for-host/{id}")
+    @PreAuthorize("hasAuthority('HOST')")
+    public ResponseEntity<ResponseObj> getByIdForHost(@PathVariable Long id){
+        return servicesService.getByIdByHost(id);
     }
 
-    @GetMapping("/get-services-for-customer-id/{id}")
-    @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long id){
-        return servicesService.getById_ForCustomer(id);
+    @GetMapping("/get-service-by-type-for-customer/{serviceType}")
+    @PreAuthorize("hasAuthority('HOST')")
+    public ResponseEntity<ResponseObj> getServiceByTypeForHost(@RequestParam String serviceType){
+        TypeEnum typeEnum = TypeEnum.valueOf(serviceType);
+        return servicesService.getAllServiceTypeByHost(typeEnum);
     }
 
-    @GetMapping("/get-service-by-type")
-    public ResponseEntity<ResponseObj> getServiceByType(@PathVariable(name = "serviceType") TypeEnum typeEnum){
-        return servicesService.getAllServiceByType(typeEnum);
-    }
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    @PreAuthorize("hasAuthority('HOST')")
     @PostMapping(value = "/create-service", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> create(@RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
                                     @RequestPart(name = "serviceName") String serviceName,
@@ -62,13 +75,13 @@ public class ServicesController {
         }
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    @PreAuthorize("hasAuthority('HOST')")
     @DeleteMapping("/delete-service/{id}")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long id){
         return servicesService.delete(id);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    @PreAuthorize("hasAuthority('HOST')")
     @PutMapping(value = "/update-service/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> update(@PathVariable Long id,
                                     @RequestPart(name = "fileImg", required = false) MultipartFile fileImg,

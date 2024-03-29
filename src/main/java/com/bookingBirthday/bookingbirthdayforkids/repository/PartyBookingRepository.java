@@ -16,5 +16,5 @@ public interface PartyBookingRepository extends JpaRepository<PartyBooking, Long
 
     List<PartyBooking> findAllByStatus(StatusEnum statusEnum );
 
-    PartyBooking findAllByDateAndIsActiveIsTrue(LocalDate date);
+    List<PartyBooking> findAllByDateAndIsActiveIsTrue(LocalDate date);
 }
