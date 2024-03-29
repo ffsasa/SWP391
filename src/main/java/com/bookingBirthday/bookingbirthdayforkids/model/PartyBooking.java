@@ -38,10 +38,6 @@ public class PartyBooking extends BaseEntity{
     private LocalDate date;
 
     @Transient
-    @JsonProperty("slotInVenueObject")
-    private SlotInRoom slotInRoomObject;
-
-    @Transient
     @JsonProperty("venueObject")
     private Venue venueObject;
 
@@ -61,7 +57,6 @@ public class PartyBooking extends BaseEntity{
     private List<Payment> paymentList;
 
     @OneToMany(mappedBy = "partyBooking", cascade = CascadeType.ALL)
-    @JsonIgnore
     private List<PackageInBooking> packageInBookings;
 
     @OneToOne(mappedBy = "partyBooking", cascade = CascadeType.ALL)

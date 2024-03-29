@@ -1,6 +1,7 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -18,6 +19,7 @@ public class PackageInBooking extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "partyBooking_id")
+    @JsonIgnore
     private PartyBooking partyBooking;
 
     @ManyToOne

@@ -20,25 +20,22 @@ public class PartyBookingController {
     @Autowired
     PartyBookingService partyBookingService;
 
-    @GetMapping("/get-all")
-    public ResponseEntity<ResponseObj> getAll() {
-        return partyBookingService.getAll();
-    }
-    @GetMapping("/get-all-completed")
-    public ResponseEntity<ResponseObj> getAllCompleted() {
-        return partyBookingService.getAllCompleted();
-    }
-
-    @GetMapping("/get-all-party-booking-for-host")
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getAllForHost() {
-        return partyBookingService.getAllForHost();
-    }
-
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @GetMapping("/get-all-by-user")
     public ResponseEntity<ResponseObj> getAllByUser() {
         return partyBookingService.getAllByUser();
+    }
+
+    @GetMapping("/get-all-party-booking-for-host/{venueId}")
+    @PreAuthorize("hasAuthority('HOST')")
+    public ResponseEntity<ResponseObj> getAllForHost(@PathVariable Long venueId) {
+        return partyBookingService.getAll_ForHost(venueId);
+    }
+
+    @GetMapping("/get-all-completed")
+    @PreAuthorize("hasAuthority('HOST')")
+    public ResponseEntity<ResponseObj> getAllCompleted() {
+        return partyBookingService.getAllCompleted();
     }
 
     @GetMapping("/get-id/{id}")
