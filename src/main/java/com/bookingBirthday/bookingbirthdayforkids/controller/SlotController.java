@@ -63,4 +63,9 @@ public class SlotController {
     public ResponseEntity<?> addSlotInRoomBySlotId(@RequestParam Long roomId, @RequestBody List<Long> slotId) {
         return slotService.addSlotInRoomByRoomId(roomId, slotId);
     }
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    @PutMapping("enable/{id}")
+    public ResponseEntity<ResponseObj> enableSlotForHost(@PathVariable Long id) {
+        return slotService.enableSlotForHost(id);
+    }
 }
