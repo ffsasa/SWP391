@@ -23,28 +23,28 @@ public class PackageController {
     @Autowired
     PackageService packageService;
 
-    @GetMapping("/get-all-package-for-customer/{venueId}")
+    @GetMapping("/get-all-package-for-customer")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> getAllForCustomer(@PathVariable Long venueId) {
-        return packageService.getAllForCustomer(venueId);
+    public ResponseEntity<ResponseObj> getAllForCustomer() {
+        return packageService.getAllForCustomer();
     }
 
-    @GetMapping("/get-all-package-for-host/{venueId}")
+    @GetMapping("/get-all-package-for-host")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getAllForHost(@PathVariable Long venueId) {
-        return packageService.getAllForHost(venueId);
+    public ResponseEntity<ResponseObj> getAllForHost() {
+        return packageService.getAllForHost();
     }
 
-    @GetMapping("/get-package-for-customer/{venueId}/{packageId}")
+    @GetMapping("/get-package-for-customer/{packageId}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> getByIdForCustomer(@PathVariable Long venueId, @PathVariable Long packageId) {
-        return packageService.getByIdForCustomer(venueId, packageId);
+    public ResponseEntity<ResponseObj> getByIdForCustomer( @PathVariable Long packageId) {
+        return packageService.getByIdForCustomer(packageId);
     }
 
-    @GetMapping("/get-package-for-host/{venueId}/{packageId}")
+    @GetMapping("/get-package-for-host/{packageId}")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getByIdForHost(@PathVariable Long venueId, @PathVariable Long packageId) {
-        return packageService.getByIdForHost(venueId, packageId);
+    public ResponseEntity<ResponseObj> getByIdForHost(@PathVariable Long packageId) {
+        return packageService.getByIdForHost(packageId);
     }
 
 
@@ -93,8 +93,13 @@ public class PackageController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @DeleteMapping("/delete/{venueId}/{packageId}")
-    public ResponseEntity<ResponseObj> delete(@PathVariable Long venueId, @PathVariable Long packageId) {
-        return packageService.delete(venueId, packageId);
+    @DeleteMapping("/delete/{packageId}")
+    public ResponseEntity<ResponseObj> delete( @PathVariable Long packageId) {
+        return packageService.delete(packageId);
+    }
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
+    @PutMapping("/enable/{packageId}")
+    public ResponseEntity<ResponseObj> enablePackageForHost(@PathVariable Long packageId) {
+        return packageService.enablePackageForHost(packageId);
     }
 }

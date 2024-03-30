@@ -467,6 +467,7 @@ public class SlotServiceImpl implements SlotService {
                     .body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot is already active", null));
         }
         slot.get().setActive(true);
+        slot.get().setDeleteAt(null);
         slot.get().setUpdateAt(LocalDateTime.now());
         slotRepository.save(slot.get());
 
