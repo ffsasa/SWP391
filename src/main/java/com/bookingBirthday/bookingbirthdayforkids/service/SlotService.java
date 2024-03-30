@@ -22,4 +22,6 @@ public interface SlotService {
 
     public ResponseEntity<ResponseObj> delete(Long id);
     ResponseEntity<ResponseObj> addSlotInRoomByRoomId(Long roomId, List<Long> slotId);
+
+    ResponseEntity<ResponseObj> enableSlotForHost(Long id);
 }

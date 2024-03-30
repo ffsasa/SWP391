@@ -3,7 +3,6 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.SlotRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.*;
-import com.bookingBirthday.bookingbirthdayforkids.model.Package;
 import com.bookingBirthday.bookingbirthdayforkids.repository.*;
 import com.bookingBirthday.bookingbirthdayforkids.service.SlotService;
 import com.bookingBirthday.bookingbirthdayforkids.util.AuthenUtil;
@@ -17,7 +16,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -214,7 +212,7 @@ public class SlotServiceImpl implements SlotService {
                         .body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Time gap between slots must be at least 1 hour", null));
             }
         }
-        
+
         Slot slot = new Slot();
         slot.setTimeStart(slotRequest.getTimeStart());
         slot.setTimeEnd(slotRequest.getTimeEnd());
@@ -329,7 +327,6 @@ public class SlotServiceImpl implements SlotService {
     }
 
 
-
     //fix
     @Override
     public ResponseEntity<ResponseObj> delete(Long id) {
@@ -435,6 +432,48 @@ public class SlotServiceImpl implements SlotService {
 
         return response;
     }
+    @Override
+    public ResponseEntity<ResponseObj> enableSlotForHost(Long id) {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
+        }
+
+        Optional<Account> account = accountRepository.findById(userId);
+        if (!account.isPresent()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
+        }
+
+        Role role = roleRepository.findByName(RoleEnum.HOST);
+        if (!account.get().getRole().equals(role)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a host", null));
+        }
+
+        Optional<Slot> slot = slotRepository.findById(id);
+        if (!slot.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Slot does not exist", null));
+        }
+        if (!slot.get().getAccount().getId().equals(account.get().getId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Account not permission to enable slot", null));
+        }
+
+        if (slot.get().isActive()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot is already active", null));
+        }
+        slot.get().setActive(true);
+        slot.get().setUpdateAt(LocalDateTime.now());
+        slotRepository.save(slot.get());
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseObj(HttpStatus.OK.toString(), "Slot has been enabled", slot.get()));
+    }
+
 
 
 }
