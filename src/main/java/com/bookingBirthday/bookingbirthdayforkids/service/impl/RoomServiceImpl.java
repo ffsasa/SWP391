@@ -223,7 +223,7 @@ public class RoomServiceImpl implements RoomService {
                 room.setCapacity(capacity);
                 room.setRoomImgUrl(img);
                 room.setPricing(parsedPricing);
-                room.setActive(true);
+                room.setActive(false);
                 room.setCreateAt(LocalDateTime.now());
                 room.setUpdateAt(LocalDateTime.now());
                 roomRepository.save(room);
@@ -268,6 +268,28 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public ResponseEntity<ResponseObj> enable(Long roomId, Long venueId){
+        Long userId = AuthenUtil.getCurrentUserId();
+        Optional<Account> account = accountRepository.findById(userId);
+        Optional<Venue> venue = venueRepository.findById(venueId);
+        if (!venue.isPresent()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Venue does not exist", null));
+        }
+        if (!account.get().getId().equals(venue.get().getAccount().getId())) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You are not permission", null));
+        }
+        List<Room> roomList = venue.get().getRoomList();
+        for(Room room : roomList){
+            if(room.getId().equals(roomId)){
+                room.setActive(true);
+                roomRepository.save(room);
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Enable successfully", room));
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Room not found", null));
+    }
+
+    @Override
     public ResponseEntity<ResponseObj> delete(Long roomId, Long venueId) {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
@@ -285,6 +307,11 @@ public class RoomServiceImpl implements RoomService {
                     room.setActive(false);
                     room.setDeleteAt(LocalDateTime.now());
                     room.setVenue(venue.get());
+                    List<SlotInRoom> slotInRoomList = room.getSlotInRoomList();
+                    for(SlotInRoom slotInRoom : slotInRoomList){
+                        slotInRoom.setActive(false);
+                        slotInRoom.setDeleteAt(LocalDateTime.now());
+                    }
                     roomRepository.save(room);
 
                 }
