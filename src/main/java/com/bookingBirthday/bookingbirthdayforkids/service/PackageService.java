@@ -9,13 +9,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface PackageService {
-    public ResponseEntity<ResponseObj> getAllForCustomer(Long venueId);
+    public ResponseEntity<ResponseObj> getAllForCustomer();
 
-    public ResponseEntity<ResponseObj> getAllForHost(Long venueId);
+    public ResponseEntity<ResponseObj> getAllForHost();
 
-    public ResponseEntity<ResponseObj> getByIdForHost(Long venueId, Long id);
+    public ResponseEntity<ResponseObj> getByIdForHost(Long id);
 
-    public ResponseEntity<ResponseObj> getByIdForCustomer(Long venueId, Long id);
+    public ResponseEntity<ResponseObj> getByIdForCustomer(Long id);
 
     ResponseEntity<ResponseObj> create(Long venueId, MultipartFile imgFile, String packageName, String packageDescription, float percent, List<PackageServiceRequest> packageServiceRequestList, TypeEnum typeEnum);
 
@@ -23,5 +23,7 @@ public interface PackageService {
 
     public ResponseEntity<ResponseObj> updatePercentPackage(Long venueId, Long id, float percent);
 
-    public ResponseEntity<ResponseObj> delete(Long venueId, Long id);
+    public ResponseEntity<ResponseObj> delete(Long id);
+
+    ResponseEntity<ResponseObj> enablePackageForHost(Long id);
 }

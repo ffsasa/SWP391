@@ -35,7 +35,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
 
     //fix
     @Override
-    public ResponseEntity<ResponseObj> getAllForCustomer(Long venueId) {
+    public ResponseEntity<ResponseObj> getAllForCustomer() {
         Long userId = AuthenUtil.getCurrentUserId();
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
@@ -51,22 +51,22 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a customer", null));
         }
 
-        Optional<Venue> venue = venueRepository.findById(venueId);
-        if (!venue.isPresent()) {
+        List<Venue> venue = venueRepository.findAllByIsActiveIsTrue();
+        if (venue.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
         }
-        List<Package> packageList = packageRepository.findAllByVenueIdAndIsActiveIsTrue(venueId);
+        List<Package> packageList = packageRepository.findAllByIsActiveIsTrue();
         if (packageList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "No active packages found for this venue", null));
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageList));
     }
 
-    //fix
+    //fix done
 
 
     @Override
-    public ResponseEntity<ResponseObj> getAllForHost(Long venueId) {
+    public ResponseEntity<ResponseObj> getAllForHost() {
         Long userId = AuthenUtil.getCurrentUserId();
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
@@ -77,23 +77,24 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
         }
 
-        Role role = roleRepository.findByName(RoleEnum.CUSTOMER);
+        Role role = roleRepository.findByName(RoleEnum.HOST);
         if (!account.get().getRole().equals(role)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a customer", null));
         }
 
-        Optional<Venue> venue = venueRepository.findById(venueId);
+        Optional<Venue> venue = venueRepository.findById(userId);
         if (!venue.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
         }
-        List<Package> packageList = packageRepository.findAllByVenueId(venue.get().getId());
+        List<Package> packageList = packageRepository.findAll();
         if (packageList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "No active packages found for this venue", null));
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageList));
     }
 
-    public ResponseEntity<ResponseObj> getByIdForCustomer(Long venueId, Long id) {
+    @Override
+    public ResponseEntity<ResponseObj> getByIdForCustomer(Long id) {
         Long userId = AuthenUtil.getCurrentUserId();
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
@@ -109,13 +110,13 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a customer", null));
         }
 
-        Optional<Venue> venue = venueRepository.findById(venueId);
-        if (!venue.isPresent()) {
+        List<Venue> venue = venueRepository.findAllByIsActiveIsTrue();
+        if (venue.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
         }
 
         Optional<Package> apackage = packageRepository.findById(id);
-        if (apackage.isPresent() && apackage.get().getVenue().getId().equals(venueId) && apackage.get().isActive()) {
+        if (apackage.isPresent() && apackage.get().isActive()) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", apackage));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This package does not exist or is inactive", null));
@@ -125,7 +126,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
 //fix
 
     @Override
-    public ResponseEntity<ResponseObj> getByIdForHost(Long venueId, Long id) {
+    public ResponseEntity<ResponseObj> getByIdForHost(Long id) {
         Long userId = AuthenUtil.getCurrentUserId();
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
@@ -141,12 +142,12 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a host", null));
         }
 
-        Optional<Venue> venue = venueRepository.findById(venueId);
+        Optional<Venue> venue = venueRepository.findById(userId);
         if (!venue.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
         }
         Optional<Package> apackage = packageRepository.findById(id);
-        if (apackage.isPresent() && apackage.get().getVenue().getId().equals(venueId)) {
+        if (apackage.isPresent()) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", apackage));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This package does not exist or is inactive", null));
@@ -214,54 +215,6 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
     }
 
 
-    //Sửa
-//    @Override
-//    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, String packageDescription, float percent, List<PackageServiceRequest> packageServiceRequestList, TypeEnum typeEnum) {
-//        if (packageRepository.existsByPackageName(packageName)) {
-//            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new ResponseObj(HttpStatus.ALREADY_REPORTED.toString(), "Package name has already exist", null));
-//        }
-//        Package pack = new Package();
-//        float packPricing = 0;
-//        try {
-//            String img = "";
-//            if (imgFile != null) {
-//                switch (typeEnum) {
-//                    case FOOD, DECORATION:
-//                        img = firebaseService.uploadImage(imgFile);
-//                        pack.setPackageName(packageName);
-//                        pack.setPackageImgUrl(img);
-//                        pack.setPackageDescription(packageDescription);
-//                        pack.setActive(true);
-//                        pack.setCreateAt(LocalDateTime.now());
-//                        pack.setUpdateAt(LocalDateTime.now());
-//                        pack.setPackageType(typeEnum);
-//                        packageRepository.save(pack);
-//                        break;
-//                    default:
-//                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid package type", null));
-//                }
-//            }
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Image is invalid", null));
-//        }
-//
-//        for (PackageServiceRequest packageServiceRequest : packageServiceRequestList) {
-//            PackageService packageService = new PackageService();
-//            packageService.setCount(packageServiceRequest.getCount());
-//            packageService.setPricing((packageServiceRequest.getCount() * servicesRepository.findById(packageServiceRequest.getServiceId()).get().getPricing()));
-//            packageService.setActive(true);
-//            packageService.setCreateAt(LocalDateTime.now());
-//            packageService.setUpdateAt(LocalDateTime.now());
-//            packPricing += packageService.getPricing();
-//            packageService.setApackage(pack);
-//            packageService.setServices(servicesRepository.findById(packageServiceRequest.getServiceId()).get());
-//            packageServiceRepository.save(packageService);
-//        }
-//        float newPricing = packPricing * percent;
-//        pack.setPricing(packPricing - newPricing);
-//        packageRepository.save(pack);
-//        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Successful", pack));
-//    }
 
     //fix
     @Override
@@ -352,7 +305,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
 
     //fix
     @Override
-    public ResponseEntity<ResponseObj> delete(Long venueId, Long id) {
+    public ResponseEntity<ResponseObj> delete(Long id) {
         Long userId = AuthenUtil.getCurrentUserId();
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
@@ -365,14 +318,15 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         if (!account.get().getRole().equals(role)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a Host", null));
         }
-        Optional<Venue> venue = venueRepository.findById(venueId);
+        Optional<Venue> venue = venueRepository.findById(userId);
         if (!venue.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
-        }
-        if (!venue.get().getAccount().getId().equals(account.get().getId())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "You are not permission", null));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You are not permission", null));
         }
         Optional<Package> pack = packageRepository.findById(id);
+        if (!pack.get().isActive()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package is already inactive", null));
+        }
         if (pack.isPresent()) {
             pack.get().setActive(false);
             pack.get().setDeleteAt(LocalDateTime.now());
@@ -387,5 +341,44 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         } else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Package does not exist", null));
     }
+    @Override
+    public ResponseEntity<ResponseObj> enablePackageForHost(Long id) {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
+        }
+        Optional<Account> account = accountRepository.findById(userId);
+        if (!account.isPresent()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
+        }
+        Role role = roleRepository.findByName(RoleEnum.HOST);
+        if (!account.get().getRole().equals(role)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a Host", null));
+        }
+        Optional<Venue> venue = venueRepository.findById(userId);
+        if (!venue.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You are not permission", null));
+        }
+        Optional<Package> pack = packageRepository.findById(id);
+        if (pack.isPresent()) {
+            if (pack.get().isActive()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package is already active", null));
+            }
+            pack.get().setActive(true);
+            pack.get().setDeleteAt(null);
+            pack.get().getPackageServiceList().forEach(packageService -> {
+                packageService.getApackage().setVenue(venue.get());
+                packageService.setDeleteAt(null);
+                packageService.setActive(true);
+                packageServiceRepository.save(packageService);
+            });
+            packageRepository.save(pack.get());
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Enable successful", null));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Package does not exist", null));
+        }
+    }
+
 }
 
