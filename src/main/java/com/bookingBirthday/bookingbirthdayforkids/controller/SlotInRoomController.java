@@ -15,21 +15,21 @@ public class SlotInRoomController {
     @Autowired
     SlotInRoomService slotinRoomService;
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PostMapping("/create")
-    public ResponseEntity<ResponseObj> create(@Valid @RequestBody SlotInRoomRequest slotInRoomRequest){
-        return slotinRoomService.create(slotInRoomRequest);
+    @PreAuthorize("hasAuthority('HOST')")
+    @PostMapping("/create/{venueId}")
+    public ResponseEntity<ResponseObj> create(@PathVariable Long venueId, @Valid @RequestBody SlotInRoomRequest slotInRoomRequest){
+        return slotinRoomService.create(slotInRoomRequest, venueId);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @DeleteMapping("/disable/{id}")
-    public ResponseEntity<ResponseObj> disableSlotInVenue(@PathVariable Long id){
-        return slotinRoomService.disableSlotInRoom(id);
+    @PreAuthorize("hasAuthority('HOST')")
+    @DeleteMapping("/disable/{slotInRoomId}")
+    public ResponseEntity<ResponseObj> disableSlotInVenue(@PathVariable Long slotInRoomId){
+        return slotinRoomService.disableSlotInRoom(slotInRoomId);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PutMapping("/active/{id}")
-    public ResponseEntity<ResponseObj> activeSlotInVenue(@PathVariable Long id){
-        return slotinRoomService.activeSlotInRoom(id);
+    @PreAuthorize("hasAuthority('HOST')")
+    @PutMapping("/active/{slotInRoomId}")
+    public ResponseEntity<ResponseObj> activeSlotInVenue(@PathVariable Long slotInRoomId){
+        return slotinRoomService.activeSlotInRoom(slotInRoomId);
     }
 }
