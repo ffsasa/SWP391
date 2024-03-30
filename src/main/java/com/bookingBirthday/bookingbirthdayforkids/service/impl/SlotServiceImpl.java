@@ -36,20 +36,19 @@ public class SlotServiceImpl implements SlotService {
     @Autowired
     VenueRepository venueRepository;
 
-    public ResponseEntity<ResponseObj> getAllSlotForCustomer(Long venueId) {
-        Optional<Venue> venue = venueRepository.findById(venueId);
-        if (!venue.isPresent()) {
+    public ResponseEntity<ResponseObj> getAllSlotForCustomer() {
+        List<Venue> venue = venueRepository.findAllByIsActiveIsTrue();
+        if (venue.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
         }
-        Account account = venue.get().getAccount();
-        List<Slot> slotList = slotRepository.findAllByIsActiveIsTrueAndAccount(account);
+        List<Slot> slotList = slotRepository.findAllByIsActiveIsTrue();
         if (slotList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
         }
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", slotList));
     }
 
-
+    //fix
     @Override
     public ResponseEntity<ResponseObj> getAllSlotForHost() {
         Long userId = AuthenUtil.getCurrentUserId();
@@ -70,11 +69,6 @@ public class SlotServiceImpl implements SlotService {
                     .body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a host", null));
         }
 
-        Optional<Account> requestedAccount = accountRepository.findById(userId);
-        if (!requestedAccount.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Account not found", null));
-        }
 
         List<Slot> slotList = slotRepository.findAllByAccountId(userId);
 
@@ -87,9 +81,9 @@ public class SlotServiceImpl implements SlotService {
                 .body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", slotList));
     }
 
-
+    //fix
     @Override
-    public ResponseEntity<ResponseObj> getByIdForCustomer(Long venueId, Long id) {
+    public ResponseEntity<ResponseObj> getByIdForCustomer(Long id) {
         Long userId = AuthenUtil.getCurrentUserId();
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -108,8 +102,8 @@ public class SlotServiceImpl implements SlotService {
                     .body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a customer", null));
         }
 
-        Optional<Venue> venue = venueRepository.findById(venueId);
-        if (!venue.isPresent()) {
+        List<Venue> venue = venueRepository.findAllByIsActiveIsTrue();
+        if (venue.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
         }
@@ -117,12 +111,9 @@ public class SlotServiceImpl implements SlotService {
         try {
             Optional<Slot> slot = slotRepository.findById(id);
             if (slot.isPresent()) {
-                if (slot.get().getAccount().getVenue().getId().equals(venueId) && slot.get().isActive()) {
+                if (slot.get().isActive()) {
                     return ResponseEntity.status(HttpStatus.ACCEPTED)
                             .body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", slot));
-                } else {
-                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                            .body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "You do not have permission to access this slot", null));
                 }
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -132,6 +123,8 @@ public class SlotServiceImpl implements SlotService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Slot does not exist", null));
     }
 
     @Override

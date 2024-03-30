@@ -7,14 +7,14 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface SlotService {
-    public ResponseEntity<ResponseObj> getAllSlotForCustomer(Long venueId);
+    public ResponseEntity<ResponseObj> getAllSlotForCustomer();
 
     public ResponseEntity<ResponseObj> getAllSlotForHost();
 
 
     public ResponseEntity<ResponseObj> getByIdForHost(Long id);
 
-    public ResponseEntity<ResponseObj> getByIdForCustomer(Long venueId, Long id);
+    public ResponseEntity<ResponseObj> getByIdForCustomer(Long id);
 
     public ResponseEntity<ResponseObj> create(SlotRequest slotRequest);
 
