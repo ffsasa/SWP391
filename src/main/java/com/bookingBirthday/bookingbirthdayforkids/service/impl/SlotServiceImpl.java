@@ -307,6 +307,12 @@ public class SlotServiceImpl implements SlotService {
                     .body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Slot does not exist", null));
         }
 
+        Slot slotToUpdate = existSlot.get();
+        if (!slotToUpdate.getAccount().getId().equals(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not authorized to update this slot", null));
+        }
+
         if (isInvalidTimeRange(slotRequest.getTimeStart(), slotRequest.getTimeEnd())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Time start must be earlier than time end", null));
@@ -320,16 +326,15 @@ public class SlotServiceImpl implements SlotService {
                     .body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Cannot create slot between 00:00:00 and 07:59:59", null));
         }
 
-        Slot slotToUpdate = existSlot.get();
         slotToUpdate.setTimeStart(slotRequest.getTimeStart());
         slotToUpdate.setTimeEnd(slotRequest.getTimeEnd());
         slotToUpdate.setUpdateAt(LocalDateTime.now());
-        slotToUpdate.setAccount(account.get());
         slotRepository.save(slotToUpdate);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED)
                 .body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", slotToUpdate));
     }
+
 
 
     //fix
@@ -361,9 +366,13 @@ public class SlotServiceImpl implements SlotService {
 
         if (!slot.get().getAccount().getId().equals(account.get().getId())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Account id not correct", null));
+                    .body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Account not permission to delete slot", null));
         }
 
+        if (!slot.get().isActive()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot is already inactive", null));
+        }
         slot.get().setActive(false);
         slot.get().setAccount(account.get());
         slot.get().setDeleteAt(LocalDateTime.now());
