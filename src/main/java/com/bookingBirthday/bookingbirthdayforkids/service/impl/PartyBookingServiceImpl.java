@@ -254,6 +254,10 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Account does not exist", null));
             }
 
+            if (partyBookingRepository.existsBySlotInRoomIdAndDateAndIsActiveIsTrue(partyBookingRequest.getSlotInRoomId(), partyBookingRequest.getDate())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in room is not available", null));
+            }
+
             Optional<Package> packageDeco = packageRepository.findById(partyBookingRequest.getPackageDecoId());
             Optional<Package> packageFood = packageRepository.findById(partyBookingRequest.getPackageFoodId());
             Optional<SlotInRoom> slotInRoom = slotInRoomRepository.findById(partyBookingRequest.getSlotInRoomId());
@@ -395,6 +399,10 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             if (existPartyBooking.isPresent()) {
                 if (!existPartyBooking.get().getAccount().getId().equals(userId)) {
                     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to update this booking", null));
+                }
+
+                if (partyBookingRepository.existsBySlotInRoomIdAndDateAndIsActiveIsTrue(slotInRoomId, date)) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in room is not available", null));
                 }
 
                 Optional<SlotInRoom> optionalSlotInRoom = slotInRoomRepository.findById(slotInRoomId);
