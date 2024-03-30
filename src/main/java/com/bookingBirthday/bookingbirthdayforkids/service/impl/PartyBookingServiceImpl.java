@@ -60,6 +60,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 }
 
                 pricing += TotalPriceUtil.getTotalPricingPackage(partyBooking);
+                pricing += partyBooking.getSlotInRoom().getRoom().getPricing();
 
                 partyBooking.setPricingTotal(pricing);
 
@@ -106,6 +107,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     }
 
                     pricing += TotalPriceUtil.getTotalPricingPackage(partyBooking);
+                    pricing += partyBooking.getSlotInRoom().getRoom().getPricing();
 
                     partyBooking.setPricingTotal(pricing);
 
@@ -156,6 +158,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     }
 
                     pricing += TotalPriceUtil.getTotalPricingPackage(partyBooking);
+                    pricing += partyBooking.getSlotInRoom().getRoom().getPricing();
 
                     partyBooking.setPricingTotal(pricing);
 
@@ -191,6 +194,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     }
 
                     pricing += TotalPriceUtil.getTotalPricingPackage(partyBooking.get());
+                    pricing += partyBooking.get().getSlotInRoom().getRoom().getPricing();
 
                     partyBooking.get().setPricingTotal(pricing);
 
@@ -227,6 +231,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 }
 
                 pricing += TotalPriceUtil.getTotalPricingPackage(partyBooking.get());
+                pricing += partyBooking.get().getSlotInRoom().getRoom().getPricing();
 
                 partyBooking.get().setPricingTotal(pricing);
 
