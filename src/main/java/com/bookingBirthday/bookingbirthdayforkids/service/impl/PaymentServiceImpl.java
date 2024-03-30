@@ -79,6 +79,11 @@ public class PaymentServiceImpl implements PaymentService {
 
                 Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
                 float totalPrice = TotalPriceUtil.getTotalPricingPackage(partyBooking.get());
+                for (UpgradeService upgradeService : partyBooking.get().getUpgradeServices()) {
+                    totalPrice += upgradeService.getServices().getPricing() * upgradeService.getCount();
+                }
+                totalPrice += partyBooking.get().getSlotInRoom().getRoom().getPricing();
+
                 int vnp_Amount = (int) totalPrice;
 
                 for(UpgradeService upgradeService : partyBooking.get().getUpgradeServices()){
