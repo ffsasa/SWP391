@@ -75,16 +75,16 @@ public class RoomController {
         return roomService.getSlotInRoomByIdForCustomer(roomId, venueId);
     }
 
-    @GetMapping("check-slot-in-room-for-customer/{date}/{venueId}")
-    @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> checkSlotInRoomForHost(@RequestPart String date, @PathVariable Long venueId) {
-        LocalDateTime parseDate = LocalDateTime.parse(date);
+    @GetMapping("check-slot-in-room-for-customer/{venueId}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<ResponseObj> checkSlotInRoomForCustomer(@RequestParam String date, @PathVariable Long venueId) {
+        LocalDate parseDate = LocalDate.parse(date);
         return roomService.checkSlotInRoomForCustomer(parseDate, venueId);
     }
 
-    @GetMapping("check-slot-in-room-for-host/{date}")
+    @GetMapping("check-slot-in-room-for-host")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> checkSlotInRoomForHost(@RequestPart String date) {
+    public ResponseEntity<ResponseObj> checkSlotInRoomForHost(@RequestParam String date) {
         LocalDate parseDate = LocalDate.parse(date);
         return roomService.checkSlotInRoomForHost(parseDate);
     }

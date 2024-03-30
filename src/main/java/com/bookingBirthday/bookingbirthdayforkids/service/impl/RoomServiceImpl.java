@@ -300,11 +300,11 @@ public class RoomServiceImpl implements RoomService {
 
     //thêm
     @Override
-    public ResponseEntity<ResponseObj> checkSlotInRoomForCustomer(LocalDateTime date, Long venueId) {
+    public ResponseEntity<ResponseObj> checkSlotInRoomForCustomer(LocalDate date, Long venueId) {
         try {
             LocalDateTime currentDateTime = LocalDateTime.now();
             ;
-            LocalDateTime chooseDateTime = date.withHour(0).withMinute(0).withSecond(0);
+            LocalDateTime chooseDateTime = date.atStartOfDay();
 
             if (currentDateTime.isAfter(chooseDateTime.plusHours(6))) {
                 List<SlotInRoom> slotInRoomList = new ArrayList<>();
@@ -320,7 +320,7 @@ public class RoomServiceImpl implements RoomService {
             }
             if (roomListCustomer.isEmpty())
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
-            List<PartyBooking> partyBookingList = partyBookingRepository.findAllByDateAndIsActiveIsTrue(date.toLocalDate());
+            List<PartyBooking> partyBookingList = partyBookingRepository.findAllByDateAndIsActiveIsTrue(date);
 
             for(Room room : roomListCustomer){
                 List<SlotInRoom> slotInRoomList = room.getSlotInRoomList();
