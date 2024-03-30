@@ -39,34 +39,34 @@ public class RoomController {
         return roomService.getSlotInRoomByIdForCustomer(roomId, venueId);
     }
 
-    @GetMapping("/get-all-in-venue-for-host/{venueId}")
+    @GetMapping("/get-all-in-venue-for-host")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getAllRoomInVenueForHost(@PathVariable Long venueId) {
-        return roomService.getAllRoomInVenueByHost(venueId);
+    public ResponseEntity<ResponseObj> getAllRoomInVenueForHost() {
+        return roomService.getAllRoomInVenueByHost();
     }
 
-    @GetMapping("/get-room-in-venue-by-id-for-host/{venueId}/{roomId}")
+    @GetMapping("/get-room-in-venue-by-id-for-host/{roomId}")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getByIdForHost(@PathVariable Long venueId, @PathVariable Long roomId) {
-        return roomService.getRoomInVenueByIdForHost(roomId, venueId);
+    public ResponseEntity<ResponseObj> getByIdForHost(@PathVariable Long roomId) {
+        return roomService.getRoomInVenueByIdForHost(roomId);
     }
 
-    @GetMapping("get-slot-in-rom-in-venue-by-host/{venueId}/{roomId}")
+    @GetMapping("get-slot-in-rom-in-venue-by-host/{roomId}")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getSlotInRoomInVenueForHost(@PathVariable Long venueId, @PathVariable Long roomId) {
-        return roomService.getSlotInRoomByIdForHost(roomId, venueId);
+    public ResponseEntity<ResponseObj> getSlotInRoomInVenueForHost(@PathVariable Long roomId) {
+        return roomService.getSlotInRoomByIdForHost(roomId);
     }
 
-    @GetMapping("get-slot-not-add-in-room-in-venue-for-host/{venueId}/{roomId}")
+    @GetMapping("get-slot-not-add-in-room-in-venue-for-host/{roomId}")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getSlotNotAddInRoomInVenueForHost(@PathVariable Long venueId, @PathVariable Long roomId) {
-        return roomService.getSlotNotAddInRoomByIdForHost(roomId, venueId);
+    public ResponseEntity<ResponseObj> getSlotNotAddInRoomInVenueForHost(@PathVariable Long roomId) {
+        return roomService.getSlotNotAddInRoomByIdForHost(roomId);
     }
 
-    @GetMapping("get-slot-in-room-in-venue-by-id-for-host/{venueId}/{roomId}")
+    @GetMapping("get-slot-in-room-in-venue-by-id-for-host/{roomId}")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getSlotInInRoomInVenueByIdForHost(@PathVariable Long venueId, @PathVariable Long roomId) {
-        return roomService.getSlotInRoomByIdForHost(roomId, venueId);
+    public ResponseEntity<ResponseObj> getSlotInInRoomInVenueByIdForHost(@PathVariable Long roomId) {
+        return roomService.getSlotInRoomByIdForHost(roomId);
     }
 
     @GetMapping("get-slot-in-room-in-venue-by-id-for-customer/{venueId}/{roomId}")
@@ -89,46 +89,46 @@ public class RoomController {
         return roomService.checkSlotInRoomForHost(parseDate);
     }
 
-    @PostMapping(value = "/create-room/{venueId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/create-room", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<?> create(@PathVariable Long venueId,
-                                    @RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
-                                    @RequestPart String roomName,
-                                    @RequestPart String capacity,
-                                    @RequestPart String pricing) {
+    public ResponseEntity<?> create(
+            @RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
+            @RequestPart String roomName,
+            @RequestPart String capacity,
+            @RequestPart String pricing) {
         try {
             float parsedPricing = Float.parseFloat(pricing);
             int parsedCapacity = Integer.parseInt(capacity);
-            return roomService.create(fileImg, roomName, venueId, parsedCapacity, parsedPricing);
+            return roomService.create(fileImg, roomName, parsedCapacity, parsedPricing);
         } catch (NumberFormatException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid pricing", null));
         }
     }
 
-    @PutMapping("/update/{venueId}/{roomId}")
+    @PutMapping("/update/{roomId}")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> update(@PathVariable Long venueId, @PathVariable Long roomId, @RequestPart(name = "fileImg", required = false) MultipartFile fileImg,
+    public ResponseEntity<ResponseObj> update(@PathVariable Long roomId, @RequestPart(name = "fileImg", required = false) MultipartFile fileImg,
                                               @RequestPart String roomName,
                                               @RequestPart String capacity,
                                               @RequestPart String pricing) {
         try {
             float parsedPricing = Float.parseFloat(pricing);
             int parsedCapacity = Integer.parseInt(capacity);
-            return roomService.update(roomId, venueId, fileImg, roomName, parsedCapacity, parsedPricing);
+            return roomService.update(roomId, fileImg, roomName, parsedCapacity, parsedPricing);
         } catch (NumberFormatException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid pricing", null));
         }
     }
 
-    @PutMapping("enable/{venueId}/{roomId}")
+    @PutMapping("enable/{roomId}")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> enable(@PathVariable Long venueId, @PathVariable Long roomId){
-        return roomService.enable(roomId, venueId);
+    public ResponseEntity<ResponseObj> enable(@PathVariable Long roomId) {
+        return roomService.enable(roomId);
     }
 
-    @DeleteMapping("/disable/{venueId}/{roomId}")
+    @DeleteMapping("/disable/{roomId}")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> delete(@PathVariable Long venueId, @PathVariable Long roomId) {
-        return roomService.delete(roomId, venueId);
+    public ResponseEntity<ResponseObj> delete(@PathVariable Long roomId) {
+        return roomService.delete(roomId);
     }
 }

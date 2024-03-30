@@ -61,17 +61,11 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getAllRoomInVenueByHost(Long venueId) {
+    public ResponseEntity<ResponseObj> getAllRoomInVenueByHost() {
         Long userId = AuthenUtil.getCurrentUserId();
         Optional<Account> account = accountRepository.findById(userId);
-        Optional<Venue> venue = venueRepository.findById(venueId);
-        if (!venue.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Venue does not exist", null));
-        }
-        if (!account.get().getId().equals(venue.get().getAccount().getId())) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You are not permission", null));
-        }
-        List<Room> roomList = venue.get().getRoomList();
+        Venue venue = account.get().getVenue();
+        List<Room> roomList = venue.getRoomList();
         if (roomList.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
 
@@ -99,18 +93,12 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getRoomInVenueByIdForHost(Long roomId, Long venueId) {
+    public ResponseEntity<ResponseObj> getRoomInVenueByIdForHost(Long roomId) {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             Optional<Account> account = accountRepository.findById(userId);
-            Optional<Venue> venue = venueRepository.findById(venueId);
-            if (!venue.isPresent()) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Venue does not exist", null));
-            }
-            if (!account.get().getId().equals(venue.get().getAccount().getId())) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You are not permission", null));
-            }
-            List<Room> roomList = venue.get().getRoomList();
+            Venue venue = account.get().getVenue();
+            List<Room> roomList = venue.getRoomList();
             for (Room room : roomList) {
                 if (room.getId().equals(roomId)) {
                     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", room));
@@ -123,18 +111,12 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getSlotNotAddInRoomByIdForHost(Long roomId, Long venueId) {
+    public ResponseEntity<ResponseObj> getSlotNotAddInRoomByIdForHost(Long roomId) {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             Optional<Account> account = accountRepository.findById(userId);
-            Optional<Venue> venue = venueRepository.findById(venueId);
-            if (!venue.isPresent()) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Venue does not exist", null));
-            }
-            if (!account.get().getId().equals(venue.get().getAccount().getId())) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You are not permission", null));
-            }
-            List<Room> roomList = venue.get().getRoomList();
+            Venue venue = account.get().getVenue();
+            List<Room> roomList = venue.getRoomList();
             for (Room room : roomList) {
                 if (room.getId().equals(roomId)) {
                     List<SlotInRoom> slotInRoomList = room.getSlotInRoomList();
@@ -160,7 +142,7 @@ public class RoomServiceImpl implements RoomService {
 
 
     @Override
-    public ResponseEntity<ResponseObj> getSlotInRoomByIdForHost(Long roomId, Long venueId) {
+    public ResponseEntity<ResponseObj> getSlotInRoomByIdForHost(Long roomId) {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             Optional<Account> account = accountRepository.findById(userId);
@@ -200,17 +182,11 @@ public class RoomServiceImpl implements RoomService {
 
 
     @Override
-    public ResponseEntity<ResponseObj> create(MultipartFile fileImg, String roomName, Long venueId, int capacity, float parsedPricing) {
+    public ResponseEntity<ResponseObj> create(MultipartFile fileImg, String roomName, int capacity, float parsedPricing) {
         Long userId = AuthenUtil.getCurrentUserId();
         Optional<Account> account = accountRepository.findById(userId);
-        Optional<Venue> venue = venueRepository.findById(venueId);
-        if (!venue.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Venue does not exist", null));
-        }
-        if (!account.get().getId().equals(venue.get().getAccount().getId())) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You are not permission", null));
-        }
-        if (roomRepository.existsByRoomNameAndVenue(roomName, venue.get())) {
+        Venue venue = account.get().getVenue();
+        if (roomRepository.existsByRoomNameAndVenue(roomName, venue)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "This room name has already exist in this venue", null));
         }
 
@@ -219,7 +195,7 @@ public class RoomServiceImpl implements RoomService {
             if (fileImg != null) {
                 String img = firebaseService.uploadImage(fileImg);
                 room.setRoomName(roomName);
-                room.setVenue(venue.get());
+                room.setVenue(venue);
                 room.setCapacity(capacity);
                 room.setRoomImgUrl(img);
                 room.setPricing(parsedPricing);
@@ -237,18 +213,12 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> update(Long id, Long venueId, MultipartFile fileImg, String roomName, int capacity, float parsedPricing) {
+    public ResponseEntity<ResponseObj> update(Long id, MultipartFile fileImg, String roomName, int capacity, float parsedPricing) {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             Optional<Account> account = accountRepository.findById(userId);
-            Optional<Venue> venue = venueRepository.findById(venueId);
-            if (!venue.isPresent()) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Venue does not exist", null));
-            }
-            if (!account.get().getId().equals(venue.get().getAccount().getId())) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You are not permission", null));
-            }
-            List<Room> roomList = venue.get().getRoomList();
+            Venue venue = account.get().getVenue();
+            List<Room> roomList = venue.getRoomList();
             for (Room room : roomList) {
                 if (room.getId().equals(id)) {
                     room.setRoomImgUrl(fileImg == null ? room.getRoomImgUrl() : firebaseService.uploadImage(fileImg));
@@ -256,7 +226,7 @@ public class RoomServiceImpl implements RoomService {
                     room.setCapacity(capacity == 0 ? room.getCapacity() : capacity);
                     room.setPricing(parsedPricing == 0 ? room.getPricing() : parsedPricing);
                     room.setUpdateAt(LocalDateTime.now());
-                    room.setVenue(venue.get());
+                    room.setVenue(venue);
                     roomRepository.save(room);
                     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Room updated successfully", room));
                 }
@@ -268,17 +238,11 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> enable(Long roomId, Long venueId){
+    public ResponseEntity<ResponseObj> enable(Long roomId){
         Long userId = AuthenUtil.getCurrentUserId();
         Optional<Account> account = accountRepository.findById(userId);
-        Optional<Venue> venue = venueRepository.findById(venueId);
-        if (!venue.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Venue does not exist", null));
-        }
-        if (!account.get().getId().equals(venue.get().getAccount().getId())) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You are not permission", null));
-        }
-        List<Room> roomList = venue.get().getRoomList();
+        Venue venue = account.get().getVenue();
+        List<Room> roomList = venue.getRoomList();
         for(Room room : roomList){
             if(room.getId().equals(roomId)){
                 room.setActive(true);
@@ -290,23 +254,17 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> delete(Long roomId, Long venueId) {
+    public ResponseEntity<ResponseObj> delete(Long roomId) {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             Optional<Account> account = accountRepository.findById(userId);
-            Optional<Venue> venue = venueRepository.findById(venueId);
-            if (!venue.isPresent()) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Venue does not exist", null));
-            }
-            if (!account.get().getId().equals(venue.get().getAccount().getId())) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You are not permission", null));
-            }
-            List<Room> roomList = venue.get().getRoomList();
+            Venue venue = account.get().getVenue();
+            List<Room> roomList = venue.getRoomList();
             for (Room room : roomList) {
                 if (room.getId().equals(roomId)) {
                     room.setActive(false);
                     room.setDeleteAt(LocalDateTime.now());
-                    room.setVenue(venue.get());
+                    room.setVenue(venue);
                     List<SlotInRoom> slotInRoomList = room.getSlotInRoomList();
                     for(SlotInRoom slotInRoom : slotInRoomList){
                         slotInRoom.setActive(false);
