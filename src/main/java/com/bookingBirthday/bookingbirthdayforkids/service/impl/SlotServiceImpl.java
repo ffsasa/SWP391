@@ -51,7 +51,7 @@ public class SlotServiceImpl implements SlotService {
 
 
     @Override
-    public ResponseEntity<ResponseObj> getAllSlotForHost(Long accountId) {
+    public ResponseEntity<ResponseObj> getAllSlotForHost() {
         Long userId = AuthenUtil.getCurrentUserId();
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -70,13 +70,13 @@ public class SlotServiceImpl implements SlotService {
                     .body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a host", null));
         }
 
-        Optional<Account> requestedAccount = accountRepository.findById(accountId);
+        Optional<Account> requestedAccount = accountRepository.findById(userId);
         if (!requestedAccount.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Account not found", null));
         }
 
-        List<Slot> slotList = slotRepository.findAllByAccountId(accountId);
+        List<Slot> slotList = slotRepository.findAllByAccountId(userId);
 
         if (slotList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -135,7 +135,7 @@ public class SlotServiceImpl implements SlotService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getByIdForHost(Long accountId, Long id) {
+    public ResponseEntity<ResponseObj> getByIdForHost(Long id) {
         Long userId = AuthenUtil.getCurrentUserId();
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -157,7 +157,7 @@ public class SlotServiceImpl implements SlotService {
         try {
             Optional<Slot> slot = slotRepository.findById(id);
             if (slot.isPresent()) {
-                if (slot.get().getAccount().getId().equals(accountId)) {
+                if (slot.get().getAccount().getId().equals(userId)) {
                     return ResponseEntity.status(HttpStatus.ACCEPTED)
                             .body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", slot));
                 } else {
