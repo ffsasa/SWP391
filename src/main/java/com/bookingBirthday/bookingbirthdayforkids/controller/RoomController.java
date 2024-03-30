@@ -120,7 +120,13 @@ public class RoomController {
         }
     }
 
-    @DeleteMapping("/delete/{venueId}/{roomId}")
+    @PutMapping("enable/{venueId}/{roomId}")
+    @PreAuthorize("hasAuthority('HOST')")
+    public ResponseEntity<ResponseObj> enable(@PathVariable Long venueId, @PathVariable Long roomId){
+        return roomService.enable(roomId, venueId);
+    }
+
+    @DeleteMapping("/disable/{venueId}/{roomId}")
     @PreAuthorize("hasAuthority('HOST')")
     public ResponseEntity<ResponseObj> delete(@PathVariable Long venueId, @PathVariable Long roomId) {
         return roomService.delete(roomId, venueId);

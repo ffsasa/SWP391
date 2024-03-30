@@ -25,6 +25,8 @@ public interface RoomService {
 
     public ResponseEntity<ResponseObj> checkSlotInRoomForCustomer(LocalDate date, Long venueId);
 
+    public ResponseEntity<ResponseObj> enable(Long roomId, Long venueId);
+
 
     public ResponseEntity<ResponseObj> checkSlotInRoomForHost(LocalDate date);
 
