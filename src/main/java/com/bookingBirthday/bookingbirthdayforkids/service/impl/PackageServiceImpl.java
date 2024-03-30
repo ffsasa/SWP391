@@ -157,20 +157,17 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
     //fix
 
     @Override
-    public ResponseEntity<ResponseObj> create(Long venueId, MultipartFile imgFile, String packageName, String packageDescription, float percent, List<PackageServiceRequest> packageServiceRequestList, TypeEnum typeEnum) {
-        Long userId = AuthenUtil.getCurrentUserId();
-        if (userId == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not found", null));
-        }
-        Optional<Account> account = accountRepository.findById(userId);
-        Optional<Venue> venue = venueRepository.findById(venueId);
-        if (!venue.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
-        }
-
-        if (!venue.get().getAccount().getId().equals(account.get().getId())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "You are not permission", null));
-        }
+    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, String packageDescription, float percent, List<PackageServiceRequest> packageServiceRequestList, TypeEnum typeEnum) {
+//        Long userId = AuthenUtil.getCurrentUserId();
+//        if (userId == null) {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not found", null));
+//        }
+//        Optional<Account> account = accountRepository.findById(userId);
+//        if (!account.isPresent()) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
+//        }
+//        Optional<Venue> venue = venueRepository.findById(account.get().getId());
+        
         Package pack = new Package();
         float packPricing = 0;
         try {
@@ -185,7 +182,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
                         pack.setCreateAt(LocalDateTime.now());
                         pack.setUpdateAt(LocalDateTime.now());
                         pack.setPackageType(typeEnum);
-                        pack.setVenue(venue.get());
+//                        pack.setVenue(venue.get());
                         packageRepository.save(pack);
                         break;
                     default:
