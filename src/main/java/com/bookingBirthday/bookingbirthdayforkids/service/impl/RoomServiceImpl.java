@@ -272,6 +272,8 @@ public class RoomServiceImpl implements RoomService {
                     }
                     roomRepository.save(room);
 
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Room disable successfully", null));
+
                 }
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Room not found", null));
