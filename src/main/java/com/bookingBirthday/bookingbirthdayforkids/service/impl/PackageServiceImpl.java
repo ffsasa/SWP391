@@ -35,7 +35,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
 
     //fix
     @Override
-    public ResponseEntity<ResponseObj> getAllForCustomer() {
+    public ResponseEntity<ResponseObj> getAllForCustomer(Long id) {
         Long userId = AuthenUtil.getCurrentUserId();
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
@@ -51,11 +51,11 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a customer", null));
         }
 
-        List<Venue> venue = venueRepository.findAllByIsActiveIsTrue();
+        Optional<Venue> venue = venueRepository.findById(id);
         if (venue.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
         }
-        List<Package> packageList = packageRepository.findAllByIsActiveIsTrue();
+        List<Package> packageList = venue.get().getPackageList();
         if (packageList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "No active packages found for this venue", null));
         }
@@ -381,6 +381,24 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Package does not exist", null));
         }
     }
+
+    @Override
+    public ResponseEntity<ResponseObj> getAllForCustomerByType(Long venueId, TypeEnum typeEnum) {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
+        }
+        Optional<Venue> venue = venueRepository.findById(venueId);
+        if (!venue.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
+        }
+        List<Package> packageList = packageRepository.findAllByVenueIdAndPackageTypeAndIsActiveIsTrue(venue.get().getId(), typeEnum);
+        if (packageList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "No active packages found for this venue", null));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageList));
+    }
+
 
 }
 
