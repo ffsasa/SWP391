@@ -23,7 +23,7 @@ public interface RoomService {
 
     public ResponseEntity<ResponseObj> getSlotNotAddInRoomByIdForHost(Long roomId, Long venueId);
 
-    public ResponseEntity<ResponseObj> checkSlotInRoomForCustomer(LocalDateTime date, Long venueId);
+    public ResponseEntity<ResponseObj> checkSlotInRoomForCustomer(LocalDate date, Long venueId);
 
 
     public ResponseEntity<ResponseObj> checkSlotInRoomForHost(LocalDate date);
