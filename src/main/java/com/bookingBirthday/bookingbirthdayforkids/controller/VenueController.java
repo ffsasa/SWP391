@@ -33,80 +33,48 @@ public class VenueController {
         return venueService.getAllForHost();
     }
 
-    //    @GetMapping("/check-slot-in-venue")
-//    public ResponseEntity<ResponseObj> checkSlotInVenue(@RequestParam String date) {
-//        try {
-//            return venueService.checkSlotInVenue(LocalDateTime.parse(date));
-//        } catch (Exception e) {
-//            List<Object> errors = new ArrayList<>();
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid date", errors));
-//        }
-//    }
-//
-//    @GetMapping("/check-slot-in-venue-for-host")
-//    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-//    public ResponseEntity<ResponseObj> checkSlotInVenueForHost(@RequestParam String date) {
-//        try {
-//            return venueService.checkSlotInVenueForHost(LocalDate.parse(date));
-//        } catch (Exception e) {
-//            List<Object> errors = new ArrayList<>();
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid date", errors));
-//        }
-////    }
-
-//    @GetMapping("/get-all-party-booking-in-venue/{venueId}")
-//    public ResponseEntity<ResponseObj> getAllPartyBookingByVenueId(@PathVariable Long venueId) {
-//        return venueService.getAllPartyBookingByVenue(venueId);
-//    }
     @GetMapping("/get-venue-for-customer-id/{id}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
     public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long id) {
         return venueService.getById_ForCustomer(id);
     }
 
-
-//    @GetMapping("/get-slot-in-venue-by-venue/{id}")
-//    public ResponseEntity<ResponseObj> getSlotInVenueByVenue(@PathVariable Long id) {
-//        return venueService.getSlotInVenueById(id);
-//    }
-
-
     @PreAuthorize("hasAuthority('HOST')")
-    @PostMapping(value = "/customize-venue/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ResponseObj> customize(@PathVariable Long id,
-                                                 @RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
+    @PutMapping(value = "/customize-venue", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseObj> customize(
+            @RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
                                                  @RequestPart String venueName,
                                                  @RequestPart String venueDescription,
                                                  @RequestPart String street,
                                                  @RequestPart String ward,
                                                  @RequestPart String district,
                                                  @RequestPart String city) {
-        return venueService.customize(id, fileImg, venueName, venueDescription, street, ward, district, city);
+        return venueService.customize(fileImg, venueName, venueDescription, street, ward, district, city);
     }
 
     @PreAuthorize("hasAuthority('HOST')")
-    @PostMapping(value = "/update-venue/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ResponseObj> update(@PathVariable Long id,
-                                              @RequestPart(name = "fileImg", required = false) MultipartFile fileImg,
+    @PutMapping(value = "/update-venue", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseObj> update(
+            @RequestPart(name = "fileImg", required = false) MultipartFile fileImg,
                                               @RequestPart String venueName,
                                               @RequestPart String venueDescription,
                                               @RequestPart String street,
                                               @RequestPart String ward,
                                               @RequestPart String district,
                                               @RequestPart String city) {
-        return venueService.update(id, fileImg, venueName, venueDescription, street, ward, district, city);
+        return venueService.update(fileImg, venueName, venueDescription, street, ward, district, city);
     }
 
-    @PutMapping("/set-active-venue/{id}")
-    public ResponseEntity<ResponseObj> setActiveVenue(@PathVariable Long id) {
-        return venueService.activeVenue(id);
+    @PutMapping("/set-active-venue")
+    public ResponseEntity<ResponseObj> setActiveVenue() {
+        return venueService.activeVenue();
     }
 
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ResponseObj> delete(@PathVariable Long id) {
-        return venueService.delete(id);
+    @DeleteMapping("/delete")
+    public ResponseEntity<ResponseObj> delete() {
+        return venueService.delete();
     }
 
 }

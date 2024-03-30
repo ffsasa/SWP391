@@ -16,13 +16,13 @@ public interface VenueService {
 
     public ResponseEntity<ResponseObj> getById_ForCustomer(Long id);
     public ResponseEntity<ResponseObj> getAllPartyBookingByVenue(Long venueId);
-    public ResponseEntity<ResponseObj> activeVenue(Long id);
+    public ResponseEntity<ResponseObj> activeVenue();
 
-    public ResponseEntity<ResponseObj> customize(Long id, MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city);
+    public ResponseEntity<ResponseObj> customize(MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city);
 
-    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city);
+    public ResponseEntity<ResponseObj> update(MultipartFile imgFile, String venueName, String venueDescription, String street, String ward, String district, String city);
 
-    public ResponseEntity<ResponseObj> delete(Long id);
+    public ResponseEntity<ResponseObj> delete();
 //    public ResponseEntity<ResponseObj> getAllPartyBookingByVenue(Long venueId);
 
 }
