@@ -193,6 +193,8 @@ public class SlotServiceImpl implements SlotService {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a host", null));
         }
+
+
         if (slotRequest == null || slotRequest.getTimeStart() == null || slotRequest.getTimeStart().isEmpty() ||
                 slotRequest.getTimeEnd() == null || slotRequest.getTimeEnd().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -211,7 +213,7 @@ public class SlotServiceImpl implements SlotService {
                     .body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Cannot create slot between 00:00:00 and 07:59:59", null));
         }
 
-        List<Slot> existingSlots = slotRepository.findAll();
+        List<Slot> existingSlots = slotRepository.findByAccountId(userId);
         if (!existingSlots.isEmpty()) {
             Slot lastSlot = existingSlots.get(existingSlots.size() - 1);
             if (!isTimeGapValid(lastSlot.getTimeEnd(), slotRequest.getTimeStart())) {
@@ -219,6 +221,7 @@ public class SlotServiceImpl implements SlotService {
                         .body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Time gap between slots must be at least 1 hour", null));
             }
         }
+        
         Slot slot = new Slot();
         slot.setTimeStart(slotRequest.getTimeStart());
         slot.setTimeEnd(slotRequest.getTimeEnd());

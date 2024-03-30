@@ -11,5 +11,7 @@ import java.util.List;
 public interface SlotRepository extends JpaRepository<Slot, Long> {
     List<Slot> findAllByAccountId(Long accountId);
 
+    List<Slot> findByAccountId(Long accountId);
     List<Slot> findAllByIsActiveIsTrueAndAccount(Account account);
 }
+
