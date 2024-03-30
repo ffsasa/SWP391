@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface PackageService {
-    public ResponseEntity<ResponseObj> getAllForCustomer();
+    public ResponseEntity<ResponseObj> getAllForCustomer(Long id);
 
     public ResponseEntity<ResponseObj> getAllForHost();
 
@@ -26,4 +26,6 @@ public interface PackageService {
     public ResponseEntity<ResponseObj> delete(Long id);
 
     ResponseEntity<ResponseObj> enablePackageForHost(Long id);
+
+    public ResponseEntity<ResponseObj> getAllForCustomerByType(Long venueId, TypeEnum typeEnum);
 }

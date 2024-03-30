@@ -23,11 +23,18 @@ public class PackageController {
     @Autowired
     PackageService packageService;
 
-    @GetMapping("/get-all-package-for-customer")
+    @GetMapping("/get-all-package-for-customer/{venueId}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> getAllForCustomer() {
-        return packageService.getAllForCustomer();
+    public ResponseEntity<ResponseObj> getAllForCustomer(@PathVariable Long venueId,
+                                                         @RequestParam(required = false, defaultValue = "") String packageType) {
+        if (packageType.isEmpty()) {
+            return packageService.getAllForCustomer(venueId);
+        } else {
+            TypeEnum parseEnum = TypeEnum.valueOf(packageType);
+            return packageService.getAllForCustomerByType(venueId, parseEnum);
+        }
     }
+
 
     @GetMapping("/get-all-package-for-host")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
