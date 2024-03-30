@@ -12,6 +12,6 @@ public interface SlotRepository extends JpaRepository<Slot, Long> {
     List<Slot> findAllByAccountId(Long userId);
 
     List<Slot> findByAccountId(Long accountId);
-    List<Slot> findAllByIsActiveIsTrueAndAccount(Account account);
+    List<Slot> findAllByIsActiveIsTrue();
 }
 

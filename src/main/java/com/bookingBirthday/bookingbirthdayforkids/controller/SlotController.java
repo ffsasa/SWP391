@@ -16,10 +16,10 @@ public class SlotController {
     @Autowired
     SlotService slotService;
 
-    @GetMapping("/get-all-slot-for-customer/{venueId}")
+    @GetMapping("/get-all-slot-for-customer")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> getAllSlotForCustomer(@PathVariable Long venueId) {
-        return slotService.getAllSlotForCustomer(venueId);
+    public ResponseEntity<ResponseObj> getAllSlotForCustomer() {
+        return slotService.getAllSlotForCustomer();
     }
 
     @GetMapping("/get-all-slot-for-host")
@@ -28,10 +28,10 @@ public class SlotController {
         return slotService.getAllSlotForHost();
     }
 
-    @GetMapping("/get-id-for-customer/{venueId}/{id}")
+    @GetMapping("/get-id-for-customer/{id}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> getByIdForCustomer(@PathVariable Long venueId, @PathVariable Long id) {
-        return slotService.getByIdForCustomer(venueId, id);
+    public ResponseEntity<ResponseObj> getByIdForCustomer(@PathVariable Long id) {
+        return slotService.getByIdForCustomer(id);
     }
 
     @GetMapping("/get-id-for-host/{id}")
