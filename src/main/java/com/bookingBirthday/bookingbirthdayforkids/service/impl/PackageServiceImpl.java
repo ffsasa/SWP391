@@ -73,20 +73,49 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         }
 
         Optional<Account> account = accountRepository.findById(userId);
-        if (!account.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
-        }
-
-        Role role = roleRepository.findByName(RoleEnum.HOST);
-        if (!account.get().getRole().equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a customer", null));
-        }
-
-        Optional<Venue> venue = venueRepository.findById(userId);
-        if (!venue.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
+        Venue venue = account.get().getVenue();
+        if (venue == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You don't have any venue", null));
         }
         List<Package> packageList = packageRepository.findAll();
+        if (packageList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "No active packages found for this venue", null));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageList));
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> getAllForHostIsTrue() {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
+        }
+
+        Optional<Account> account = accountRepository.findById(userId);
+        Venue venue = account.get().getVenue();
+        if (venue == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You don't have any venue", null));
+        }
+        List<Package> packageList = packageRepository.findAllByIsActiveIsTrue();
+        if (packageList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "No active packages found for this venue", null));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageList));
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> getAllForHostIsFalse() {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
+        }
+
+        Optional<Account> account = accountRepository.findById(userId);
+        Venue venue = account.get().getVenue();
+        if (venue == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You don't have any venue", null));
+        }
+        List<Package> packageList = packageRepository.findAllByIsActiveIsFalse();
         if (packageList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "No active packages found for this venue", null));
         }
