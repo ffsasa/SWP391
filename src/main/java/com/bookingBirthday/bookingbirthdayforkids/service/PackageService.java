@@ -15,6 +15,10 @@ public interface PackageService {
 
     public ResponseEntity<ResponseObj> getByIdForHost(Long id);
 
+    public ResponseEntity<ResponseObj> getAllForHostIsTrue();
+
+    public ResponseEntity<ResponseObj> getAllForHostIsFalse();
+
     public ResponseEntity<ResponseObj> getByIdForCustomer(Long id);
 
     ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, String packageDescription, float percent, List<PackageServiceRequest> packageServiceRequestList, TypeEnum typeEnum);

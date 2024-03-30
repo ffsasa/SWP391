@@ -38,8 +38,20 @@ public class PackageController {
 
     @GetMapping("/get-all-package-for-host")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getAllForHost() {
-        return packageService.getAllForHost();
+    public ResponseEntity<ResponseObj> getAllForHost(@RequestParam(required = false, defaultValue = "") String active) {
+        if(active.isEmpty()){
+            return packageService.getAllForHost();
+        }
+        else {
+            boolean isActive = Boolean.parseBoolean(active);
+            if(isActive){
+                return packageService.getAllForHostIsTrue();
+            }
+            else{
+                return packageService.getAllForHostIsFalse();
+            }
+
+        }
     }
 
     @GetMapping("/get-package-for-customer/{packageId}")
