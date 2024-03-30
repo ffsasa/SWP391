@@ -157,22 +157,17 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
     //fix
 
     @Override
-    public ResponseEntity<ResponseObj> create(Long venueId, MultipartFile imgFile, String packageName, String packageDescription, float percent, List<PackageServiceRequest> packageServiceRequestList, TypeEnum typeEnum) {
+    public ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, String packageDescription, float percent, List<PackageServiceRequest> packageServiceRequestList, TypeEnum typeEnum) {
         Long userId = AuthenUtil.getCurrentUserId();
         if (userId == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not found", null));
-        }
-        Optional<Account> account = accountRepository.findById(userId);
-        Optional<Venue> venue = venueRepository.findById(venueId);
-        if (!venue.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
         }
 
-        if (!venue.get().getAccount().getId().equals(account.get().getId())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "You are not permission", null));
-        }
+        Optional<Account> account = accountRepository.findById(userId);
         Package pack = new Package();
         float packPricing = 0;
+
         try {
             if (imgFile != null) {
                 switch (typeEnum) {
@@ -185,7 +180,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
                         pack.setCreateAt(LocalDateTime.now());
                         pack.setUpdateAt(LocalDateTime.now());
                         pack.setPackageType(typeEnum);
-                        pack.setVenue(venue.get());
+                        pack.setVenue(account.get().getVenue());
                         packageRepository.save(pack);
                         break;
                     default:
@@ -199,20 +194,27 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         for (PackageServiceRequest packageServiceRequest : packageServiceRequestList) {
             PackageService packageService = new PackageService();
             packageService.setCount(packageServiceRequest.getCount());
-            packageService.setPricing((packageServiceRequest.getCount() * servicesRepository.findById(packageServiceRequest.getServiceId()).get().getPricing()));
-            packageService.setActive(true);
-            packageService.setCreateAt(LocalDateTime.now());
-            packageService.setUpdateAt(LocalDateTime.now());
-            packPricing += packageService.getPricing();
-            packageService.setApackage(pack);
-            packageService.setServices(servicesRepository.findById(packageServiceRequest.getServiceId()).get());
-            packageServiceRepository.save(packageService);
+            Optional<Services> serviceOptional = servicesRepository.findById(packageServiceRequest.getServiceId());
+            if (serviceOptional.isPresent()) {
+                Services service = serviceOptional.get();
+                packageService.setPricing(packageService.getCount() * service.getPricing());
+                packageService.setActive(true);
+                packageService.setCreateAt(LocalDateTime.now());
+                packageService.setUpdateAt(LocalDateTime.now());
+                packPricing += packageService.getPricing();
+                packageService.setApackage(pack);
+                packageService.setServices(service);
+                packageServiceRepository.save(packageService);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Service not found for ID: " + packageServiceRequest.getServiceId(), null));
+            }
         }
         float newPricing = packPricing * percent;
         pack.setPricing(packPricing - newPricing);
         packageRepository.save(pack);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Successful", pack));
     }
+
 
 
 

@@ -49,8 +49,8 @@ public class PackageController {
 
 
     @PreAuthorize("hasAuthority('HOST')")
-    @PostMapping(value = "/create-package/{venueId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> create(@PathVariable Long venueId,
+    @PostMapping(value = "/create-package", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> create(
                                     @RequestPart(name = "fileImg", required = true) MultipartFile fileImg,
                                     @RequestPart(name = "packageName") String packageName,
                                     @RequestPart(name = "packageDescription") String packageDescription,
@@ -65,7 +65,7 @@ public class PackageController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Percent ranges from 0.1-0.5", null));
             List<PackageServiceRequest> packageServiceRequests = objectMapper.readValue(packageServiceRequestsStr, new TypeReference<List<PackageServiceRequest>>() {
             });
-            return packageService.create(venueId, fileImg, packageName, packageDescription, parsePercent, packageServiceRequests, parseTypeEnum);
+            return packageService.create(fileImg, packageName, packageDescription, parsePercent, packageServiceRequests, parseTypeEnum);
         } catch (NumberFormatException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid percent", null));
         }
