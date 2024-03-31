@@ -58,16 +58,6 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     packageInBooking.getAPackage().getVenue().setAccount(null);
                 });
 
-                float pricing = 0;
-                for (UpgradeService upgradeService : partyBooking.getUpgradeServices()) {
-                    pricing += upgradeService.getServices().getPricing() * upgradeService.getCount();
-                }
-
-                pricing += TotalPriceUtil.getTotalPricingPackage(partyBooking);
-                pricing += partyBooking.getSlotInRoom().getRoom().getPricing();
-
-                partyBooking.setPricingTotal(pricing);
-
                 for (Payment payment : partyBooking.getPaymentList()) {
                     partyBooking.setIsPayment(payment.getStatus().equals("SUCCESS"));
                 }
@@ -108,16 +98,6 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                         packageInBooking.getAPackage().getVenue().setRoomList(null);
                         packageInBooking.getAPackage().getVenue().setAccount(null);
                     });
-
-                    float pricing = 0;
-                    for (UpgradeService upgradeService : partyBooking.getUpgradeServices()) {
-                        pricing += upgradeService.getServices().getPricing() * upgradeService.getCount();
-                    }
-
-                    pricing += TotalPriceUtil.getTotalPricingPackage(partyBooking);
-                    pricing += partyBooking.getSlotInRoom().getRoom().getPricing();
-
-                    partyBooking.setPricingTotal(pricing);
 
                     for (Payment payment : partyBooking.getPaymentList()) {
                         partyBooking.setIsPayment(payment.getStatus().equals("SUCCESS"));
@@ -164,16 +144,6 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                         packageInBooking.getAPackage().getVenue().setAccount(null);
                     });
 
-                    float pricing = 0;
-                    for (UpgradeService upgradeService : partyBooking.getUpgradeServices()) {
-                        pricing += upgradeService.getServices().getPricing() * upgradeService.getCount();
-                    }
-
-                    pricing += TotalPriceUtil.getTotalPricingPackage(partyBooking);
-                    pricing += partyBooking.getSlotInRoom().getRoom().getPricing();
-
-                    partyBooking.setPricingTotal(pricing);
-
                     for (Payment payment : partyBooking.getPaymentList()) {
                         partyBooking.setIsPayment(payment.getStatus().equals("SUCCESS"));
                     }
@@ -203,16 +173,6 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                         packageInBooking.getAPackage().getVenue().setRoomList(null);
                         packageInBooking.getAPackage().getVenue().setAccount(null);
                     });
-
-                    float pricing = 0;
-                    for (UpgradeService upgradeService : partyBooking.get().getUpgradeServices()) {
-                        pricing += upgradeService.getServices().getPricing() * upgradeService.getCount();
-                    }
-
-                    pricing += TotalPriceUtil.getTotalPricingPackage(partyBooking.get());
-                    pricing += partyBooking.get().getSlotInRoom().getRoom().getPricing();
-
-                    partyBooking.get().setPricingTotal(pricing);
 
                     for (Payment payment : partyBooking.get().getPaymentList()) {
                         partyBooking.get().setIsPayment(payment.getStatus().equals("SUCCESS"));
@@ -244,16 +204,6 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     packageInBooking.getAPackage().getVenue().setRoomList(null);
                     packageInBooking.getAPackage().getVenue().setAccount(null);
                 });
-
-                float pricing = 0;
-                for (UpgradeService upgradeService : partyBooking.get().getUpgradeServices()) {
-                    pricing += upgradeService.getServices().getPricing() * upgradeService.getCount();
-                }
-
-                pricing += TotalPriceUtil.getTotalPricingPackage(partyBooking.get());
-                pricing += partyBooking.get().getSlotInRoom().getRoom().getPricing();
-
-                partyBooking.get().setPricingTotal(pricing);
 
                 for (Payment payment : partyBooking.get().getPaymentList()) {
                     partyBooking.get().setIsPayment(payment.getStatus().equals("SUCCESS"));
@@ -310,6 +260,8 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             partyBooking.setUpdateAt(LocalDateTime.now());
             partyBooking.setAccount(account.get());
             partyBooking.setSlotInRoom(slotInRoom.get());
+            partyBooking.setDeposit(0);
+            partyBooking.setRemainingMoney(0);
             partyBookingRepository.save(partyBooking);
 
             //UpgradeService
@@ -347,6 +299,18 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             packageInBookingFood.setUpdateAt(LocalDateTime.now());
             packageInBookingFood.setPartyBooking(partyBooking);
             packageInBookingRepository.save(packageInBookingFood);
+
+            float pricing = 0;
+            for (UpgradeService upgradeService : partyBooking.getUpgradeServices()) {
+                pricing += upgradeService.getServices().getPricing() * upgradeService.getCount();
+            }
+
+            pricing += TotalPriceUtil.getTotalPricingPackage(partyBooking);
+            pricing += partyBooking.getSlotInRoom().getRoom().getPricing();
+
+            partyBooking.setPricingTotal(pricing);
+
+            partyBookingRepository.save(partyBooking);
 
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Create successful", partyBooking));
         } catch (Exception e) {
@@ -403,6 +367,18 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                             upgradeServiceRepository.save(newUpgradeService);
                         }
                     }
+
+                    float pricing = 0;
+                    for (UpgradeService upgradeService : existPartyBooking.get().getUpgradeServices()) {
+                        pricing += upgradeService.getServices().getPricing() * upgradeService.getCount();
+                    }
+
+                    pricing += TotalPriceUtil.getTotalPricingPackage(existPartyBooking.get());
+                    pricing += existPartyBooking.get().getSlotInRoom().getRoom().getPricing();
+
+                    existPartyBooking.get().setPricingTotal(pricing);
+
+                    partyBookingRepository.save(existPartyBooking.get());
                 }
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", existPartyBooking));
             }
@@ -443,6 +419,18 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     existPartyBooking.get().setSlotInRoom(optionalSlotInRoom.get());
                     existPartyBooking.get().setDate(date);
                     existPartyBooking.get().setUpdateAt(LocalDateTime.now());
+                    partyBookingRepository.save(existPartyBooking.get());
+
+                    float pricing = 0;
+                    for (UpgradeService upgradeService : existPartyBooking.get().getUpgradeServices()) {
+                        pricing += upgradeService.getServices().getPricing() * upgradeService.getCount();
+                    }
+
+                    pricing += TotalPriceUtil.getTotalPricingPackage(existPartyBooking.get());
+                    pricing += existPartyBooking.get().getSlotInRoom().getRoom().getPricing();
+
+                    existPartyBooking.get().setPricingTotal(pricing);
+
                     partyBookingRepository.save(existPartyBooking.get());
                 } else {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Date is invalid", null));
@@ -495,6 +483,19 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                         }
                     }
                 }
+
+                float pricing = 0;
+                for (UpgradeService upgradeService : existPartyBooking.get().getUpgradeServices()) {
+                    pricing += upgradeService.getServices().getPricing() * upgradeService.getCount();
+                }
+
+                pricing += TotalPriceUtil.getTotalPricingPackage(existPartyBooking.get());
+                pricing += existPartyBooking.get().getSlotInRoom().getRoom().getPricing();
+
+                existPartyBooking.get().setPricingTotal(pricing);
+
+                partyBookingRepository.save(existPartyBooking.get());
+
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", existPartyBooking));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This party booking does not exist", null));

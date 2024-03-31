@@ -36,6 +36,12 @@ public class PartyBooking extends BaseEntity{
     public StatusEnum status;
     @Min(value = 1, message = "Capacity value must be greater than or equal to 1")
     private int participantAmount;
+    @Min(value = 0, message = "Total price value must be greater than or equal to 0")
+    private int totalPrice;
+    @Min(value = 0, message = "Deposit value must be greater than or equal to 0")
+    private int deposit;
+    @Min(value = 0, message = "Remaining money value must be greater than or equal to 0")
+    private int remainingMoney;
     private LocalDate date;
 
     @Transient
