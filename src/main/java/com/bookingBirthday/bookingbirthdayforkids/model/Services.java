@@ -40,6 +40,7 @@ public class Services extends BaseEntity{
     private List<UpgradeService> upgradeServiceList;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "account_id")
     private Account account;
 }
