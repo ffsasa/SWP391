@@ -33,7 +33,7 @@ public class RoomController {
         return roomService.getRoomInVenueByIdForCustomer(roomId, venueId);
     }
 
-    @GetMapping("get-slot-in-rom-in-venue-by-customer/{roomId}/{venueId}")
+    @GetMapping("get-slot-in-room-in-venue-by-customer/{roomId}/{venueId}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
     public ResponseEntity<ResponseObj> getSlotInRoomInVenueForCustomer(@PathVariable Long roomId, @PathVariable Long venueId) {
         return roomService.getSlotInRoomByIdForCustomer(roomId, venueId);
@@ -75,12 +75,6 @@ public class RoomController {
     @PreAuthorize("hasAuthority('HOST')")
     public ResponseEntity<ResponseObj> getSlotInInRoomInVenueByIdForHost(@PathVariable Long roomId) {
         return roomService.getSlotInRoomByIdForHost(roomId);
-    }
-
-    @GetMapping("get-slot-in-room-in-venue-by-id-for-customer/{venueId}/{roomId}")
-    @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> getSlotInInRoomInVenueByIdForCustomer(@PathVariable Long venueId, @PathVariable Long roomId) {
-        return roomService.getSlotInRoomByIdForCustomer(roomId, venueId);
     }
 
     @GetMapping("check-slot-in-room-for-customer/{venueId}")

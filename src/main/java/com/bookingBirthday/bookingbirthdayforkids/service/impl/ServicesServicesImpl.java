@@ -92,6 +92,7 @@ public class ServicesServicesImpl implements ServicesService {
         for(Services services : servicesList){
             if(services.getId().equals(serviceId)){
                 services.setActive(true);
+                servicesRepository.save(services);
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Enable successfully", services));
             }
         }
@@ -298,6 +299,7 @@ public class ServicesServicesImpl implements ServicesService {
                         services.setCreateAt(LocalDateTime.now());
                         services.setUpdateAt(LocalDateTime.now());
                         services.setAccount(account);
+                        services.setServiceType(typeEnum);
                         servicesRepository.save(services);
                 }
             }
@@ -333,6 +335,7 @@ public class ServicesServicesImpl implements ServicesService {
                     services.get().setPricing(pricing == 0 ? services.get().getPricing() : pricing);
                     services.get().setUpdateAt(LocalDateTime.now());
                     services.get().setAccount(account);
+                    services.get().setServiceType(typeEnum);
                     servicesRepository.save(services.get());
             }
         } catch (Exception e) {
