@@ -31,7 +31,7 @@ public class Package extends BaseEntity{
     private float pricing;
 
     @OneToMany(mappedBy = "apackage", cascade = CascadeType.ALL)
-    @JsonIgnore
+//    @JsonIgnore
     private List<PackageService> packageServiceList;
 
     @OneToMany(mappedBy = "aPackage", cascade = CascadeType.ALL)
