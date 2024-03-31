@@ -94,7 +94,6 @@ public class VenueServiceImpl implements VenueService {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue doest not have any booking", null));
                 } else {
                     for (PartyBooking partyBooking : partyBookingList) {
-                        partyBooking.setVenueObject(partyBooking.getSlotInRoom().getRoom().getVenue());
 
                         float pricing = 0;
                         for (UpgradeService upgradeService : partyBooking.getUpgradeServices()) {

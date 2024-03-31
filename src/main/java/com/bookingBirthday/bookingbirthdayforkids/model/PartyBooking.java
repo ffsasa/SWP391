@@ -39,10 +39,6 @@ public class PartyBooking extends BaseEntity{
     private LocalDate date;
 
     @Transient
-    @JsonProperty("venueObject")
-    private Venue venueObject;
-
-    @Transient
     @JsonProperty("isPayment")
     private Boolean isPayment;
 

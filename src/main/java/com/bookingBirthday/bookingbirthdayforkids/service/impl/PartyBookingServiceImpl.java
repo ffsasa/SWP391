@@ -52,7 +52,11 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             }
             List<PartyBooking> partyBookingList = partyBookingRepository.findAllByIsActiveIsTrueAndAccountId(userId);
             for (PartyBooking partyBooking : partyBookingList) {
-                partyBooking.setVenueObject(partyBooking.getSlotInRoom().getRoom().getVenue());
+
+                partyBooking.getPackageInBookings().forEach(packageInBooking -> {
+                    packageInBooking.getAPackage().getVenue().setRoomList(null);
+                    packageInBooking.getAPackage().getVenue().setAccount(null);
+                });
 
                 float pricing = 0;
                 for (UpgradeService upgradeService : partyBooking.getUpgradeServices()) {
@@ -99,7 +103,11 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
                 }
                 for (PartyBooking partyBooking : partyBookingList) {
-                    partyBooking.setVenueObject(partyBooking.getSlotInRoom().getRoom().getVenue());
+
+                    partyBooking.getPackageInBookings().forEach(packageInBooking -> {
+                        packageInBooking.getAPackage().getVenue().setRoomList(null);
+                        packageInBooking.getAPackage().getVenue().setAccount(null);
+                    });
 
                     float pricing = 0;
                     for (UpgradeService upgradeService : partyBooking.getUpgradeServices()) {
@@ -150,7 +158,11 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
                 }
                 for (PartyBooking partyBooking : partyBookingList) {
-                    partyBooking.setVenueObject(partyBooking.getSlotInRoom().getRoom().getVenue());
+
+                    partyBooking.getPackageInBookings().forEach(packageInBooking -> {
+                        packageInBooking.getAPackage().getVenue().setRoomList(null);
+                        packageInBooking.getAPackage().getVenue().setAccount(null);
+                    });
 
                     float pricing = 0;
                     for (UpgradeService upgradeService : partyBooking.getUpgradeServices()) {
@@ -186,7 +198,11 @@ public class PartyBookingServiceImpl implements PartyBookingService {
 
             if (partyBooking.isPresent()) {
                 if (partyBooking.get().getSlotInRoom().getSlot().getAccount().getId().equals(userId)) {
-                    partyBooking.get().setVenueObject(partyBooking.get().getSlotInRoom().getRoom().getVenue());
+
+                    partyBooking.get().getPackageInBookings().forEach(packageInBooking -> {
+                        packageInBooking.getAPackage().getVenue().setRoomList(null);
+                        packageInBooking.getAPackage().getVenue().setAccount(null);
+                    });
 
                     float pricing = 0;
                     for (UpgradeService upgradeService : partyBooking.get().getUpgradeServices()) {
@@ -223,7 +239,11 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 if (!partyBooking.get().getAccount().getId().equals(userId)) {
                     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to see this booking", null));
                 }
-                partyBooking.get().setVenueObject(partyBooking.get().getSlotInRoom().getRoom().getVenue());
+
+                partyBooking.get().getPackageInBookings().forEach(packageInBooking -> {
+                    packageInBooking.getAPackage().getVenue().setRoomList(null);
+                    packageInBooking.getAPackage().getVenue().setAccount(null);
+                });
 
                 float pricing = 0;
                 for (UpgradeService upgradeService : partyBooking.get().getUpgradeServices()) {
