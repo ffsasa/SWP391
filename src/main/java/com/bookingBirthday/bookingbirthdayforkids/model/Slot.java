@@ -30,6 +30,7 @@ public class Slot extends BaseEntity {
     private List<SlotInRoom> slotInRoom;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "account_id")
     private Account account;
 }
