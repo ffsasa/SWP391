@@ -33,7 +33,7 @@ public class RoomController {
         return roomService.getRoomInVenueByIdForCustomer(roomId, venueId);
     }
 
-    @GetMapping("get-slot-in-rom-in-venue-by-customer/{roomId}/{venueId}")
+    @GetMapping("get-slot-in-room-in-venue-by-customer/{roomId}/{venueId}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
     public ResponseEntity<ResponseObj> getSlotInRoomInVenueForCustomer(@PathVariable Long roomId, @PathVariable Long venueId) {
         return roomService.getSlotInRoomByIdForCustomer(roomId, venueId);
@@ -41,8 +41,16 @@ public class RoomController {
 
     @GetMapping("/get-all-in-venue-for-host")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getAllRoomInVenueForHost() {
-        return roomService.getAllRoomInVenueByHost();
+    public ResponseEntity<ResponseObj> getAllRoomInVenueForHost(@RequestParam(required = false, defaultValue = "") String active) {
+        if(active.isEmpty()){
+            return roomService.getAllRoomInVenueByHost();
+        }else{
+            Boolean isActive = Boolean.parseBoolean(active);
+            if(isActive){
+                return roomService.getAllRoomInVenueIsTrueByHost();
+            }
+            return roomService.getAllRoomInVenueIsFalseByHost();
+        }
     }
 
     @GetMapping("/get-room-in-venue-by-id-for-host/{roomId}")
@@ -67,12 +75,6 @@ public class RoomController {
     @PreAuthorize("hasAuthority('HOST')")
     public ResponseEntity<ResponseObj> getSlotInInRoomInVenueByIdForHost(@PathVariable Long roomId) {
         return roomService.getSlotInRoomByIdForHost(roomId);
-    }
-
-    @GetMapping("get-slot-in-room-in-venue-by-id-for-customer/{venueId}/{roomId}")
-    @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> getSlotInInRoomInVenueByIdForCustomer(@PathVariable Long venueId, @PathVariable Long roomId) {
-        return roomService.getSlotInRoomByIdForCustomer(roomId, venueId);
     }
 
     @GetMapping("check-slot-in-room-for-customer/{venueId}")

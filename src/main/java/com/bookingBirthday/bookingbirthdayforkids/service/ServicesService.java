@@ -13,8 +13,17 @@ public interface ServicesService {
     public ResponseEntity<ResponseObj> getAllServiceTypeByHost(TypeEnum typeEnum);
     public ResponseEntity<ResponseObj> getAllForHost();
 
-    public ResponseEntity<ResponseObj> getServiceByIdForCustomeByVenue(Long venueId, Long serviceId);
+    public ResponseEntity<ResponseObj> getAllServiceTypeIsTrueByHost(TypeEnum typeEnum);
 
+    public ResponseEntity<ResponseObj> getAllServiceTypeIsFalseByHost(TypeEnum typeEnum);
+
+    public ResponseEntity<ResponseObj> getAllServiceIsActiveTrueForHost();
+
+    public ResponseEntity<ResponseObj> getAllServiceIsActiveFalseForHost();
+
+    public ResponseEntity<ResponseObj> getServiceByIdForCustomerByVenue(Long venueId, Long serviceId);
+
+    public ResponseEntity<ResponseObj> enable(Long serviceId);
 
     public ResponseEntity<ResponseObj> getByIdByHost(Long id);
 
