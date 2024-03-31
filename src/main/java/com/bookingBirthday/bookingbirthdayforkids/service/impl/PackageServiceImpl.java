@@ -30,8 +30,6 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
     VenueRepository venueRepository;
     @Autowired
     AccountRepository accountRepository;
-    @Autowired
-    RoleRepository roleRepository;
 
     //fix
     @Override
@@ -41,15 +39,6 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
         }
 
-        Optional<Account> account = accountRepository.findById(userId);
-        if (!account.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
-        }
-
-        Role role = roleRepository.findByName(RoleEnum.CUSTOMER);
-        if (!account.get().getRole().equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a customer", null));
-        }
 
         Optional<Venue> venue = venueRepository.findById(id);
         if (venue.isEmpty()) {
@@ -129,16 +118,6 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
         }
 
-        Optional<Account> account = accountRepository.findById(userId);
-        if (!account.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
-        }
-
-        Role role = roleRepository.findByName(RoleEnum.CUSTOMER);
-        if (!account.get().getRole().equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a customer", null));
-        }
-
         List<Venue> venue = venueRepository.findAllByIsActiveIsTrue();
         if (venue.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
@@ -159,16 +138,6 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         Long userId = AuthenUtil.getCurrentUserId();
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
-        }
-
-        Optional<Account> account = accountRepository.findById(userId);
-        if (!account.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
-        }
-
-        Role role = roleRepository.findByName(RoleEnum.HOST);
-        if (!account.get().getRole().equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a host", null));
         }
 
         Optional<Venue> venue = venueRepository.findById(userId);
@@ -194,6 +163,10 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         }
 
         Optional<Account> account = accountRepository.findById(userId);
+        if (account.get().getVenue() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Venue not found for this account", null));
+        }
         Package pack = new Package();
         float packPricing = 0;
 
@@ -253,13 +226,6 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
         }
         Optional<Account> account = accountRepository.findById(userId);
-        if (!account.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
-        }
-        Role role = roleRepository.findByName(RoleEnum.HOST);
-        if (!account.get().getRole().equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a Host", null));
-        }
 
         Optional<Package> aPackage = packageRepository.findById(id);
         if (!aPackage.isPresent()) {
@@ -293,14 +259,6 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
         }
         Optional<Account> account = accountRepository.findById(userId);
-        if (!account.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
-        }
-        Role role = roleRepository.findByName(RoleEnum.HOST);
-        if (!account.get().getRole().equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a Host", null));
-        }
-
         Optional<Package> aPackage = packageRepository.findById(id);
         if (!aPackage.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This package does not exist", null));
@@ -335,28 +293,20 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
         }
-        Optional<Account> account = accountRepository.findById(userId);
-        if (!account.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
-        }
-        Role role = roleRepository.findByName(RoleEnum.HOST);
-        if (!account.get().getRole().equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a Host", null));
-        }
-        Optional<Venue> venue = venueRepository.findById(userId);
-        if (!venue.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You are not permission", null));
-        }
+        Optional<Account> account =accountRepository.findById(userId);
         Optional<Package> pack = packageRepository.findById(id);
         if (!pack.get().isActive()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package is already inactive", null));
         }
+        Venue packageVenue = pack.get().getVenue();
+        if (!packageVenue.getAccount().getId().equals(account.get().getId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "You do not have permission to delete this package", null));
+        }
         if (pack.isPresent()) {
             pack.get().setActive(false);
             pack.get().setDeleteAt(LocalDateTime.now());
             pack.get().getPackageServiceList().forEach(packageService -> {
-                packageService.getApackage().setVenue(venue.get());
                 packageService.setDeleteAt(LocalDateTime.now());
                 packageService.setActive(false);
                 packageServiceRepository.save(packageService);
@@ -373,28 +323,17 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
         }
-        Optional<Account> account = accountRepository.findById(userId);
-        if (!account.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
-        }
-        Role role = roleRepository.findByName(RoleEnum.HOST);
-        if (!account.get().getRole().equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a Host", null));
-        }
-        Optional<Venue> venue = venueRepository.findById(userId);
-        if (!venue.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You are not permission", null));
-        }
         Optional<Package> pack = packageRepository.findById(id);
         if (pack.isPresent()) {
             if (pack.get().isActive()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package is already active", null));
+            } else if (!pack.get().getVenue().getAccount().getId().equals(userId)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "You are not permission", null));
             }
             pack.get().setActive(true);
             pack.get().setDeleteAt(null);
             pack.get().getPackageServiceList().forEach(packageService -> {
-                packageService.getApackage().setVenue(venue.get());
                 packageService.setDeleteAt(null);
                 packageService.setActive(true);
                 packageServiceRepository.save(packageService);
