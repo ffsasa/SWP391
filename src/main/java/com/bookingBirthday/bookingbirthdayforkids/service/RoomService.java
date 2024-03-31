@@ -27,6 +27,9 @@ public interface RoomService {
 
     public ResponseEntity<ResponseObj> enable(Long roomId);
 
+    public ResponseEntity<ResponseObj> getAllRoomInVenueIsTrueByHost();
+
+    public ResponseEntity<ResponseObj> getAllRoomInVenueIsFalseByHost();
 
     public ResponseEntity<ResponseObj> checkSlotInRoomForHost(LocalDate date);
 

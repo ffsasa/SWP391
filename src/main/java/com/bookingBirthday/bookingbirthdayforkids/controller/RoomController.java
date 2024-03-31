@@ -41,8 +41,16 @@ public class RoomController {
 
     @GetMapping("/get-all-in-venue-for-host")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getAllRoomInVenueForHost() {
-        return roomService.getAllRoomInVenueByHost();
+    public ResponseEntity<ResponseObj> getAllRoomInVenueForHost(@RequestParam(required = false, defaultValue = "") String active) {
+        if(active.isEmpty()){
+            return roomService.getAllRoomInVenueByHost();
+        }else{
+            Boolean isActive = Boolean.parseBoolean(active);
+            if(isActive){
+                return roomService.getAllRoomInVenueIsTrueByHost();
+            }
+            return roomService.getAllRoomInVenueIsFalseByHost();
+        }
     }
 
     @GetMapping("/get-room-in-venue-by-id-for-host/{roomId}")

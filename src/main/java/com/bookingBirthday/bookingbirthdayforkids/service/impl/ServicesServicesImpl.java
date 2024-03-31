@@ -85,6 +85,20 @@ public class ServicesServicesImpl implements ServicesService {
     }
 
     @Override
+    public ResponseEntity<ResponseObj> enable(Long serviceId){
+        Long userId = AuthenUtil.getCurrentUserId();
+        Optional<Account> account = accountRepository.findById(userId);
+        List<Services> servicesList = account.get().getServicesList();
+        for(Services services : servicesList){
+            if(services.getId().equals(serviceId)){
+                services.setActive(true);
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Enable successfully", services));
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This service dose not exist", null));
+    }
+
+    @Override
     public ResponseEntity<ResponseObj> getAllServiceTypeByHost(TypeEnum typeEnum) {
         try {
             Long useId = AuthenUtil.getCurrentUserId();
@@ -103,6 +117,101 @@ public class ServicesServicesImpl implements ServicesService {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> getAllServiceTypeIsTrueByHost(TypeEnum typeEnum) {
+        try {
+            Long useId = AuthenUtil.getCurrentUserId();
+            Optional<Account> account = accountRepository.findById(useId);
+            List<Services> servicesListType = servicesRepository.findAllByServiceType(typeEnum);
+            List<Services> servicesListTypeByHost = new ArrayList<>();
+            List<Services> servicesListTypeIstrueByHost = new ArrayList<>();
+            for (Services services : servicesListType) {
+                if (services.getAccount().getId().equals(account.get().getId())) {
+                    servicesListTypeByHost.add(services);
+                }
+            }
+            if (servicesListTypeByHost.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+            }
+            for(Services services : servicesListTypeByHost){
+                if(services.isActive()){
+                    servicesListTypeIstrueByHost.add(services);
+                }
+            }
+            if(servicesListTypeIstrueByHost.isEmpty()){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", servicesListTypeIstrueByHost));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> getAllServiceTypeIsFalseByHost(TypeEnum typeEnum) {
+        try {
+            Long useId = AuthenUtil.getCurrentUserId();
+            Optional<Account> account = accountRepository.findById(useId);
+            List<Services> servicesListType = servicesRepository.findAllByServiceType(typeEnum);
+            List<Services> servicesListTypeByHost = new ArrayList<>();
+            List<Services> servicesListTypeIstrueByHost = new ArrayList<>();
+            for (Services services : servicesListType) {
+                if (services.getAccount().getId().equals(account.get().getId())) {
+                    servicesListTypeByHost.add(services);
+                }
+            }
+            if (servicesListTypeByHost.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+            }
+            for(Services services : servicesListTypeByHost){
+                if(!services.isActive()){
+                    servicesListTypeIstrueByHost.add(services);
+                }
+            }
+            if(servicesListTypeIstrueByHost.isEmpty()){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", servicesListTypeIstrueByHost));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+
+    @Override
+    public ResponseEntity<ResponseObj> getAllServiceIsActiveTrueForHost(){
+        Long userId = AuthenUtil.getCurrentUserId();
+        Optional <Account> account = accountRepository.findById(userId);
+        List<Services> servicesList = account.get().getServicesList();
+        List<Services> servicesListActive = new ArrayList<>();
+        for(Services services : servicesList){
+            if(services.isActive()){
+                servicesListActive.add(services);
+            }
+        }
+        if(servicesListActive.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", servicesListActive));
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> getAllServiceIsActiveFalseForHost(){
+        Long userId = AuthenUtil.getCurrentUserId();
+        Optional <Account> account = accountRepository.findById(userId);
+        List<Services> servicesList = account.get().getServicesList();
+        List<Services> servicesListActive = new ArrayList<>();
+        for(Services services : servicesList){
+            if(!services.isActive()){
+                servicesListActive.add(services);
+            }
+        }
+        if(servicesListActive.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", servicesListActive));
     }
 
     @Override
@@ -127,7 +236,7 @@ public class ServicesServicesImpl implements ServicesService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getServiceByIdForCustomeByVenue(Long venueId, Long serviceId) {
+    public ResponseEntity<ResponseObj> getServiceByIdForCustomerByVenue(Long venueId, Long serviceId) {
         try {
             Optional<Venue> venue = venueRepository.findById(venueId);
             Optional<Services> services = servicesRepository.findById(serviceId);

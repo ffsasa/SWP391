@@ -74,6 +74,48 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public ResponseEntity<ResponseObj> getAllRoomInVenueIsTrueByHost() {
+        Long userId = AuthenUtil.getCurrentUserId();
+        Optional<Account> account = accountRepository.findById(userId);
+        Venue venue = account.get().getVenue();
+        List<Room> roomList = venue.getRoomList();
+        List<Room> roomListIsTrue = new ArrayList<>();
+        if (roomList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+        }
+        for (Room room : roomList) {
+            if (room.isActive()) {
+                roomListIsTrue.add(room);
+            }
+        }
+        if (roomListIsTrue.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", roomListIsTrue));
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> getAllRoomInVenueIsFalseByHost() {
+        Long userId = AuthenUtil.getCurrentUserId();
+        Optional<Account> account = accountRepository.findById(userId);
+        Venue venue = account.get().getVenue();
+        List<Room> roomList = venue.getRoomList();
+        List<Room> roomListIsFalse = new ArrayList<>();
+        if (roomList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+        }
+        for (Room room : roomList) {
+            if (!room.isActive()) {
+                roomListIsFalse.add(room);
+            }
+        }
+        if (roomListIsFalse.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", roomListIsFalse));
+    }
+
+    @Override
     public ResponseEntity<ResponseObj> getRoomInVenueByIdForCustomer(Long roomId, Long venueId) {
         try {
             Optional<Venue> venue = venueRepository.findById(venueId);
@@ -238,13 +280,13 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> enable(Long roomId){
+    public ResponseEntity<ResponseObj> enable(Long roomId) {
         Long userId = AuthenUtil.getCurrentUserId();
         Optional<Account> account = accountRepository.findById(userId);
         Venue venue = account.get().getVenue();
         List<Room> roomList = venue.getRoomList();
-        for(Room room : roomList){
-            if(room.getId().equals(roomId)){
+        for (Room room : roomList) {
+            if (room.getId().equals(roomId)) {
                 room.setActive(true);
                 roomRepository.save(room);
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Enable successfully", room));
@@ -266,7 +308,7 @@ public class RoomServiceImpl implements RoomService {
                     room.setDeleteAt(LocalDateTime.now());
                     room.setVenue(venue);
                     List<SlotInRoom> slotInRoomList = room.getSlotInRoomList();
-                    for(SlotInRoom slotInRoom : slotInRoomList){
+                    for (SlotInRoom slotInRoom : slotInRoomList) {
                         slotInRoom.setActive(false);
                         slotInRoom.setDeleteAt(LocalDateTime.now());
                     }
