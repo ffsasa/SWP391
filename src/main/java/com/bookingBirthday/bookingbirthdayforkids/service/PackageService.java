@@ -23,9 +23,9 @@ public interface PackageService {
 
     ResponseEntity<ResponseObj> create(MultipartFile imgFile, String packageName, String packageDescription, float percent, List<PackageServiceRequest> packageServiceRequestList, TypeEnum typeEnum);
 
-    public ResponseEntity<ResponseObj> update(Long venueId, Long id, MultipartFile imgFile, String packageName, String packageDescription);
+    public ResponseEntity<ResponseObj> update( Long id, MultipartFile imgFile, String packageName, String packageDescription);
 
-    public ResponseEntity<ResponseObj> updatePercentPackage(Long venueId, Long id, float percent);
+    public ResponseEntity<ResponseObj> updatePercentPackage(Long id, float percent);
 
     public ResponseEntity<ResponseObj> delete(Long id);
 

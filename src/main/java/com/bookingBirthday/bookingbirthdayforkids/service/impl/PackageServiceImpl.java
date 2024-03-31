@@ -245,11 +245,9 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
     }
 
 
-
-
     //fix
     @Override
-    public ResponseEntity<ResponseObj> update(Long venueId, Long id, MultipartFile imgFile, String packageName, String packageDescription) {
+    public ResponseEntity<ResponseObj> update(Long id, MultipartFile imgFile, String packageName, String packageDescription) {
         Long userId = AuthenUtil.getCurrentUserId();
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
@@ -262,25 +260,22 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         if (!account.get().getRole().equals(role)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a Host", null));
         }
-        Optional<Venue> venue = venueRepository.findById(venueId);
-        if (!venue.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
-        }
-        if (!venue.get().getAccount().getId().equals(account.get().getId())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "You are not permission", null));
-        }
+
         Optional<Package> aPackage = packageRepository.findById(id);
         if (!aPackage.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This package does not exist", null));
         }
-        try {
+        Venue packageVenue = aPackage.get().getVenue();
+        if (!packageVenue.getAccount().getId().equals(account.get().getId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "You do not have permission to update this package", null));
+        }
 
+        try {
             aPackage.get().setPackageName(packageName == null ? aPackage.get().getPackageName() : packageName);
             aPackage.get().setPackageDescription(packageDescription == null ? aPackage.get().getPackageDescription() : packageDescription);
             aPackage.get().setPackageImgUrl(imgFile == null ? aPackage.get().getPackageImgUrl() : firebaseService.uploadImage(imgFile));
-            aPackage.get().setPricing(aPackage.get().getPricing());
-            aPackage.get().setVenue(venue.get());
             aPackage.get().setUpdateAt(LocalDateTime.now());
+            aPackage.get().setActive(true);
             packageRepository.save(aPackage.get());
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", aPackage));
 
@@ -289,9 +284,10 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         }
     }
 
+
     //fix
     @Override
-    public ResponseEntity<ResponseObj> updatePercentPackage(Long venueId, Long id, float percent) {
+    public ResponseEntity<ResponseObj> updatePercentPackage(Long id, float percent) {
         Long userId = AuthenUtil.getCurrentUserId();
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
@@ -304,28 +300,25 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         if (!account.get().getRole().equals(role)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a Host", null));
         }
-        Optional<Venue> venue = venueRepository.findById(venueId);
-        if (!venue.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
-        }
-        if (!venue.get().getAccount().getId().equals(account.get().getId())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "You are not permission", null));
-        }
+
         Optional<Package> aPackage = packageRepository.findById(id);
-        if (aPackage.isEmpty()) {
+        if (!aPackage.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This package does not exist", null));
         }
-        float packPricing = 0;
-
-        List<PackageService> packageServiceList = aPackage.get().getPackageServiceList();
-        for (PackageService packageService : packageServiceList) {
-            packPricing += packageService.getPricing();
+        Venue packageVenue = aPackage.get().getVenue();
+        if (!packageVenue.getAccount().getId().equals(account.get().getId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "You do not have permission to update this package", null));
         }
+
         try {
-            float newPricing = packPricing * percent;
-            aPackage.get().setPricing(packPricing - newPricing);
+            float packPricing = 0;
+            List<PackageService> packageServiceList = aPackage.get().getPackageServiceList();
+            for (PackageService packageService : packageServiceList) {
+                packPricing += packageService.getPricing();
+            }
+            float newPricing = packPricing * (1 - percent);
+            aPackage.get().setPricing(newPricing);
             aPackage.get().setUpdateAt(LocalDateTime.now());
-            aPackage.get().setVenue(venue.get());
             packageRepository.save(aPackage.get());
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", aPackage));
 
@@ -333,6 +326,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
+
 
     //fix
     @Override
@@ -372,6 +366,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         } else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Package does not exist", null));
     }
+
     @Override
     public ResponseEntity<ResponseObj> enablePackageForHost(Long id) {
         Long userId = AuthenUtil.getCurrentUserId();

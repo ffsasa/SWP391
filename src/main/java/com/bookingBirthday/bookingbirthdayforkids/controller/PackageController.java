@@ -92,20 +92,20 @@ public class PackageController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PutMapping(value = "/update-package/{venueId}/{packageId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> update(@PathVariable Long venueId, @PathVariable Long packageId, @RequestPart(name = "fileImg", required = false) MultipartFile fileImg, @RequestPart String packageName, @RequestPart String packageDescription) {
-        return packageService.update(venueId, packageId, fileImg, packageName, packageDescription);
+    @PutMapping(value = "/update-package/{packageId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> update( @PathVariable Long packageId, @RequestPart(name = "fileImg", required = false) MultipartFile fileImg, @RequestPart String packageName, @RequestPart String packageDescription) {
+        return packageService.update(packageId, fileImg, packageName, packageDescription);
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PatchMapping(value = "/update-percent-package/{venueId}/{packageId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updatePercentPackage(@PathVariable Long venueId, @PathVariable Long packageId, @RequestPart String percent) {
+    @PatchMapping(value = "/update-percent-package/{packageId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updatePercentPackage(@PathVariable Long packageId, @RequestPart String percent) {
         try {
             float parsePercent = Float.parseFloat(percent);
             if (parsePercent > 0.5 || parsePercent < 0.1) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Percent ranges from 0.1-0.5", null));
             }
-            return packageService.updatePercentPackage(venueId, packageId, Float.parseFloat(percent));
+            return packageService.updatePercentPackage(packageId, Float.parseFloat(percent));
         } catch (NumberFormatException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid percent", null));
         }
