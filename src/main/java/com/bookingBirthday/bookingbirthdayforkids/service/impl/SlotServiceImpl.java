@@ -55,19 +55,6 @@ public class SlotServiceImpl implements SlotService {
                     .body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
         }
 
-        Optional<Account> account = accountRepository.findById(userId);
-        if (!account.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
-        }
-
-        Role role = roleRepository.findByName(RoleEnum.HOST);
-        if (!account.get().getRole().equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a host", null));
-        }
-
-
         List<Slot> slotList = slotRepository.findAllByAccountId(userId);
 
         if (slotList.isEmpty()) {
@@ -88,17 +75,6 @@ public class SlotServiceImpl implements SlotService {
                     .body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
         }
 
-        Optional<Account> account = accountRepository.findById(userId);
-        if (!account.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
-        }
-
-        Role role = roleRepository.findByName(RoleEnum.CUSTOMER);
-        if (!account.get().getRole().equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a customer", null));
-        }
 
         List<Venue> venue = venueRepository.findAllByIsActiveIsTrue();
         if (venue.isEmpty()) {
@@ -133,17 +109,6 @@ public class SlotServiceImpl implements SlotService {
                     .body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
         }
 
-        Optional<Account> account = accountRepository.findById(userId);
-        if (!account.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
-        }
-
-        Role role = roleRepository.findByName(RoleEnum.HOST);
-        if (!account.get().getRole().equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a host", null));
-        }
 
         try {
             Optional<Slot> slot = slotRepository.findById(id);
@@ -174,16 +139,6 @@ public class SlotServiceImpl implements SlotService {
                     .body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
         }
         Optional<Account> account = accountRepository.findById(userId);
-        if (!account.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
-        }
-
-        Role role = roleRepository.findByName(RoleEnum.HOST);
-        if (!account.get().getRole().equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a host", null));
-        }
 
 
         if (slotRequest == null || slotRequest.getTimeStart() == null || slotRequest.getTimeStart().isEmpty() ||
@@ -280,17 +235,6 @@ public class SlotServiceImpl implements SlotService {
                     .body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
         }
 
-        Optional<Account> account = accountRepository.findById(userId);
-        if (!account.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
-        }
-
-        Role role = roleRepository.findByName(RoleEnum.HOST);
-        if (!account.get().getRole().equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a host", null));
-        }
 
         Optional<Slot> existSlot = slotRepository.findById(id);
         if (!existSlot.isPresent()) {
@@ -337,16 +281,6 @@ public class SlotServiceImpl implements SlotService {
         }
 
         Optional<Account> account = accountRepository.findById(userId);
-        if (!account.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
-        }
-
-        Role role = roleRepository.findByName(RoleEnum.HOST);
-        if (!account.get().getRole().equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a host", null));
-        }
 
         Optional<Slot> slot = slotRepository.findById(id);
         if (!slot.isPresent()) {
@@ -382,16 +316,6 @@ public class SlotServiceImpl implements SlotService {
         }
 
         Optional<Account> account = accountRepository.findById(userId);
-        if (!account.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
-        }
-
-        Role role = roleRepository.findByName(RoleEnum.HOST);
-        if (!account.get().getRole().equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a host", null));
-        }
 
         Room room = roomRepository.findById(roomId).orElse(null);
         if (room == null) {
@@ -432,6 +356,7 @@ public class SlotServiceImpl implements SlotService {
 
         return response;
     }
+
     @Override
     public ResponseEntity<ResponseObj> enableSlotForHost(Long id) {
         Long userId = AuthenUtil.getCurrentUserId();
@@ -441,17 +366,6 @@ public class SlotServiceImpl implements SlotService {
         }
 
         Optional<Account> account = accountRepository.findById(userId);
-        if (!account.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "Account not found", null));
-        }
-
-        Role role = roleRepository.findByName(RoleEnum.HOST);
-        if (!account.get().getRole().equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User is not a host", null));
-        }
-
         Optional<Slot> slot = slotRepository.findById(id);
         if (!slot.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -474,7 +388,6 @@ public class SlotServiceImpl implements SlotService {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseObj(HttpStatus.OK.toString(), "Slot has been enabled", slot.get()));
     }
-
 
 
 }
