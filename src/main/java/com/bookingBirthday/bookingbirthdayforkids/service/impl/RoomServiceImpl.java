@@ -343,6 +343,12 @@ public class RoomServiceImpl implements RoomService {
             }
             Optional<Venue> venue = venueRepository.findById(venueId);
             List<Room> roomList = venue.get().getRoomList();
+            for(Room room: roomList){
+                room.getVenue().setRoomList(null);
+                room.getVenue().setAccount(null);
+                room.setVenueInfo(room.getVenue());
+
+            }
             List<Room> roomListCustomer = new ArrayList<>();
             for (Room room : roomList) {
                 if (room.isActive()) {

@@ -1,6 +1,7 @@
 package com.bookingBirthday.bookingbirthdayforkids.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -28,6 +29,10 @@ public class Room extends BaseEntity{
     @JoinColumn(name = "venue_id")
     @JsonIgnore
     private Venue venue;
+
+    @Transient
+    @JsonProperty("venueInfo")
+    private Venue venueInfo;
 
     @OneToMany(mappedBy = "room")
 //    @JsonIgnore
