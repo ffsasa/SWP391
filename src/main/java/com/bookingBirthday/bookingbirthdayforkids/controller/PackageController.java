@@ -38,7 +38,8 @@ public class PackageController {
 
     @GetMapping("/get-all-package-for-host")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getAllForHost(@RequestParam(required = false, defaultValue = "") String active) {
+    public ResponseEntity<ResponseObj> getAllForHost(@RequestParam(required = false, defaultValue = "") String active,
+                                                     @RequestParam(required = false, defaultValue = "" ) String packageType) {
         if(active.isEmpty()){
             return packageService.getAllForHost();
         }
@@ -50,7 +51,6 @@ public class PackageController {
             else{
                 return packageService.getAllForHostIsFalse();
             }
-
         }
     }
 
