@@ -47,7 +47,7 @@ public class PackageController {
             return packageService.getAllForHost();
         }
 
-        else if (!active.isEmpty() && packageType == null) {
+        else if (!active.isEmpty() && packageType.isEmpty()) {
             boolean isActive = Boolean.parseBoolean(active);
             if (isActive) {
                 return packageService.getAllForHostIsTrue();
@@ -56,7 +56,7 @@ public class PackageController {
             }
         }
 
-        else if (active == null && !packageType.isEmpty()) {
+        else if (active.isEmpty() && !packageType.isEmpty()) {
             TypeEnum typeEnum = TypeEnum.valueOf(packageType);
             return packageService.getAllForHostByType(typeEnum);
         }
