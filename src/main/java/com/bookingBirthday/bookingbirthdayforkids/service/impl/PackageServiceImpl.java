@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,8 +39,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
         }
-
-
+        
         Optional<Venue> venue = venueRepository.findById(id);
         if (venue.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
@@ -69,7 +69,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         Long venueId = venue.getId();
         List<Package> packageList = packageRepository.findAllByVenueId(venueId);
         if (packageList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "No active packages found for this venue", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "No Package Found", new ArrayList<>()));
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageList));
     }
@@ -89,7 +89,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         Long venueId = venue.getId();
         List<Package> packageList = packageRepository.findAllByVenueIdAndIsActiveIsTrue(venueId);
         if (packageList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "No active packages found for this venue", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "No Package Found", new ArrayList<>()));
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageList));
     }
@@ -108,11 +108,14 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         }
         Long venueId = venue.getId();
         List<Package> packageList = packageRepository.findAllByVenueIdAndIsActiveIsFalse(venueId);
+
         if (packageList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "No active packages found for this venue", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "No Package Found", new ArrayList<>()));
         }
+
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageList));
     }
+
 
     @Override
     public ResponseEntity<ResponseObj> getByIdForCustomer(Long id) {
@@ -372,7 +375,5 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageList));
     }
-
-
 }
 
