@@ -66,7 +66,8 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         if (venue == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You don't have any venue", null));
         }
-        List<Package> packageList = packageRepository.findAll();
+        Long venueId = venue.getId();
+        List<Package> packageList = packageRepository.findAllByVenueId(venueId);
         if (packageList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "No active packages found for this venue", null));
         }
@@ -85,7 +86,8 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         if (venue == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You don't have any venue", null));
         }
-        List<Package> packageList = packageRepository.findAllByIsActiveIsTrue();
+        Long venueId = venue.getId();
+        List<Package> packageList = packageRepository.findAllByVenueIdAndIsActiveIsTrue(venueId);
         if (packageList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "No active packages found for this venue", null));
         }
@@ -104,7 +106,8 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         if (venue == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You don't have any venue", null));
         }
-        List<Package> packageList = packageRepository.findAllByIsActiveIsFalse();
+        Long venueId = venue.getId();
+        List<Package> packageList = packageRepository.findAllByVenueIdAndIsActiveIsFalse(venueId);
         if (packageList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "No active packages found for this venue", null));
         }
@@ -140,16 +143,24 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
         }
 
-        Optional<Venue> venue = venueRepository.findById(userId);
-        if (!venue.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
+        Optional<Account> account = accountRepository.findById(userId);
+        Venue venue = account.get().getVenue();
+        if (venue == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You don't have any venue", null));
         }
-        Optional<Package> apackage = packageRepository.findById(id);
-        if (apackage.isPresent()) {
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", apackage));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This package does not exist or is inactive", null));
+        Long venueId = venue.getId();
+
+        Optional<Package> packageOptional = packageRepository.findById(id);
+        if (!packageOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Package not found", null));
         }
+
+        Package packageItem = packageOptional.get();
+        if (!packageItem.getVenue().getId().equals(venueId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "You do not have permission to access this package", null));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageItem));
+
     }
 
     //fix
