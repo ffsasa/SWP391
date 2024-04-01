@@ -15,6 +15,8 @@ import java.util.List;
 public class PartyBookingRequest {
     @NotBlank(message = "Kid Name cannot blank")
     private String kidName;
+    @NotBlank(message = "Reservation Name cannot blank")
+    private String reservationAgent;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDate kidDOB;
     @NotBlank(message = "Email cannot blank")

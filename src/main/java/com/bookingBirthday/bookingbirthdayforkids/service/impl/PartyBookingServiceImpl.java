@@ -333,6 +333,53 @@ public class PartyBookingServiceImpl implements PartyBookingService {
         }
     }
 
+    @Override
+    public ResponseEntity<ResponseObj> getAll_ForHostByTypeAndDate(StatusEnum statusEnum, LocalDate date) {
+        try {
+            Long userId = AuthenUtil.getCurrentUserId();
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User does not exist", null));
+            }
+
+            Optional<Account> account = accountRepository.findById(userId);
+            if (account.isPresent()) {
+                Venue venue = account.get().getVenue();
+                if (venue == null) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
+                }
+            }
+
+            List<Slot> slotList = slotRepository.findAllByAccountId(userId);
+
+            if (!slotList.isEmpty()) {
+                List<PartyBooking> partyBookingList = new ArrayList<>();
+                for (Slot slot : slotList) {
+                    for (SlotInRoom slotInRoom : slot.getSlotInRoom()) {
+                        for (PartyBooking partyBooking : slotInRoom.getPartyBookingList()) {
+                            if (partyBooking.getStatus().equals(statusEnum) && partyBooking.getDate().equals(date)) {
+                                partyBookingList.add(partyBooking);
+                            }
+                        }
+                    }
+                }
+                if (partyBookingList.isEmpty()) {
+                    return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", partyBookingList));
+                }
+                for (PartyBooking partyBooking : partyBookingList) {
+
+                    partyBooking.getPackageInBookings().forEach(packageInBooking -> {
+                        packageInBooking.getAPackage().getVenue().setRoomList(null);
+                        packageInBooking.getAPackage().getVenue().setAccount(null);
+                    });
+                }
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
     //Sửa
     @Override
     public ResponseEntity<ResponseObj> create(PartyBookingRequest partyBookingRequest) {
@@ -366,7 +413,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             //PartyBooking
             PartyBooking partyBooking = new PartyBooking();
             partyBooking.setKidName(partyBookingRequest.getKidName());
-            partyBooking.setReservationAgent(account.get().getFullName());
+            partyBooking.setReservationAgent(partyBookingRequest.getReservationAgent());
             partyBooking.setKidDOB(partyBookingRequest.getKidDOB());
             partyBooking.setEmail(partyBookingRequest.getEmail());
             partyBooking.setPhone(partyBookingRequest.getPhone());
@@ -637,6 +684,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 }
 
                 existPartyBooking.get().setKidName(partyBookingRequest.getKidName() == null ? existPartyBooking.get().getKidName() : partyBookingRequest.getKidName());
+                existPartyBooking.get().setKidName(partyBookingRequest.getReservationAgent() == null ? existPartyBooking.get().getReservationAgent() : partyBookingRequest.getReservationAgent());
                 existPartyBooking.get().setKidDOB(partyBookingRequest.getKidDOB() == null ? existPartyBooking.get().getKidDOB() : partyBookingRequest.getKidDOB());
                 existPartyBooking.get().setEmail(partyBookingRequest.getEmail() == null ? existPartyBooking.get().getEmail() : partyBookingRequest.getEmail());
                 existPartyBooking.get().setPhone(partyBookingRequest.getPhone() == null ? existPartyBooking.get().getPhone() : partyBookingRequest.getPhone());
