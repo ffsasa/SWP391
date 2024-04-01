@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -38,21 +39,40 @@ public class PackageController {
 
     @GetMapping("/get-all-package-for-host")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getAllForHost(@RequestParam(required = false, defaultValue = "") String active,
-                                                     @RequestParam(required = false, defaultValue = "" ) String packageType) {
-        if(active.isEmpty()){
+    public ResponseEntity<ResponseObj> getAllForHost(
+            @RequestParam(required = false, defaultValue = "") String active,
+            @RequestParam(required = false, defaultValue = "") String packageType
+    ) {
+        if (active == null && packageType == null) {
             return packageService.getAllForHost();
         }
-        else {
+
+        else if (!active.isEmpty() && packageType.isEmpty()) {
             boolean isActive = Boolean.parseBoolean(active);
-            if(isActive){
+            if (isActive) {
                 return packageService.getAllForHostIsTrue();
-            }
-            else{
+            } else {
                 return packageService.getAllForHostIsFalse();
             }
         }
+
+        else if (active.isEmpty() && !packageType.isEmpty()) {
+            TypeEnum typeEnum = TypeEnum.valueOf(packageType);
+            return packageService.getAllForHostByType(typeEnum);
+        }
+
+        else{
+            boolean isActive = Boolean.parseBoolean(active);
+            TypeEnum typeEnum = TypeEnum.valueOf(packageType);
+            if (isActive) {
+                return packageService.getAllForHostIsTrueByType(typeEnum);
+            } else {
+                return packageService.getAllForHostIsFalseByType(typeEnum);
+            }
+        }
     }
+
+
 
     @GetMapping("/get-package-for-customer/{packageId}")
     @PreAuthorize("hasAuthority('CUSTOMER')")

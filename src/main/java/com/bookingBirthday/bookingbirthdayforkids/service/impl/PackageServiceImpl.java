@@ -39,7 +39,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
         }
-        
+
         Optional<Venue> venue = venueRepository.findById(id);
         if (venue.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found", null));
@@ -375,5 +375,65 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageList));
     }
+
+    @Override
+    public ResponseEntity<ResponseObj> getAllForHostByType(TypeEnum typeEnum) {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
+        }
+        Optional<Account> account = accountRepository.findById(userId);
+        Venue venue = account.get().getVenue();
+        if (venue == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You don't have any venue", null));
+        }
+        Long venueId = venue.getId();
+        List<Package> packageList = packageRepository.findAllByVenueIdAndPackageType(venueId, typeEnum);
+        if (packageList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "No Package Found", new ArrayList<>()));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageList));
+    }
+    @Override
+    public ResponseEntity<ResponseObj> getAllForHostIsTrueByType(TypeEnum typeEnum) {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
+        }
+        Optional<Account> account = accountRepository.findById(userId);
+        Venue venue = account.get().getVenue();
+        if (venue == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You don't have any venue", null));
+        }
+        Long venueId = venue.getId();
+
+        List<Package> packageList = packageRepository.findActivePackagesByVenueIdAndPackageType(venueId, typeEnum);
+        if (packageList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "No Package Found", new ArrayList<>()));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageList));
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> getAllForHostIsFalseByType(TypeEnum typeEnum) {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
+        }
+        Optional<Account> account = accountRepository.findById(userId);
+        Venue venue = account.get().getVenue();
+        if (venue == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You don't have any venue", null));
+        }
+        Long venueId = venue.getId();
+
+        List<Package> packageList = packageRepository.findInactivePackagesByVenueIdAndPackageType(venueId, typeEnum);
+
+        if (packageList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "No Package Found", new ArrayList<>()));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageList));
+}
+
 }
 
