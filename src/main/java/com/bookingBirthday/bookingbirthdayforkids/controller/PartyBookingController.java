@@ -2,7 +2,7 @@ package com.bookingBirthday.bookingbirthdayforkids.controller;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.PartyBookingRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
-import com.bookingBirthday.bookingbirthdayforkids.model.PartyBooking;
+import com.bookingBirthday.bookingbirthdayforkids.model.StatusEnum;
 import com.bookingBirthday.bookingbirthdayforkids.service.PartyBookingService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +11,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/party-booking")
@@ -49,6 +47,25 @@ public class PartyBookingController {
     @PreAuthorize("hasAuthority('CUSTOMER')")
     public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long partyBookingId){
         return partyBookingService.getById_ForCustomer(partyBookingId);
+    }
+
+    @GetMapping("/get-all-party-booking-for-host-by-date")
+    @PreAuthorize("hasAuthority('HOST')")
+    public ResponseEntity<ResponseObj> getAllForHostByDate(@RequestParam(required = false, defaultValue = "") LocalDate date) {
+        if (date == null) {
+            return partyBookingService.getAll_ForHost();
+        }
+        return partyBookingService.getAll_ForHostByDate(date);
+    }
+
+    @GetMapping("/get-all-party-booking-for-host-by-type")
+    @PreAuthorize("hasAuthority('HOST')")
+    public ResponseEntity<ResponseObj> getAllForHostByType(@RequestParam(required = false, defaultValue = "")String status) {
+        if (status == null) {
+            return partyBookingService.getAll_ForHost();
+        }
+        StatusEnum statusEnum = StatusEnum.valueOf(status);
+        return partyBookingService.getAll_ForHostByType(statusEnum);
     }
 
     @PostMapping("/create")

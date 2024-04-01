@@ -24,6 +24,8 @@ import java.util.List;
 public class PartyBooking extends BaseEntity{
     @NotBlank(message = "Kid Name cannot blank")
     private String kidName;
+    @NotBlank(message = "Reservation Name cannot blank")
+    private String reservationAgent;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDate kidDOB;
     @NotBlank(message = "Email cannot blank")
@@ -43,10 +45,6 @@ public class PartyBooking extends BaseEntity{
     @Min(value = 0, message = "Remaining money value must be greater than or equal to 0")
     private int remainingMoney;
     private LocalDate date;
-
-    @Transient
-    @JsonProperty("isPayment")
-    private Boolean isPayment;
 
     @ManyToOne
     @JoinColumn(name = "account_id")
