@@ -55,10 +55,14 @@ public class PackageController {
         } else if (active.isEmpty() && !packageType.isEmpty()) {
             TypeEnum typeEnum = TypeEnum.valueOf(packageType);
             return packageService.getAllForHostByType(typeEnum);
-        } else {
+        } else{
             boolean isActive = Boolean.parseBoolean(active);
             TypeEnum typeEnum = TypeEnum.valueOf(packageType);
-            return isActive ? packageService.getAllForHostIsTrueByType(typeEnum) : packageService.getAllForHostIsFalseByType(typeEnum);
+            if (isActive) {
+                return packageService.getAllForHostIsTrueByType(typeEnum);
+            } else {
+                return packageService.getAllForHostIsFalseByType(typeEnum);
+            }
         }
     }
 
