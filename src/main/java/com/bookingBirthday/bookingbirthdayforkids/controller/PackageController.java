@@ -43,19 +43,25 @@ public class PackageController {
             @RequestParam(required = false, defaultValue = "") String active,
             @RequestParam(required = false, defaultValue = "") String packageType
     ) {
-        if (active.isEmpty() && packageType.isEmpty()) {
+        if (active == null && packageType == null) {
             return packageService.getAllForHost();
-        } else if (!active.isEmpty() && packageType.isEmpty()) {
+        }
+
+        else if (!active.isEmpty() && packageType == null) {
             boolean isActive = Boolean.parseBoolean(active);
             if (isActive) {
                 return packageService.getAllForHostIsTrue();
             } else {
                 return packageService.getAllForHostIsFalse();
             }
-        } else if (active.isEmpty() && !packageType.isEmpty()) {
+        }
+
+        else if (active == null && !packageType.isEmpty()) {
             TypeEnum typeEnum = TypeEnum.valueOf(packageType);
             return packageService.getAllForHostByType(typeEnum);
-        } else{
+        }
+
+        else{
             boolean isActive = Boolean.parseBoolean(active);
             TypeEnum typeEnum = TypeEnum.valueOf(packageType);
             if (isActive) {
