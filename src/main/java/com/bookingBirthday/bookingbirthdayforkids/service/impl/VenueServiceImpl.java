@@ -104,10 +104,6 @@ public class VenueServiceImpl implements VenueService {
                         pricing += partyBooking.getSlotInRoom().getRoom().getPricing();
 
                         partyBooking.setPricingTotal(pricing);
-
-                        for (Payment payment : partyBooking.getPaymentList()) {
-                            partyBooking.setIsPayment(payment.getStatus().equals("SUCCESS"));
-                        }
                     }
                     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", partyBookingList));
                 }
