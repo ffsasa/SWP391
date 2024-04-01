@@ -27,6 +27,8 @@ public interface PartyBookingService {
 
     ResponseEntity<ResponseObj> getAll_ForHostByType(StatusEnum statusEnum);
 
+    ResponseEntity<ResponseObj> getAll_ForHostByTypeAndDate(StatusEnum statusEnum, LocalDate date);
+
     public ResponseEntity<ResponseObj> create(PartyBookingRequest partyBookingRequest);
 
     public ResponseEntity<ResponseObj> updateUpgradeService(Long partyBookingId, PartyBookingRequest partyBookingRequest);

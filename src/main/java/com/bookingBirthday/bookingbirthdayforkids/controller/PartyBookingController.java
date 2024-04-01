@@ -27,8 +27,20 @@ public class PartyBookingController {
 
     @GetMapping("/get-all-party-booking-for-host")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getAllForHost() {
-        return partyBookingService.getAll_ForHost();
+    public ResponseEntity<ResponseObj> getAllForHost(@RequestParam(required = false, defaultValue = "") LocalDate date,
+                                                     @RequestParam(required = false, defaultValue = "") String status) {
+        if (date == null) {
+            if (status.isEmpty()) {
+                return partyBookingService.getAll_ForHost();
+            }
+            return partyBookingService.getAll_ForHostByType(StatusEnum.valueOf(status));
+        } else {
+            if (!status.isEmpty()) {
+                StatusEnum statusEnum = StatusEnum.valueOf(status);
+                return partyBookingService.getAll_ForHostByTypeAndDate(statusEnum, date);
+            }
+            return partyBookingService.getAll_ForHostByDate(date);
+        }
     }
 
     @GetMapping("/get-all-completed")
@@ -39,62 +51,43 @@ public class PartyBookingController {
 
     @GetMapping("/get-by-id-for-host/{partyBookingId}")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getByIdForHost(@PathVariable Long partyBookingId){
+    public ResponseEntity<ResponseObj> getByIdForHost(@PathVariable Long partyBookingId) {
         return partyBookingService.getById_ForHost(partyBookingId);
     }
 
     @GetMapping("/get-by-id-for-customer/{partyBookingId}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long partyBookingId){
+    public ResponseEntity<ResponseObj> getById_ForCustomer(@PathVariable Long partyBookingId) {
         return partyBookingService.getById_ForCustomer(partyBookingId);
-    }
-
-    @GetMapping("/get-all-party-booking-for-host-by-date")
-    @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getAllForHostByDate(@RequestParam(required = false, defaultValue = "") LocalDate date) {
-        if (date == null) {
-            return partyBookingService.getAll_ForHost();
-        }
-        return partyBookingService.getAll_ForHostByDate(date);
-    }
-
-    @GetMapping("/get-all-party-booking-for-host-by-type")
-    @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getAllForHostByType(@RequestParam(required = false, defaultValue = "")String status) {
-        if (status == null) {
-            return partyBookingService.getAll_ForHost();
-        }
-        StatusEnum statusEnum = StatusEnum.valueOf(status);
-        return partyBookingService.getAll_ForHostByType(statusEnum);
     }
 
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> create(@Valid @RequestBody PartyBookingRequest partyBookingRequest){
+    public ResponseEntity<ResponseObj> create(@Valid @RequestBody PartyBookingRequest partyBookingRequest) {
         return partyBookingService.create(partyBookingRequest);
     }
 
     @PutMapping("/update-upgrade-service/{partyBookingId}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> updateUpgradeService(@PathVariable Long partyBookingId,@Valid @RequestBody PartyBookingRequest partyBookingRequest){
+    public ResponseEntity<ResponseObj> updateUpgradeService(@PathVariable Long partyBookingId, @Valid @RequestBody PartyBookingRequest partyBookingRequest) {
         return partyBookingService.updateUpgradeService(partyBookingId, partyBookingRequest);
     }
 
     @PutMapping("/update-organization-time/{partyBookingId}/{slotInRoomId}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> updateOrganizationTime(@PathVariable Long partyBookingId, @PathVariable Long slotInRoomId, @Valid @RequestBody LocalDate date){
+    public ResponseEntity<ResponseObj> updateOrganizationTime(@PathVariable Long partyBookingId, @PathVariable Long slotInRoomId, @Valid @RequestBody LocalDate date) {
         return partyBookingService.updateOrganizationTime(partyBookingId, date, slotInRoomId);
     }
 
     @PutMapping("/update-package/{partyBookingId}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> updatePackage(@PathVariable Long partyBookingId,@Valid @RequestBody PartyBookingRequest partyBookingRequest){
+    public ResponseEntity<ResponseObj> updatePackage(@PathVariable Long partyBookingId, @Valid @RequestBody PartyBookingRequest partyBookingRequest) {
         return partyBookingService.updatePackage(partyBookingId, partyBookingRequest);
     }
 
     @PutMapping("/update-basic-info/{partyBookingId}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> updateBasicInfo(@PathVariable Long partyBookingId,@Valid @RequestBody PartyBookingRequest partyBookingRequest){
+    public ResponseEntity<ResponseObj> updateBasicInfo(@PathVariable Long partyBookingId, @Valid @RequestBody PartyBookingRequest partyBookingRequest) {
         return partyBookingService.updateBasicInfo(partyBookingId, partyBookingRequest);
     }
 
@@ -112,7 +105,7 @@ public class PartyBookingController {
 
     @DeleteMapping("/delete-party-booking-for-host/{partyBookingId}")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> deleteBooking(@PathVariable Long partyBookingId){
+    public ResponseEntity<ResponseObj> deleteBooking(@PathVariable Long partyBookingId) {
         return partyBookingService.deleteBooking_ForHost(partyBookingId);
     }
 
