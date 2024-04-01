@@ -54,7 +54,7 @@ public class RoomServiceImpl implements RoomService {
             }
         }
         if (roomListCustomer.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List is empty", roomListCustomer));
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", roomListCustomer));
 
@@ -67,7 +67,7 @@ public class RoomServiceImpl implements RoomService {
         Venue venue = account.get().getVenue();
         List<Room> roomList = venue.getRoomList();
         if (roomList.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List is empty", roomList));
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", roomList));
 
@@ -81,7 +81,7 @@ public class RoomServiceImpl implements RoomService {
         List<Room> roomList = venue.getRoomList();
         List<Room> roomListIsTrue = new ArrayList<>();
         if (roomList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List is empty", roomList));
         }
         for (Room room : roomList) {
             if (room.isActive()) {
@@ -89,7 +89,7 @@ public class RoomServiceImpl implements RoomService {
             }
         }
         if (roomListIsTrue.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List is empty", roomListIsTrue));
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", roomListIsTrue));
     }
@@ -102,7 +102,7 @@ public class RoomServiceImpl implements RoomService {
         List<Room> roomList = venue.getRoomList();
         List<Room> roomListIsFalse = new ArrayList<>();
         if (roomList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List is empty", roomList));
         }
         for (Room room : roomList) {
             if (!room.isActive()) {
@@ -110,7 +110,7 @@ public class RoomServiceImpl implements RoomService {
             }
         }
         if (roomListIsFalse.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List is empty", roomListIsFalse));
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", roomListIsFalse));
     }
