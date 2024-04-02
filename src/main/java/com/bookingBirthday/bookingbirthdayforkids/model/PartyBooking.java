@@ -39,11 +39,11 @@ public class PartyBooking extends BaseEntity{
     @Min(value = 1, message = "Capacity value must be greater than or equal to 1")
     private int participantAmount;
     @Min(value = 0, message = "Total price value must be greater than or equal to 0")
-    private int totalPrice;
+    private float totalPrice;
     @Min(value = 0, message = "Deposit value must be greater than or equal to 0")
-    private int deposit;
+    private float deposit;
     @Min(value = 0, message = "Remaining money value must be greater than or equal to 0")
-    private int remainingMoney;
+    private float remainingMoney;
     private LocalDate date;
 
     @ManyToOne
@@ -66,8 +66,4 @@ public class PartyBooking extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "slotInRoom_id")
     private SlotInRoom slotInRoom;
-
-    @Transient
-    @JsonProperty("pricingTotal")
-    private float pricingTotal;
 }
