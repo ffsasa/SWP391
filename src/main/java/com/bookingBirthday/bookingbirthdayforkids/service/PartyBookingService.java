@@ -25,9 +25,17 @@ public interface PartyBookingService {
 
     ResponseEntity<ResponseObj> getAll_ForHostByDate(LocalDate date);
 
-    ResponseEntity<ResponseObj> getAll_ForHostByType(StatusEnum statusEnum);
+    ResponseEntity<ResponseObj> getAll_ForHostByStatus(StatusEnum statusEnum);
 
     ResponseEntity<ResponseObj> getAll_ForHostByTypeAndDate(StatusEnum statusEnum, LocalDate date);
+
+    ResponseEntity<ResponseObj> getAll_ForHostByDateAndCreatedAndStatus(LocalDate date, LocalDate createdAt ,StatusEnum statusEnum);
+
+    ResponseEntity<ResponseObj> getAll_ForHostByDateAndCreated(LocalDate date, LocalDate createdAt);
+
+    ResponseEntity<ResponseObj> getAll_ForHostByStatusAndCreated(StatusEnum statusEnum, LocalDate createdAt);
+
+    ResponseEntity<ResponseObj> getAll_ForHostByCreated(LocalDate createdAt);
 
     public ResponseEntity<ResponseObj> create(PartyBookingRequest partyBookingRequest);
 
