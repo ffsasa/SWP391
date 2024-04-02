@@ -103,7 +103,7 @@ public class VenueServiceImpl implements VenueService {
                         pricing += TotalPriceUtil.getTotalPricingPackage(partyBooking);
                         pricing += partyBooking.getSlotInRoom().getRoom().getPricing();
 
-                        partyBooking.setPricingTotal(pricing);
+                        partyBooking.setTotalPrice(pricing);
                     }
                     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", partyBookingList));
                 }

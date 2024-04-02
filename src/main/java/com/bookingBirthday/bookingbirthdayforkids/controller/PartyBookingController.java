@@ -28,7 +28,8 @@ public class PartyBookingController {
     @GetMapping("/get-all-party-booking-for-host")
     @PreAuthorize("hasAuthority('HOST')")
     public ResponseEntity<ResponseObj> getAllForHost(@RequestParam(required = false, defaultValue = "") LocalDate date,
-                                                     @RequestParam(required = false, defaultValue = "") String status) {
+                                                     @RequestParam(required = false, defaultValue = "") String status,
+                                                     @RequestParam(required = false, defaultValue = "") String active) {
         if (date == null) {
             if (status.isEmpty()) {
                 return partyBookingService.getAll_ForHost();
