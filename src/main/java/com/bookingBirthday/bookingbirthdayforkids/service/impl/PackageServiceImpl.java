@@ -407,7 +407,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         }
         Long venueId = venue.getId();
 
-        List<Package> packageList = packageRepository.findActivePackagesByVenueIdAndPackageType(venueId, typeEnum);
+        List<Package> packageList = packageRepository.findAllByVenueIdAndIsActiveIsTrueAndPackageType(venueId, typeEnum);
         if (packageList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "No Package Found", new ArrayList<>()));
         }
@@ -427,7 +427,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         }
         Long venueId = venue.getId();
 
-        List<Package> packageList = packageRepository.findInactivePackagesByVenueIdAndPackageType(venueId, typeEnum);
+        List<Package> packageList = packageRepository.findAllByVenueIdAndIsActiveIsFalseAndPackageType(venueId, typeEnum);
 
         if (packageList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "No Package Found", new ArrayList<>()));
