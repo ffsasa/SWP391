@@ -55,8 +55,20 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public void paymentSuccess(Long id) {
         Optional <PartyBooking> partyBooking = partyBookingRepository.findById(id);
-
+        int totalPrice = (int) (partyBooking.get().getDeposit() * 2);
+        int remainMoney = (int) (totalPrice - partyBooking.get().getDeposit());
+        partyBooking.get().setRemainingMoney(remainMoney);
+        partyBooking.get().setTotalPrice(totalPrice);
         partyBooking.get().setStatus(StatusEnum.CONFIRMED);
+        partyBookingRepository.save(partyBooking.get());
+    }
+
+    @Override
+    public void paymentFail(Long id){
+        Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
+        int deposit = 0;
+        partyBooking.get().setDeposit(deposit);
+        partyBooking.get().setStatus(StatusEnum.CANCELLED);
         partyBookingRepository.save(partyBooking.get());
     }
 
@@ -90,6 +102,11 @@ public class PaymentServiceImpl implements PaymentService {
                     vnp_Amount += (int) (upgradeService.getServices().getPricing() * upgradeService.getCount());
                 }
 
+                int vnp_Deposit = (int) (vnp_Amount * 0.5);
+                int vnp_RemainMoney = (int) (totalPrice - vnp_Deposit);
+                partyBooking.get().setDeposit(vnp_Deposit);
+                partyBookingRepository.save(partyBooking.get());
+
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
                 String vnp_CreateDate = formatter.format(cld.getTime());
                 cld.add(Calendar.MINUTE, 10);
@@ -100,7 +117,7 @@ public class PaymentServiceImpl implements PaymentService {
                 vnp_Params.put("vnp_Version", PaymentConfig.vnp_Version);
                 vnp_Params.put("vnp_Command", PaymentConfig.vnp_Command);
                 vnp_Params.put("vnp_TmnCode", PaymentConfig.vnp_TmnCode);
-//                vnp_Params.put("vnp_Amount", String.valueOf(String.valueOf(vnp_Amount) + "00"));
+                vnp_Params.put("vnp_Amount", String.valueOf(String.valueOf(vnp_Deposit) + "00"));
                 vnp_Params.put("vnp_BankCode",  PaymentConfig.vnp_BankCode);
                 vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
                 vnp_Params.put("vnp_CurrCode", PaymentConfig.vnp_CurrCode);

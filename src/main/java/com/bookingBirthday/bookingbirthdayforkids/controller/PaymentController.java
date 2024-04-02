@@ -96,6 +96,7 @@ public class PaymentController {
             payment.setStatus("FAILED");
             payment.setPaymentMethod(paymentMethod);
             paymentRepository.save(payment);
+            paymentService.paymentFail(bookingId);
             response.sendRedirect("http://localhost:3000/payment/failed");
 
     }
