@@ -43,31 +43,29 @@ public class PackageController {
             @RequestParam(required = false, defaultValue = "") String active,
             @RequestParam(required = false, defaultValue = "") String packageType
     ) {
-        if (active == null && packageType == null) {
-            return packageService.getAllForHost();
-        }
-
-        else if (!active.isEmpty() && packageType.isEmpty()) {
-            boolean isActive = Boolean.parseBoolean(active);
-            if (isActive) {
-                return packageService.getAllForHostIsTrue();
+        if (active.isEmpty()) {
+            if (packageType.isEmpty()) {
+                return packageService.getAllForHost();
             } else {
-                return packageService.getAllForHostIsFalse();
+                TypeEnum typeEnum = TypeEnum.valueOf(packageType);
+                return packageService.getAllForHostByType(typeEnum);
             }
-        }
-
-        else if (active.isEmpty() && !packageType.isEmpty()) {
-            TypeEnum typeEnum = TypeEnum.valueOf(packageType);
-            return packageService.getAllForHostByType(typeEnum);
-        }
-
-        else{
-            boolean isActive = Boolean.parseBoolean(active);
-            TypeEnum typeEnum = TypeEnum.valueOf(packageType);
-            if (isActive) {
-                return packageService.getAllForHostIsTrueByType(typeEnum);
+        } else {
+            if (packageType.isEmpty()) {
+                boolean isActive = Boolean.parseBoolean(active);
+                if (isActive) {
+                    return packageService.getAllForHostIsTrue();
+                } else {
+                    return packageService.getAllForHostIsFalse();
+                }
             } else {
-                return packageService.getAllForHostIsFalseByType(typeEnum);
+                boolean isActive = Boolean.parseBoolean(active);
+                TypeEnum typeEnum = TypeEnum.valueOf(packageType);
+                if (isActive) {
+                    return packageService.getAllForHostIsTrueByType(typeEnum);
+                } else {
+                    return packageService.getAllForHostIsFalseByType(typeEnum);
+                }
             }
         }
     }
