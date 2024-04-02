@@ -29,18 +29,32 @@ public class PartyBookingController {
     @PreAuthorize("hasAuthority('HOST')")
     public ResponseEntity<ResponseObj> getAllForHost(@RequestParam(required = false, defaultValue = "") LocalDate date,
                                                      @RequestParam(required = false, defaultValue = "") String status,
-                                                     @RequestParam(required = false, defaultValue = "") String active) {
-        if (date == null) {
-            if (status.isEmpty()) {
+                                                     @RequestParam(required = false, defaultValue = "") LocalDate createdDate) {
+        if (date != null){
+            if (!status.isEmpty()){
+                if (createdDate != null){
+                    StatusEnum statusEnum = StatusEnum.valueOf(status);
+                    return partyBookingService.getAll_ForHostByDateAndCreatedAndStatus(date, createdDate, statusEnum);
+                }
+                return partyBookingService.getAll_ForHostByTypeAndDate(StatusEnum.valueOf(status), date);
+            } else {
+                if (createdDate != null){
+                    return partyBookingService.getAll_ForHostByDateAndCreated(date, createdDate);
+                }
+                return partyBookingService.getAll_ForHostByDate(date);
+            }
+        } else {
+            if (!status.isEmpty()){
+                if (createdDate != null){
+                    return partyBookingService.getAll_ForHostByStatusAndCreated(StatusEnum.valueOf(status), createdDate);
+                }
+                return partyBookingService.getAll_ForHostByStatus(StatusEnum.valueOf(status));
+            } else {
+                if (createdDate != null){
+                    return partyBookingService.getAll_ForHostByCreated(createdDate);
+                }
                 return partyBookingService.getAll_ForHost();
             }
-            return partyBookingService.getAll_ForHostByType(StatusEnum.valueOf(status));
-        } else {
-            if (!status.isEmpty()) {
-                StatusEnum statusEnum = StatusEnum.valueOf(status);
-                return partyBookingService.getAll_ForHostByTypeAndDate(statusEnum, date);
-            }
-            return partyBookingService.getAll_ForHostByDate(date);
         }
     }
 

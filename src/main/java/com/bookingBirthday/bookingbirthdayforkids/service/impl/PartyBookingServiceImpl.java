@@ -60,7 +60,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 });
             }
             if (partyBookingList.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", null));
             }
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
         } catch (Exception e) {
@@ -96,7 +96,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     }
                 }
                 if (partyBookingList.isEmpty()) {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+                    return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", null));
                 }
                 for (PartyBooking partyBooking : partyBookingList) {
 
@@ -107,7 +107,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 }
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
             }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not have any slots", null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
@@ -145,7 +145,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     }
                 }
                 if (partyBookingList.isEmpty()) {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+                    return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", null));
                 }
                 for (PartyBooking partyBooking : partyBookingList) {
 
@@ -156,7 +156,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 }
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
             }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not have any slots", null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
@@ -264,14 +264,14 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 }
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
             }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not have any slots", null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getAll_ForHostByType(StatusEnum statusEnum) {
+    public ResponseEntity<ResponseObj> getAll_ForHostByStatus(StatusEnum statusEnum) {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
@@ -311,7 +311,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 }
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
             }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not have any slots", null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
@@ -358,7 +358,201 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 }
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
             }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not have any slots", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> getAll_ForHostByDateAndCreatedAndStatus(LocalDate date, LocalDate createdAt, StatusEnum statusEnum) {
+        try {
+            Long userId = AuthenUtil.getCurrentUserId();
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User does not exist", null));
+            }
+
+            Optional<Account> account = accountRepository.findById(userId);
+            if (account.isPresent()) {
+                Venue venue = account.get().getVenue();
+                if (venue == null) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
+                }
+            }
+
+            List<Slot> slotList = slotRepository.findAllByAccountId(userId);
+
+            if (!slotList.isEmpty()) {
+                List<PartyBooking> partyBookingList = new ArrayList<>();
+                for (Slot slot : slotList) {
+                    for (SlotInRoom slotInRoom : slot.getSlotInRoom()) {
+                        for (PartyBooking partyBooking : slotInRoom.getPartyBookingList()) {
+                            LocalDate partyBookingDate = partyBooking.getCreateAt().toLocalDate();
+                            if (partyBooking.getStatus().equals(statusEnum) && partyBooking.getDate().equals(date) && partyBookingDate.isEqual(createdAt)) {
+                                partyBookingList.add(partyBooking);
+                            }
+                        }
+                    }
+                }
+                if (partyBookingList.isEmpty()) {
+                    return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", partyBookingList));
+                }
+                for (PartyBooking partyBooking : partyBookingList) {
+
+                    partyBooking.getPackageInBookings().forEach(packageInBooking -> {
+                        packageInBooking.getAPackage().getVenue().setRoomList(null);
+                        packageInBooking.getAPackage().getVenue().setAccount(null);
+                    });
+                }
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not have any slots", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> getAll_ForHostByDateAndCreated(LocalDate date, LocalDate createdAt) {
+
+        try {
+            Long userId = AuthenUtil.getCurrentUserId();
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User does not exist", null));
+            }
+
+            Optional<Account> account = accountRepository.findById(userId);
+            if (account.isPresent()) {
+                Venue venue = account.get().getVenue();
+                if (venue == null) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
+                }
+            }
+
+            List<Slot> slotList = slotRepository.findAllByAccountId(userId);
+
+            if (!slotList.isEmpty()) {
+                List<PartyBooking> partyBookingList = new ArrayList<>();
+                for (Slot slot : slotList) {
+                    for (SlotInRoom slotInRoom : slot.getSlotInRoom()) {
+                        for (PartyBooking partyBooking : slotInRoom.getPartyBookingList()) {
+                            LocalDate partyBookingDate = partyBooking.getCreateAt().toLocalDate();
+                            if (partyBooking.getDate().equals(date) && partyBookingDate.isEqual(createdAt)) {
+                                partyBookingList.add(partyBooking);
+                            }
+                        }
+                    }
+                }
+                if (partyBookingList.isEmpty()) {
+                    return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", partyBookingList));
+                }
+                for (PartyBooking partyBooking : partyBookingList) {
+
+                    partyBooking.getPackageInBookings().forEach(packageInBooking -> {
+                        packageInBooking.getAPackage().getVenue().setRoomList(null);
+                        packageInBooking.getAPackage().getVenue().setAccount(null);
+                    });
+                }
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not have any slots", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> getAll_ForHostByStatusAndCreated(StatusEnum statusEnum, LocalDate createdAt) {
+
+        try {
+            Long userId = AuthenUtil.getCurrentUserId();
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User does not exist", null));
+            }
+
+            Optional<Account> account = accountRepository.findById(userId);
+            if (account.isPresent()) {
+                Venue venue = account.get().getVenue();
+                if (venue == null) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
+                }
+            }
+
+            List<Slot> slotList = slotRepository.findAllByAccountId(userId);
+
+            if (!slotList.isEmpty()) {
+                List<PartyBooking> partyBookingList = new ArrayList<>();
+                for (Slot slot : slotList) {
+                    for (SlotInRoom slotInRoom : slot.getSlotInRoom()) {
+                        for (PartyBooking partyBooking : slotInRoom.getPartyBookingList()) {
+                            LocalDate partyBookingDate = partyBooking.getCreateAt().toLocalDate();
+                            if (partyBooking.getStatus().equals(statusEnum) && partyBookingDate.isEqual(createdAt)) {
+                                partyBookingList.add(partyBooking);
+                            }
+                        }
+                    }
+                }
+                if (partyBookingList.isEmpty()) {
+                    return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", partyBookingList));
+                }
+                for (PartyBooking partyBooking : partyBookingList) {
+
+                    partyBooking.getPackageInBookings().forEach(packageInBooking -> {
+                        packageInBooking.getAPackage().getVenue().setRoomList(null);
+                        packageInBooking.getAPackage().getVenue().setAccount(null);
+                    });
+                }
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not have any slots", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseObj> getAll_ForHostByCreated(LocalDate createdAt) {
+        try {
+            Long userId = AuthenUtil.getCurrentUserId();
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User does not exist", null));
+            }
+
+            Optional<Account> account = accountRepository.findById(userId);
+            if (account.isPresent()) {
+                Venue venue = account.get().getVenue();
+                if (venue == null) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));
+                }
+            }
+
+            List<Slot> slotList = slotRepository.findAllByAccountId(userId);
+
+            if (!slotList.isEmpty()) {
+                List<PartyBooking> partyBookingList = new ArrayList<>();
+                for (Slot slot : slotList) {
+                    for (SlotInRoom slotInRoom : slot.getSlotInRoom()) {
+                        for (PartyBooking partyBooking : slotInRoom.getPartyBookingList()) {
+                            LocalDate partyBookingDate = partyBooking.getCreateAt().toLocalDate();
+                            if (partyBookingDate.isEqual(createdAt)) {
+                                partyBookingList.add(partyBooking);
+                            }
+                        }
+                    }
+                }
+                if (partyBookingList.isEmpty()) {
+                    return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", partyBookingList));
+                }
+                for (PartyBooking partyBooking : partyBookingList) {
+
+                    partyBooking.getPackageInBookings().forEach(packageInBooking -> {
+                        packageInBooking.getAPackage().getVenue().setRoomList(null);
+                        packageInBooking.getAPackage().getVenue().setAccount(null);
+                    });
+                }
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not have any slots", null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
