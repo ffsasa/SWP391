@@ -17,6 +17,6 @@ public interface PackageRepository extends JpaRepository<Package, Long> {
     Optional<Package> findByVenueIdAndId(Long venueId, Long packageId);
     List<Package> findAllByIsActiveIsTrue();
     List<Package> findAllByVenueIdAndPackageType(Long venueId, TypeEnum typeEnum);
-    List<Package> findActivePackagesByVenueIdAndPackageType(Long venueId, TypeEnum typeEnum);
-    List<Package> findInactivePackagesByVenueIdAndPackageType(Long venueId, TypeEnum typeEnum);
+    List<Package> findAllByVenueIdAndIsActiveIsTrueAndPackageType(Long venueId, TypeEnum typeEnum);
+    List<Package> findAllByVenueIdAndIsActiveIsFalseAndPackageType(Long venueId, TypeEnum typeEnum);
 }
