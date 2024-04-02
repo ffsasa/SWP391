@@ -51,7 +51,7 @@ public class ServicesServicesImpl implements ServicesService {
                 }
             }
             if (servicesListAccount.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List is empty", servicesListAccount));
             }
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", servicesListAccount));
         } catch (Exception e) {
@@ -76,7 +76,7 @@ public class ServicesServicesImpl implements ServicesService {
                 }
             }
             if (servicesListAccountByType.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List is empty", servicesListAccountByType));
             }
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", servicesListAccountByType));
         } catch (Exception e) {
@@ -112,7 +112,7 @@ public class ServicesServicesImpl implements ServicesService {
                 }
             }
             if (servicesListTypeByHost.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List is empty", servicesListTypeByHost));
             }
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", servicesListTypeByHost));
         } catch (Exception e) {
@@ -134,7 +134,7 @@ public class ServicesServicesImpl implements ServicesService {
                 }
             }
             if (servicesListTypeByHost.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List is empty", servicesListTypeByHost));
             }
             for(Services services : servicesListTypeByHost){
                 if(services.isActive()){
@@ -142,7 +142,7 @@ public class ServicesServicesImpl implements ServicesService {
                 }
             }
             if(servicesListTypeIstrueByHost.isEmpty()){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List is empty", servicesListTypeIstrueByHost));
             }
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", servicesListTypeIstrueByHost));
         } catch (Exception e) {
@@ -164,7 +164,7 @@ public class ServicesServicesImpl implements ServicesService {
                 }
             }
             if (servicesListTypeByHost.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List is empty", servicesListTypeByHost));
             }
             for(Services services : servicesListTypeByHost){
                 if(!services.isActive()){
@@ -172,7 +172,7 @@ public class ServicesServicesImpl implements ServicesService {
                 }
             }
             if(servicesListTypeIstrueByHost.isEmpty()){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List is empty", servicesListTypeIstrueByHost));
             }
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", servicesListTypeIstrueByHost));
         } catch (Exception e) {
@@ -193,7 +193,7 @@ public class ServicesServicesImpl implements ServicesService {
             }
         }
         if(servicesListActive.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List is empty", servicesListActive));
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", servicesListActive));
     }
@@ -210,7 +210,7 @@ public class ServicesServicesImpl implements ServicesService {
             }
         }
         if(servicesListActive.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "List is empty", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List is empty", servicesListActive));
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Ok", servicesListActive));
     }
@@ -228,7 +228,7 @@ public class ServicesServicesImpl implements ServicesService {
                 }
             }
             if (servicesListByHost.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "List is empty", servicesListByHost));
             }
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", servicesListByHost));
         } catch (Exception e) {

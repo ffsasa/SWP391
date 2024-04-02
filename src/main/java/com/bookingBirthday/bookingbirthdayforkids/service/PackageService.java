@@ -32,4 +32,10 @@ public interface PackageService {
     ResponseEntity<ResponseObj> enablePackageForHost(Long id);
 
     public ResponseEntity<ResponseObj> getAllForCustomerByType(Long venueId, TypeEnum typeEnum);
+
+    ResponseEntity<ResponseObj> getAllForHostByType(TypeEnum typeEnum);
+
+    ResponseEntity<ResponseObj> getAllForHostIsTrueByType(TypeEnum typeEnum);
+
+    ResponseEntity<ResponseObj> getAllForHostIsFalseByType(TypeEnum typeEnum);
 }
