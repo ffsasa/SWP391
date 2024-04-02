@@ -387,10 +387,10 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             if (slotInRoom.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Slot in room does not exist", null));
             }
-            if (packageDeco.isEmpty()) {
+            if (packageDeco.isEmpty() || !packageDeco.get().getPackageType().equals(TypeEnum.DECORATION)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package deco does not exist", null));
             }
-            if (packageFood.isEmpty()) {
+            if (packageFood.isEmpty() || !packageFood.get().getPackageType().equals(TypeEnum.FOOD)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package food does not exist", null));
             }
 
