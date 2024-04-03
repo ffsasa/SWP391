@@ -68,7 +68,7 @@ public class PaymentServiceImpl implements PaymentService {
         Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
         int deposit = 0;
         partyBooking.get().setDeposit(deposit);
-        partyBooking.get().setStatus(StatusEnum.CANCELLED);
+        partyBooking.get().setStatus(StatusEnum.PENDING);
         partyBookingRepository.save(partyBooking.get());
     }
 
@@ -160,6 +160,14 @@ public class PaymentServiceImpl implements PaymentService {
                 String paymentUrl = PaymentConfig.vnp_PayUrl + "?" + queryUrl;
 
                 return paymentUrl;
+            }
+
+            if(partyBookingOptional.get().getStatus().equals(StatusEnum.CONFIRMED)){
+                return "CONFIRMED";
+            }else if(partyBookingOptional.get().getStatus().equals(StatusEnum.COMPLETED)){
+                return "COMPLETED";
+            }else if(partyBookingOptional.get().getStatus().equals(StatusEnum.CANCELLED)){
+                return "CANCELLED";
             }
 
         }
