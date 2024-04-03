@@ -343,7 +343,7 @@ public class RoomServiceImpl implements RoomService {
             }
             Optional<Venue> venue = venueRepository.findById(venueId);
             List<Room> roomList = venue.get().getRoomList();
-            for(Room room: roomList){
+            for (Room room : roomList) {
                 room.getVenue().setRoomList(null);
                 room.getVenue().setAccount(null);
                 room.setVenueInfo(room.getVenue());
@@ -370,9 +370,12 @@ public class RoomServiceImpl implements RoomService {
 
                 for (SlotInRoom slotInRoom : slotInRoomValidate) {
                     for (PartyBooking partyBooking : partyBookingList) {
-                        if (partyBooking.getSlotInRoom().equals(slotInRoom)) {
+                        if (partyBooking.getSlotInRoom().equals(slotInRoom) && (partyBooking.getStatus().equals(StatusEnum.PENDING) || partyBooking.getStatus().equals(StatusEnum.CONFIRMED) || partyBooking.getStatus().equals(StatusEnum.COMPLETED))) {
                             slotInRoom.setStatus(true);
+                        } else if (partyBooking.getSlotInRoom().equals(slotInRoom) && partyBooking.getStatus().equals(StatusEnum.CANCELLED)) {
+                            slotInRoom.setStatus(false);
                         }
+                    
                     }
                 }
                 room.setSlotInRoomList(slotInRoomValidate);
@@ -403,8 +406,10 @@ public class RoomServiceImpl implements RoomService {
                 for (SlotInRoom slotInRoom : slotInRoomList) {
 
                     for (PartyBooking partyBooking : partyBookingList) {
-                        if (partyBooking.getSlotInRoom().equals(slotInRoom)) {
+                        if (partyBooking.getSlotInRoom().equals(slotInRoom) && (partyBooking.getStatus().equals(StatusEnum.PENDING) || partyBooking.getStatus().equals(StatusEnum.CONFIRMED) || partyBooking.getStatus().equals(StatusEnum.COMPLETED))) {
                             slotInRoom.setStatus(true);
+                        } else if (partyBooking.getSlotInRoom().equals(slotInRoom) && partyBooking.getStatus().equals(StatusEnum.CANCELLED)) {
+                            slotInRoom.setStatus(false);
                         }
                     }
                 }
