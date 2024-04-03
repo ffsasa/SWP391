@@ -1,9 +1,14 @@
 package com.bookingBirthday.bookingbirthdayforkids.controller;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.PartyBookingRequest;
+import com.bookingBirthday.bookingbirthdayforkids.dto.request.UpgradeServiceRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.StatusEnum;
+import com.bookingBirthday.bookingbirthdayforkids.model.UpgradeService;
 import com.bookingBirthday.bookingbirthdayforkids.service.PartyBookingService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/party-booking")
@@ -84,26 +90,39 @@ public class PartyBookingController {
 
     @PutMapping("/update-upgrade-service/{partyBookingId}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> updateUpgradeService(@PathVariable Long partyBookingId, @Valid @RequestBody PartyBookingRequest partyBookingRequest) {
-        return partyBookingService.updateUpgradeService(partyBookingId, partyBookingRequest);
+    public ResponseEntity<ResponseObj> updateUpgradeService(@PathVariable Long partyBookingId, @RequestParam(required = false, defaultValue = "") String dataUpgrade) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<UpgradeServiceRequest> dataUpgradeList = objectMapper.readValue(dataUpgrade, new TypeReference<List<UpgradeServiceRequest>>() {
+        });
+        return partyBookingService.updateUpgradeService(partyBookingId, dataUpgradeList);
     }
 
-    @PutMapping("/update-organization-time/{partyBookingId}/{slotInRoomId}")
+    @PutMapping("/update-organization-time/{partyBookingId}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> updateOrganizationTime(@PathVariable Long partyBookingId, @PathVariable Long slotInRoomId, @Valid @RequestBody LocalDate date) {
+    public ResponseEntity<ResponseObj> updateOrganizationTime(@PathVariable Long partyBookingId,
+                                                              @RequestParam(required = false, defaultValue = "") Long slotInRoomId,
+                                                              @RequestParam(required = false, defaultValue = "") LocalDate date) {
         return partyBookingService.updateOrganizationTime(partyBookingId, date, slotInRoomId);
     }
 
     @PutMapping("/update-package/{partyBookingId}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> updatePackage(@PathVariable Long partyBookingId, @Valid @RequestBody PartyBookingRequest partyBookingRequest) {
-        return partyBookingService.updatePackage(partyBookingId, partyBookingRequest);
+    public ResponseEntity<ResponseObj> updatePackage(@PathVariable Long partyBookingId,
+                                                     @RequestParam(required = false, defaultValue = "") Long packageDecoId,
+                                                     @RequestParam(required = false, defaultValue = "") Long packageFoodId) {
+        return partyBookingService.updatePackage(partyBookingId, packageDecoId, packageFoodId);
     }
 
     @PutMapping("/update-basic-info/{partyBookingId}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<ResponseObj> updateBasicInfo(@PathVariable Long partyBookingId, @Valid @RequestBody PartyBookingRequest partyBookingRequest) {
-        return partyBookingService.updateBasicInfo(partyBookingId, partyBookingRequest);
+    public ResponseEntity<ResponseObj> updateBasicInfo(@PathVariable Long partyBookingId,
+                                                       @RequestParam(required = false, defaultValue = "") String kidName,
+                                                       @RequestParam(required = false, defaultValue = "") String reservationAgent,
+                                                       @RequestParam(required = false, defaultValue = "") LocalDate kidDOB,
+                                                       @RequestParam(required = false, defaultValue = "") String email,
+                                                       @RequestParam(required = false, defaultValue = "") String phone,
+                                                       @RequestParam(required = false, defaultValue = "") int participantAmount) {
+        return partyBookingService.updateBasicInfo(partyBookingId, kidName, reservationAgent, kidDOB, email, phone, participantAmount);
     }
 
     @PutMapping("/cancel-party-booking-for-host/{partyBookingId}")

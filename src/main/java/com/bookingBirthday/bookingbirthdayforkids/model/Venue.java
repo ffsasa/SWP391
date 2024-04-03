@@ -25,7 +25,6 @@ public class Venue extends BaseEntity{
     private String city;
     
     @OneToMany(mappedBy = "venue")
-//    @JsonIgnore
     private List<Room> roomList;
 
     @OneToOne(cascade = CascadeType.ALL)
