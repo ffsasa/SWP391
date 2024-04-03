@@ -1,10 +1,12 @@
 package com.bookingBirthday.bookingbirthdayforkids.service;
 
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.PartyBookingRequest;
+import com.bookingBirthday.bookingbirthdayforkids.dto.request.UpgradeServiceRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.model.PartyBooking;
 import com.bookingBirthday.bookingbirthdayforkids.model.SlotInRoom;
 import com.bookingBirthday.bookingbirthdayforkids.model.StatusEnum;
+import com.bookingBirthday.bookingbirthdayforkids.model.UpgradeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,13 +41,13 @@ public interface PartyBookingService {
 
     public ResponseEntity<ResponseObj> create(PartyBookingRequest partyBookingRequest);
 
-    public ResponseEntity<ResponseObj> updateUpgradeService(Long partyBookingId, PartyBookingRequest partyBookingRequest);
+    public ResponseEntity<ResponseObj> updateUpgradeService(Long partyBookingId, List<UpgradeServiceRequest> dataUpgrade);
 
     public ResponseEntity<ResponseObj> updateOrganizationTime(Long partyBookingId, LocalDate date, Long slotInRoomId);
 
-    public ResponseEntity<ResponseObj> updatePackage(Long partyBookingId, PartyBookingRequest partyBookingRequest);
+    public ResponseEntity<ResponseObj> updatePackage(Long partyBookingId, long packageDecoId, long packageFoodId);
 
-    public ResponseEntity<ResponseObj> updateBasicInfo(Long partyBookingId, PartyBookingRequest partyBookingRequest);
+    public ResponseEntity<ResponseObj> updateBasicInfo(Long partyBookingId, String kidName, String reservationAgent, LocalDate kidDOB, String email, String phoneNumber, int participantAmount);
 
     ResponseEntity<ResponseObj> cancelBooking_ForHost(Long partyBookingId);
 
