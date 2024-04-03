@@ -163,11 +163,11 @@ public class PaymentServiceImpl implements PaymentService {
             }
 
             if(partyBookingOptional.get().getStatus().equals(StatusEnum.CONFIRMED)){
-                return "CONFIRMED";
+                return "confirmed";
             }else if(partyBookingOptional.get().getStatus().equals(StatusEnum.COMPLETED)){
-                return "COMPLETED";
+                return "completed";
             }else if(partyBookingOptional.get().getStatus().equals(StatusEnum.CANCELLED)){
-                return "CANCELLED";
+                return "cancelled";
             }
 
         }
