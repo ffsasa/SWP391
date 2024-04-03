@@ -175,20 +175,26 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
         }
-
         Optional<Account> account = accountRepository.findById(userId);
         if (account.get().getVenue() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Venue not found for this account", null));
         }
-        Package pack = new Package();
-        float packPricing = 0;
-
         try {
+            for (PackageServiceRequest packageServiceRequest : packageServiceRequestList) {
+                Optional<Services> serviceOptional = servicesRepository.findById(packageServiceRequest.getServiceId());
+                if (!serviceOptional.isPresent()) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                            .body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Service not found for ID: " + packageServiceRequest.getServiceId(), null));
+                }
+            }
             if (imgFile != null) {
                 switch (typeEnum) {
-                    case FOOD, DECORATION:
+                    case FOOD:
+                    case DECORATION:
                         String img = firebaseService.uploadImage(imgFile);
+                        Package pack = new Package();
+                        float packPricing = 0;
                         pack.setPackageName(packageName);
                         pack.setPackageImgUrl(img);
                         pack.setPackageDescription(packageDescription);
@@ -197,38 +203,35 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
                         pack.setUpdateAt(LocalDateTime.now());
                         pack.setPackageType(typeEnum);
                         pack.setVenue(account.get().getVenue());
+                        float newPricing = 0;
+                        pack = packageRepository.save(pack);
+                        for (PackageServiceRequest packageServiceRequest : packageServiceRequestList) {
+                            PackageService packageService = new PackageService();
+                            packageService.setCount(packageServiceRequest.getCount());
+                            Optional<Services> serviceOptional = servicesRepository.findById(packageServiceRequest.getServiceId());
+                            Services service = serviceOptional.get();
+                            packageService.setPricing(packageService.getCount() * service.getPricing());
+                            packageService.setActive(true);
+                            packageService.setCreateAt(LocalDateTime.now());
+                            packageService.setUpdateAt(LocalDateTime.now());
+                            packPricing += packageService.getPricing();
+                            packageService.setApackage(pack);
+                            packageService.setServices(service);
+                            packageServiceRepository.save(packageService);
+                        }
+                        newPricing = packPricing * percent;
+                        pack.setPricing(packPricing - newPricing);
                         packageRepository.save(pack);
-                        break;
+                        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Successful", pack));
                     default:
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid package type", null));
                 }
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Image is invalid", null));
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Error occurred: " + e.getMessage(), null));
         }
-
-        for (PackageServiceRequest packageServiceRequest : packageServiceRequestList) {
-            PackageService packageService = new PackageService();
-            packageService.setCount(packageServiceRequest.getCount());
-            Optional<Services> serviceOptional = servicesRepository.findById(packageServiceRequest.getServiceId());
-            if (serviceOptional.isPresent()) {
-                Services service = serviceOptional.get();
-                packageService.setPricing(packageService.getCount() * service.getPricing());
-                packageService.setActive(true);
-                packageService.setCreateAt(LocalDateTime.now());
-                packageService.setUpdateAt(LocalDateTime.now());
-                packPricing += packageService.getPricing();
-                packageService.setApackage(pack);
-                packageService.setServices(service);
-                packageServiceRepository.save(packageService);
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Service not found for ID: " + packageServiceRequest.getServiceId(), null));
-            }
-        }
-        float newPricing = packPricing * percent;
-        pack.setPricing(packPricing - newPricing);
-        packageRepository.save(pack);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Successful", pack));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Invalid image file", null));
     }
 
 
@@ -307,7 +310,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
         }
-        Optional<Account> account =accountRepository.findById(userId);
+        Optional<Account> account = accountRepository.findById(userId);
         Optional<Package> pack = packageRepository.findById(id);
         if (!pack.get().isActive()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -394,6 +397,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageList));
     }
+
     @Override
     public ResponseEntity<ResponseObj> getAllForHostIsTrueByType(TypeEnum typeEnum) {
         Long userId = AuthenUtil.getCurrentUserId();
@@ -433,7 +437,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "No Package Found", new ArrayList<>()));
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageList));
-}
+    }
 
 }
 
