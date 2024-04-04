@@ -70,4 +70,8 @@ public class PartyBooking extends BaseEntity{
     @Transient
     @JsonProperty("venueObject")
     private Venue venueObject;
+
+    @Transient
+    @JsonProperty("roomObject")
+    private Room roomObject;
 }

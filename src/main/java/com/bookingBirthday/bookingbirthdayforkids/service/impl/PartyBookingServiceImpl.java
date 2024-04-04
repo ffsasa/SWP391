@@ -215,6 +215,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to see this booking", null));
                 }
                 partyBooking.get().setVenueObject(partyBooking.get().getSlotInRoom().getSlot().getAccount().getVenue());
+                partyBooking.get().setRoomObject(partyBooking.get().getSlotInRoom().getRoom());
 
                 partyBooking.get().getPackageInBookings().forEach(packageInBooking -> {
                     packageInBooking.getAPackage().getVenue().setRoomList(null);
