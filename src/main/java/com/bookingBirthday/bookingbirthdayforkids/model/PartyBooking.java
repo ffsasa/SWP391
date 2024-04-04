@@ -69,5 +69,5 @@ public class PartyBooking extends BaseEntity{
 
     @Transient
     @JsonProperty("venueObject")
-    private boolean venueObject;
+    private Venue venueObject;
 }
