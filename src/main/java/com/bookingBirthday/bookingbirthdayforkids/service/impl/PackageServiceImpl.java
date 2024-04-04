@@ -31,7 +31,7 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
     VenueRepository venueRepository;
     @Autowired
     AccountRepository accountRepository;
-
+    @Autowired PartyBookingRepository partyBookingRepository;
     //fix
     @Override
     public ResponseEntity<ResponseObj> getAllForCustomer(Long id) {
@@ -438,6 +438,71 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "OK", packageList));
     }
+    @Override
+    public ResponseEntity<ResponseObj> getAllPackageByPartyBookingId(Long partyBookingId) {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
+        }
+        Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(partyBookingId);
+        if (partyBookingOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Party booking not found", null));
+        }
+        PartyBooking partyBooking = partyBookingOptional.get();
+        List<PackageInBooking> selectedPackages = partyBooking.getPackageInBookings();
+        List<Package> allPackages = packageRepository.findAllByIsActiveIsTrue();
+        List<Package> availablePackages = new ArrayList<>();
+        for (Package aPackage : allPackages) {
+            boolean isSelected = false;
+            for (PackageInBooking selectedPackage : selectedPackages) {
+                if (selectedPackage.getAPackage().equals(aPackage)) {
+                    isSelected = true;
+                    break;
+                }
+            }
+            if (!isSelected) {
+                availablePackages.add(aPackage);
+            }
+        }
 
+        if (availablePackages.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "No active packages available for this party booking", null));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "OK", availablePackages));
+    }
+    @Override
+    public ResponseEntity<ResponseObj> getAllPackageByPartyBookingIdAndType(Long partyBookingId, TypeEnum typeEnum) {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
+        }
+        Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(partyBookingId);
+        if (partyBookingOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Party booking not found", null));
+        }
+        PartyBooking partyBooking = partyBookingOptional.get();
+        List<PackageInBooking> selectedPackages = partyBooking.getPackageInBookings();
+        List<Package> allPackages = packageRepository.findAllByPackageTypeAndIsActiveIsTrue(typeEnum);
+        List<Package> availablePackages = new ArrayList<>();
+        for (Package aPackage : allPackages) {
+            boolean isSelected = false;
+            for (PackageInBooking selectedPackage : selectedPackages) {
+                if (selectedPackage.getAPackage().equals(aPackage)) {
+                    isSelected = true;
+                    break;
+                }
+            }
+            if (!isSelected) {
+                availablePackages.add(aPackage);
+            }
+        }
+
+        if (availablePackages.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "No active packages available for this party booking", null));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "OK", availablePackages));
+    }
 }
 

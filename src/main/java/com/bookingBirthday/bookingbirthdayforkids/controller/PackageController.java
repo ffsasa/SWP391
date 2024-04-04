@@ -139,4 +139,17 @@ public class PackageController {
     public ResponseEntity<ResponseObj> enablePackageForHost(@PathVariable Long packageId) {
         return packageService.enablePackageForHost(packageId);
     }
+    @GetMapping("/get-all-package/{partyBookingId}")
+    public ResponseEntity<ResponseObj> getAllPackagesByPartyBookingId(
+            @PathVariable Long partyBookingId,
+            @RequestParam(required = false, defaultValue = "") String packageType
+    ) {
+        if (packageType.isEmpty()) {
+            return packageService.getAllPackageByPartyBookingId(partyBookingId);
+        } else {
+            TypeEnum typeEnum = TypeEnum.valueOf(packageType.toUpperCase());
+            return packageService.getAllPackageByPartyBookingIdAndType(partyBookingId, typeEnum);
+        }
+    }
+
 }

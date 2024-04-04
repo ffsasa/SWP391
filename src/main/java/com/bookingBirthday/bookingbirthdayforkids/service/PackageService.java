@@ -38,4 +38,8 @@ public interface PackageService {
     ResponseEntity<ResponseObj> getAllForHostIsTrueByType(TypeEnum typeEnum);
 
     ResponseEntity<ResponseObj> getAllForHostIsFalseByType(TypeEnum typeEnum);
+
+    ResponseEntity<ResponseObj> getAllPackageByPartyBookingId(Long partyBookingId);
+
+    ResponseEntity<ResponseObj> getAllPackageByPartyBookingIdAndType(Long partyBookingId, TypeEnum typeEnum);
 }
