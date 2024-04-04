@@ -17,6 +17,7 @@ public interface PaymentService {
     void paymentSuccess(Long id);
 
     public void paymentFail(Long id);
+    public ResponseEntity<ResponseObj>  deletePaymentById(Long id);
 
 //    public ResponseEntity<ResponseObj> Cancel(Long bookingId);
 
