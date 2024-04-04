@@ -58,6 +58,11 @@ public class PaymentController {
         }
     }
 
+    @DeleteMapping("/delete-all-payment/{id}")
+    public ResponseEntity<ResponseObj> deleteAll(@PathVariable Long id) {
+        return paymentService.deletePaymentById(id);
+    }
+
 
 
 

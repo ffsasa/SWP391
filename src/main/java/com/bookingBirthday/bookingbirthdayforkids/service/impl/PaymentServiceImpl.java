@@ -54,35 +54,35 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void paymentSuccess(Long id) {
-        Optional <PartyBooking> partyBooking = partyBookingRepository.findById(id);
-        int totalPrice = (int) (partyBooking.get().getDeposit() * 2);
-        int remainMoney = (int) (totalPrice - partyBooking.get().getDeposit());
+        Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
+        int deposit = (int) (partyBooking.get().getTotalPrice() * 0.5);
+        int remainMoney = (int) (partyBooking.get().getTotalPrice() - deposit);
         partyBooking.get().setRemainingMoney(remainMoney);
-        partyBooking.get().setTotalPrice(totalPrice);
+        partyBooking.get().setDeposit(deposit);
         partyBooking.get().setStatus(StatusEnum.CONFIRMED);
         partyBookingRepository.save(partyBooking.get());
     }
 
     @Override
-    public void paymentFail(Long id){
+    public void paymentFail(Long id) {
         Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
         int deposit = 0;
         partyBooking.get().setDeposit(deposit);
+        partyBooking.get().setRemainingMoney(0);
         partyBooking.get().setStatus(StatusEnum.PENDING);
         partyBookingRepository.save(partyBooking.get());
     }
 
     //sửa
-    public String payWithVNPAYOnline(Long id, Long paymentMethodId,HttpServletRequest request) throws UnsupportedEncodingException{
+    public String payWithVNPAYOnline(Long id, Long paymentMethodId, HttpServletRequest request) throws UnsupportedEncodingException {
         Optional<PartyBooking> partyBookingOptional = partyBookingRepository.findById(id);
 
 
+        if (partyBookingOptional.isPresent()) {
+            if (partyBookingOptional.get().getStatus().equals(StatusEnum.PENDING)) {
 
-        if(partyBookingOptional.isPresent()){
-            if(partyBookingOptional.get().getStatus().equals(StatusEnum.PENDING)){
-
-                for(Payment payment : partyBookingOptional.get().getPaymentList()){
-                    if(payment.getStatus().equals("SUCCESS")){
+                for (Payment payment : partyBookingOptional.get().getPaymentList()) {
+                    if (payment.getStatus().equals("SUCCESS")) {
                         return "success";
                     }
                 }
@@ -90,22 +90,22 @@ public class PaymentServiceImpl implements PaymentService {
                 Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
 
                 Optional<PartyBooking> partyBooking = partyBookingRepository.findById(id);
-                float totalPrice = TotalPriceUtil.getTotalPricingPackage(partyBooking.get());
-                for (UpgradeService upgradeService : partyBooking.get().getUpgradeServices()) {
-                    totalPrice += upgradeService.getServices().getPricing() * upgradeService.getCount();
-                }
-                totalPrice += partyBooking.get().getSlotInRoom().getRoom().getPricing();
+//                float totalPrice = TotalPriceUtil.getTotalPricingPackage(partyBooking.get());
+//                for (UpgradeService upgradeService : partyBooking.get().getUpgradeServices()) {
+//                    totalPrice += upgradeService.getServices().getPricing() * upgradeService.getCount();
+//                }
+//                totalPrice += partyBooking.get().getSlotInRoom().getRoom().getPricing();
+//
+//                float vnp_Amount = totalPrice;
+//
+//                for (UpgradeService upgradeService : partyBooking.get().getUpgradeServices()) {
+//                    vnp_Amount += (upgradeService.getServices().getPricing() * upgradeService.getCount());
+//                }
+                float totalPrice = partyBooking.get().getTotalPrice();
+                float vnp_Amount = totalPrice;
 
-                int vnp_Amount = (int) totalPrice;
-
-                for(UpgradeService upgradeService : partyBooking.get().getUpgradeServices()){
-                    vnp_Amount += (int) (upgradeService.getServices().getPricing() * upgradeService.getCount());
-                }
-
-                int vnp_Deposit = (int) (vnp_Amount * 0.5);
-                int vnp_RemainMoney = (int) (totalPrice - vnp_Deposit);
-                partyBooking.get().setDeposit(vnp_Deposit);
-                partyBookingRepository.save(partyBooking.get());
+                float deposit = (float) (vnp_Amount / 2);
+                int vnp_Deposit = (int)deposit;
 
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
                 String vnp_CreateDate = formatter.format(cld.getTime());
@@ -118,7 +118,7 @@ public class PaymentServiceImpl implements PaymentService {
                 vnp_Params.put("vnp_Command", PaymentConfig.vnp_Command);
                 vnp_Params.put("vnp_TmnCode", PaymentConfig.vnp_TmnCode);
                 vnp_Params.put("vnp_Amount", String.valueOf(String.valueOf(vnp_Deposit) + "00"));
-                vnp_Params.put("vnp_BankCode",  PaymentConfig.vnp_BankCode);
+                vnp_Params.put("vnp_BankCode", PaymentConfig.vnp_BankCode);
                 vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
                 vnp_Params.put("vnp_CurrCode", PaymentConfig.vnp_CurrCode);
                 vnp_Params.put("vnp_IpAddr", PaymentConfig.getIpAddress(request));
@@ -162,11 +162,11 @@ public class PaymentServiceImpl implements PaymentService {
                 return paymentUrl;
             }
 
-            if(partyBookingOptional.get().getStatus().equals(StatusEnum.CONFIRMED)){
+            if (partyBookingOptional.get().getStatus().equals(StatusEnum.CONFIRMED)) {
                 return "confirmed";
-            }else if(partyBookingOptional.get().getStatus().equals(StatusEnum.COMPLETED)){
+            } else if (partyBookingOptional.get().getStatus().equals(StatusEnum.COMPLETED)) {
                 return "completed";
-            }else if(partyBookingOptional.get().getStatus().equals(StatusEnum.CANCELLED)){
+            } else if (partyBookingOptional.get().getStatus().equals(StatusEnum.CANCELLED)) {
                 return "cancelled";
             }
 
@@ -176,16 +176,15 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
 
-
     @Override
     public ResponseEntity<ResponseObj> getById(Long id) {
         try {
             Optional<Payment> payment = paymentRepository.findById(id);
-            if(payment.isPresent())
+            if (payment.isPresent())
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), null, payment));
             else
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Payment does not exist", null));
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
         }
     }
@@ -243,4 +242,15 @@ public class PaymentServiceImpl implements PaymentService {
 //        else
 //            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Payment does not exist", null));
 //    }
+
+    @Override
+    public ResponseEntity<ResponseObj> deletePaymentById(Long id) {
+        Optional<Payment> paymentOptional = paymentRepository.findById(id);
+        if (paymentOptional.isPresent()) {
+            paymentRepository.deleteById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Delete successfully", null));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Payment with ID " + id + " not found", null));
+        }
+    }
 }
