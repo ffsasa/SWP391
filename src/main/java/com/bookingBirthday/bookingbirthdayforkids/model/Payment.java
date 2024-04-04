@@ -29,5 +29,6 @@ public class Payment extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "partyBooking_id")
+    @JsonIgnore
     private PartyBooking partyBooking;
 }

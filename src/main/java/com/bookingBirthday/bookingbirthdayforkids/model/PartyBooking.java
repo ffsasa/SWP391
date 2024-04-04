@@ -54,7 +54,7 @@ public class PartyBooking extends BaseEntity{
     private List<UpgradeService> upgradeServices;
 
     @OneToMany(mappedBy = "partyBooking", cascade = CascadeType.ALL)
-    @JsonIgnore
+//    @JsonIgnore
     private List<Payment> paymentList;
 
     @OneToMany(mappedBy = "partyBooking", cascade = CascadeType.ALL)
