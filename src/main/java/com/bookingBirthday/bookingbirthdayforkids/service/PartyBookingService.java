@@ -60,4 +60,6 @@ public interface PartyBookingService {
     public List<PartyBooking> findConfirmedBookings();
 
     public void updateCronJob(Long partyBookingId, PartyBooking partyBooking);
+
+    public List<PartyBooking> findPendingBookings();
 }

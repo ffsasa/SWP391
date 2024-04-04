@@ -1084,4 +1084,9 @@ public class PartyBookingServiceImpl implements PartyBookingService {
         partyBookingOptional.get().setStatus(partyBooking.getStatus());
         partyBookingRepository.save(partyBookingOptional.get());
     }
+
+    @Override
+    public List<PartyBooking> findPendingBookings() {
+        return partyBookingRepository.findAllByStatus(StatusEnum.PENDING);
+    }
 }
