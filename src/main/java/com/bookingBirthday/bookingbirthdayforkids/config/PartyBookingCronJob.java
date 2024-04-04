@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
@@ -19,7 +20,7 @@ public class PartyBookingCronJob {
     PartyBookingService partyBookingService;
 
 
-    @Scheduled(fixedRate = 90000)
+    @Scheduled(fixedRate = 900000)
     public void processConfirmPartyBookings() {
         LocalDateTime currentTime = LocalDateTime.now();
         List<PartyBooking> confirmedBookings = partyBookingService.findConfirmedBookings();
@@ -33,6 +34,26 @@ public class PartyBookingCronJob {
 
                 if (currentTime.isAfter(localDateTime.plusMinutes(15))) {
                     booking.setStatus(StatusEnum.COMPLETED);
+                    partyBookingService.updateCronJob(booking.getId(), booking);
+                }
+            } catch (DateTimeParseException e) {
+                System.err.println("Error parsing time: " + e.getMessage());
+            }
+        }
+    }
+
+    @Scheduled(fixedRate = 900000)
+    public void processCancelPartyBookings() {
+        LocalDateTime currentTime = LocalDateTime.now();
+        List<PartyBooking> pendingBookings = partyBookingService.findPendingBookings();
+        for (PartyBooking booking : pendingBookings) {
+            try {
+                LocalTime localTime = LocalDate.now().atStartOfDay().toLocalTime();
+
+                LocalDateTime localDateTime = LocalDateTime.of(LocalDate.now(), localTime);
+
+                if (currentTime.isAfter(localDateTime.plusMinutes(15))) {
+                    booking.setStatus(StatusEnum.CANCELLED);
                     partyBookingService.updateCronJob(booking.getId(), booking);
                 }
             } catch (DateTimeParseException e) {
