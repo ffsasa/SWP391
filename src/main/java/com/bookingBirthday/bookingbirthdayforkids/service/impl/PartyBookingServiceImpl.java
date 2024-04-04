@@ -53,6 +53,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
 
             List<PartyBooking> partyBookingList = partyBookingRepository.findAllByIsActiveIsTrueAndAccountId(userId);
             for (PartyBooking partyBooking : partyBookingList) {
+                partyBooking.setVenueObject(partyBooking.getSlotInRoom().getSlot().getAccount().getVenue());
 
                 partyBooking.getPackageInBookings().forEach(packageInBooking -> {
                     packageInBooking.getAPackage().getVenue().setRoomList(null);
@@ -99,6 +100,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", null));
                 }
                 for (PartyBooking partyBooking : partyBookingList) {
+                    partyBooking.setVenueObject(partyBooking.getSlotInRoom().getSlot().getAccount().getVenue());
 
                     partyBooking.getPackageInBookings().forEach(packageInBooking -> {
                         packageInBooking.getAPackage().getVenue().setRoomList(null);
@@ -148,6 +150,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", null));
                 }
                 for (PartyBooking partyBooking : partyBookingList) {
+                    partyBooking.setVenueObject(partyBooking.getSlotInRoom().getSlot().getAccount().getVenue());
 
                     partyBooking.getPackageInBookings().forEach(packageInBooking -> {
                         packageInBooking.getAPackage().getVenue().setRoomList(null);
@@ -182,6 +185,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
 
             if (partyBooking.isPresent()) {
                 if (partyBooking.get().getSlotInRoom().getSlot().getAccount().getId().equals(userId)) {
+                    partyBooking.get().setVenueObject(partyBooking.get().getSlotInRoom().getSlot().getAccount().getVenue());
 
                     partyBooking.get().getPackageInBookings().forEach(packageInBooking -> {
                         packageInBooking.getAPackage().getVenue().setRoomList(null);
@@ -210,6 +214,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 if (!partyBooking.get().getAccount().getId().equals(userId)) {
                     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permission to see this booking", null));
                 }
+                partyBooking.get().setVenueObject(partyBooking.get().getSlotInRoom().getSlot().getAccount().getVenue());
 
                 partyBooking.get().getPackageInBookings().forEach(packageInBooking -> {
                     packageInBooking.getAPackage().getVenue().setRoomList(null);
@@ -256,6 +261,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", partyBookingList));
                 }
                 for (PartyBooking partyBooking : partyBookingList) {
+                    partyBooking.setVenueObject(partyBooking.getSlotInRoom().getSlot().getAccount().getVenue());
 
                     partyBooking.getPackageInBookings().forEach(packageInBooking -> {
                         packageInBooking.getAPackage().getVenue().setRoomList(null);
@@ -303,6 +309,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", partyBookingList));
                 }
                 for (PartyBooking partyBooking : partyBookingList) {
+                    partyBooking.setVenueObject(partyBooking.getSlotInRoom().getSlot().getAccount().getVenue());
 
                     partyBooking.getPackageInBookings().forEach(packageInBooking -> {
                         packageInBooking.getAPackage().getVenue().setRoomList(null);
@@ -350,6 +357,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", partyBookingList));
                 }
                 for (PartyBooking partyBooking : partyBookingList) {
+                    partyBooking.setVenueObject(partyBooking.getSlotInRoom().getSlot().getAccount().getVenue());
 
                     partyBooking.getPackageInBookings().forEach(packageInBooking -> {
                         packageInBooking.getAPackage().getVenue().setRoomList(null);
@@ -398,6 +406,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", partyBookingList));
                 }
                 for (PartyBooking partyBooking : partyBookingList) {
+                    partyBooking.setVenueObject(partyBooking.getSlotInRoom().getSlot().getAccount().getVenue());
 
                     partyBooking.getPackageInBookings().forEach(packageInBooking -> {
                         packageInBooking.getAPackage().getVenue().setRoomList(null);
@@ -447,6 +456,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", partyBookingList));
                 }
                 for (PartyBooking partyBooking : partyBookingList) {
+                    partyBooking.setVenueObject(partyBooking.getSlotInRoom().getSlot().getAccount().getVenue());
 
                     partyBooking.getPackageInBookings().forEach(packageInBooking -> {
                         packageInBooking.getAPackage().getVenue().setRoomList(null);
@@ -496,6 +506,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", partyBookingList));
                 }
                 for (PartyBooking partyBooking : partyBookingList) {
+                    partyBooking.setVenueObject(partyBooking.getSlotInRoom().getSlot().getAccount().getVenue());
 
                     partyBooking.getPackageInBookings().forEach(packageInBooking -> {
                         packageInBooking.getAPackage().getVenue().setRoomList(null);
@@ -544,6 +555,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", partyBookingList));
                 }
                 for (PartyBooking partyBooking : partyBookingList) {
+                    partyBooking.setVenueObject(partyBooking.getSlotInRoom().getSlot().getAccount().getVenue());
 
                     partyBooking.getPackageInBookings().forEach(packageInBooking -> {
                         packageInBooking.getAPackage().getVenue().setRoomList(null);
@@ -816,7 +828,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
 
                 List<PackageInBooking> packageInBookingList = existPartyBooking.get().getPackageInBookings();
                 for (PackageInBooking packageInBooking : packageInBookingList) {
-                    if (packageDecoId != 0){
+                    if (packageDecoId != 0) {
                         Optional<Package> packageDeco = packageRepository.findById(packageDecoId);
                         if (packageDeco.isEmpty()) {
                             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package deco does not exist", null));
@@ -833,7 +845,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                         }
                     }
 
-                    if (packageFoodId != 0){
+                    if (packageFoodId != 0) {
                         Optional<Package> packageFood = packageRepository.findById(packageFoodId);
                         if (packageFood.isEmpty()) {
                             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package food does not exist", null));
