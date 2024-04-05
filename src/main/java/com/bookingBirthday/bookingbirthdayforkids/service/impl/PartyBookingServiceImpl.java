@@ -1033,6 +1033,12 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             Optional<PartyBooking> partyBooking = partyBookingRepository.findByIdAndIsActiveIsTrue(bookingId);
             if (partyBooking.isPresent()) {
                 if (partyBooking.get().getAccount().getId().equals(userId)) {
+                    if (partyBooking.get().getStatus() == StatusEnum.CANCELLED) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "The party booking has already been cancelled", null));
+                    }
+                    if (partyBooking.get().getStatus() == StatusEnum.COMPLETED) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "The party booking has already been completed", null));
+                    }
                     if (partyBooking.get().getStatus() == StatusEnum.PENDING || partyBooking.get().getStatus() == StatusEnum.CONFIRMED) {
                         partyBooking.get().getPackageInBookings().forEach(packageInBooking -> {
                             packageInBooking.setActive(false);
@@ -1077,6 +1083,9 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 if (partyBooking.get().getSlotInRoom().getSlot().getAccount().getId().equals(userId)) {
                     if (partyBooking.get().getStatus() == StatusEnum.CANCELLED) {
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "The party booking has already been cancelled", null));
+                    }
+                    if (partyBooking.get().getStatus() == StatusEnum.COMPLETED) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "The party booking has already been completed", null));
                     }
                     if (partyBooking.get().getStatus() == StatusEnum.PENDING || partyBooking.get().getStatus() == StatusEnum.CONFIRMED) {
                         partyBooking.get().getPackageInBookings().forEach(packageInBooking -> {
