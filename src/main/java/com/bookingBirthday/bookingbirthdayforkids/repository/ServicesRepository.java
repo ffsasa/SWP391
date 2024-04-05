@@ -13,6 +13,9 @@ public interface ServicesRepository extends JpaRepository<Services, Long> {
 
     List<Services> findAllByIsActiveIsTrue();
 
+
+    List<Services> findAllByAccountId(Long accountId);
+
     List<Services> findAllByServiceTypeAndIsActiveIsTrue(TypeEnum typeEnum);
 
 
