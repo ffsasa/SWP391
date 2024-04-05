@@ -3,7 +3,10 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.ReplyReviewRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.ReviewRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
-import com.bookingBirthday.bookingbirthdayforkids.model.*;
+import com.bookingBirthday.bookingbirthdayforkids.model.Account;
+import com.bookingBirthday.bookingbirthdayforkids.model.PartyBooking;
+import com.bookingBirthday.bookingbirthdayforkids.model.Review;
+import com.bookingBirthday.bookingbirthdayforkids.model.Venue;
 import com.bookingBirthday.bookingbirthdayforkids.repository.AccountRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PartyBookingRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.ReviewRepository;
@@ -26,39 +29,28 @@ public class ReviewServiceImpl implements ReviewService {
     ReviewRepository reviewRepository;
     @Autowired
     AccountRepository accountRepository;
+
     @Override
     public ResponseEntity<ResponseObj> create(Long bookingId, ReviewRequest reviewRequest) {
         Long userId = AuthenUtil.getCurrentUserId();
-        if(userId == null){
+        if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
         }
-        Account account = accountRepository.findById(userId).orElse(null);
-        if(account == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "User not found", null));
-        }
-        Optional<PartyBooking> optionalPartyBooking = partyBookingRepository.findById(bookingId);
-        if(optionalPartyBooking.isEmpty()) {
+        Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
+        if (partyBooking.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Party booking not found", null));
         }
-        PartyBooking partyBooking = optionalPartyBooking.get();
-        if(!partyBooking.getAccount().getId().equals(userId)){
+
+        if (!partyBooking.get().getAccount().getId().equals(userId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permitted to review this party", null));
         }
-        SlotInRoom slotInRoom = partyBooking.getSlotInRoom();
-        if(slotInRoom == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Slot in room not found for this party booking", null));
-        }
-        Room room = slotInRoom.getRoom();
-        if(room == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Room not found for this slot in room", null));
-        }
-        Venue venue = room.getVenue();
-        if(venue == null) {
+        Venue venue = partyBooking.get().getSlotInRoom().getRoom().getVenue();
+        if (venue == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found for this room", null));
         }
         Review review = new Review();
         review.setReviewMessage(reviewRequest.getReviewMessage());
-        review.setPartyBooking(partyBooking);
+        review.setPartyBooking(partyBooking.get());
         review.setRating(reviewRequest.getRating());
         review.setCreateAt(LocalDateTime.now());
         review.setUpdateAt(LocalDateTime.now());
@@ -71,13 +63,13 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ResponseEntity<ResponseObj> reply(Long bookingId, Long id, ReplyReviewRequest replyReviewRequest) {
         Long userId = AuthenUtil.getCurrentUserId();
-        if(userId == null){
+        if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
         }
         Account account = accountRepository.findById(userId).get();
         Review review = reviewRepository.findById(id).get();
         Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
-        if(partyBooking.isPresent()) {
+        if (partyBooking.isPresent()) {
             review.setReplyMessage(replyReviewRequest.getReplyMessage());
             reviewRepository.save(review);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObj(HttpStatus.CREATED.toString(), "Reply Successful", review));
@@ -100,13 +92,13 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ResponseEntity<ResponseObj> update(Long bookingId, Long id, ReviewRequest reviewRequest) {
         Long userId = AuthenUtil.getCurrentUserId();
-        if(userId == null){
+        if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
         }
         Account account = accountRepository.findById(userId).get();
         Review review = reviewRepository.findById(id).get();
         Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
-        if(partyBooking.isPresent()) {
+        if (partyBooking.isPresent()) {
             review.setReviewMessage(reviewRequest.getReviewMessage());
             review.setRating(reviewRequest.getRating() == 0 ? review.getRating() : reviewRequest.getRating());
             reviewRepository.save(review);
