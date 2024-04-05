@@ -3,10 +3,7 @@ package com.bookingBirthday.bookingbirthdayforkids.service.impl;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.ReplyReviewRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.ReviewRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
-import com.bookingBirthday.bookingbirthdayforkids.model.Account;
-import com.bookingBirthday.bookingbirthdayforkids.model.PartyBooking;
-import com.bookingBirthday.bookingbirthdayforkids.model.Review;
-import com.bookingBirthday.bookingbirthdayforkids.model.Venue;
+import com.bookingBirthday.bookingbirthdayforkids.model.*;
 import com.bookingBirthday.bookingbirthdayforkids.repository.AccountRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.PartyBookingRepository;
 import com.bookingBirthday.bookingbirthdayforkids.repository.ReviewRepository;
@@ -44,6 +41,9 @@ public class ReviewServiceImpl implements ReviewService {
         if (!partyBooking.get().getAccount().getId().equals(userId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "User not permitted to review this party", null));
         }
+        if (partyBooking.get().getStatus() != StatusEnum.COMPLETED) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseObj(HttpStatus.FORBIDDEN.toString(), "Party booking must be completed to review", null));
+        }
         Venue venue = partyBooking.get().getSlotInRoom().getRoom().getVenue();
         if (venue == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Venue not found for this room", null));
@@ -78,16 +78,41 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    public ResponseEntity<ResponseObj> getAllReviewsByVenueIdAndRating(Long venueId, Integer rating) {
+        if (rating < 0 || rating > 5) {
+            return ResponseEntity.badRequest().body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Rating must be between 0 and 5", null));
+        }
+
+        List<Review> reviewList = reviewRepository.findAllByVenueIdAndRating(venueId, rating);
+
+        if (reviewList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "There are no reviews with the specified rating", null));
+        }
+        for (Review review : reviewList) {
+            review.setPartyBookingId(review.getPartyBooking().getId());
+            review.setAccount(review.getPartyBooking().getAccount());
+            review.setAccountReply(review.getVenue().getAccount());
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseObj(HttpStatus.OK.toString(), "List", reviewList));
+    }
+
+    @Override
     public ResponseEntity<ResponseObj> getAllReviewsByVenueId(Long venueId) {
         List<Review> reviewList = reviewRepository.findAllByVenueId(venueId);
         if (reviewList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "There are no reviews yet", null));
         }
+        for (Review review : reviewList) {
+            review.setPartyBookingId(review.getPartyBooking().getId());
+            review.setAccount(review.getPartyBooking().getAccount());
+            review.setAccountReply(review.getVenue().getAccount());
+        }
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseObj(HttpStatus.OK.toString(), "List", reviewList));
     }
-
 
     @Override
     public ResponseEntity<ResponseObj> update(Long bookingId, Long id, ReviewRequest reviewRequest) {

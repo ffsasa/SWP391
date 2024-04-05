@@ -10,6 +10,8 @@ public interface ReviewService {
 
     public ResponseEntity<ResponseObj> reply(Long bookingId, Long id, ReplyReviewRequest replyReviewRequest);
 
+    ResponseEntity<ResponseObj> getAllReviewsByVenueIdAndRating(Long venueId, Integer rating);
+
     ResponseEntity<ResponseObj> getAllReviewsByVenueId(Long venueId);
 
     public ResponseEntity<ResponseObj> update(Long bookingId, Long id, ReviewRequest reviewRequest);
