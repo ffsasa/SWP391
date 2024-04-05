@@ -121,6 +121,9 @@ public class VenueServiceImpl implements VenueService {
         try {
             Optional<Venue> venue = venueRepository.findById(id);
             if (venue.isPresent() && venue.get().isActive()) {
+                for(Review review: venue.get().getReviewList()){
+                    review.setPartyBookingId(review.getPartyBooking().getId());
+                }
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", venue));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not exist", null));

@@ -40,5 +40,6 @@ public class Package extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "venue_id")
+    @JsonIgnore
     private Venue venue;
 }

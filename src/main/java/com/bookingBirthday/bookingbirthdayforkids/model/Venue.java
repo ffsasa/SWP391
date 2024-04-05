@@ -36,6 +36,5 @@ public class Venue extends BaseEntity{
     private List<Package> packageList;
 
     @OneToMany(mappedBy = "venue")
-    @JsonIgnore
     private List<Review> reviewList;
 }

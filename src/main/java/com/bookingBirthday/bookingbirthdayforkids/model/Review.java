@@ -2,10 +2,8 @@ package com.bookingBirthday.bookingbirthdayforkids.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -29,10 +27,15 @@ public class Review extends BaseEntity{
     private float rating;
     @OneToOne
     @JoinColumn(name = "partyBooking_id", referencedColumnName = "id")
+    @JsonIgnore
     private PartyBooking partyBooking;
 
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "venue_id")
     private Venue venue;
+
+    @Transient
+    @JsonProperty("partyBookingId")
+    private Long partyBookingId;
 }
