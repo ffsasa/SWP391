@@ -55,6 +55,13 @@ public class VenueServiceImpl implements VenueService {
             if (venueList.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "List is empty", null));
             }
+            for(Venue venue: venueList){
+                for(Review review: venue.getReviewList()){
+                    review.setPartyBookingId(review.getPartyBooking().getId());
+                    review.setAccount(review.getPartyBooking().getAccount());
+                    review.setAccountReply(review.getVenue().getAccount());
+                }
+            }
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", venueList));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObj(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Internal Server Error", null));
@@ -123,6 +130,8 @@ public class VenueServiceImpl implements VenueService {
             if (venue.isPresent() && venue.get().isActive()) {
                 for(Review review: venue.get().getReviewList()){
                     review.setPartyBookingId(review.getPartyBooking().getId());
+                    review.setAccount(review.getPartyBooking().getAccount());
+                    review.setAccountReply(review.getVenue().getAccount());
                 }
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", venue));
             }

@@ -32,7 +32,7 @@ public class Venue extends BaseEntity{
     private Account account;
 
     @OneToMany(mappedBy = "venue")
-    @JsonIgnore
+//    @JsonIgnore
     private List<Package> packageList;
 
     @OneToMany(mappedBy = "venue")

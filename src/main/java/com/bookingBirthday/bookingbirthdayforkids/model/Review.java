@@ -38,4 +38,12 @@ public class Review extends BaseEntity{
     @Transient
     @JsonProperty("partyBookingId")
     private Long partyBookingId;
+
+    @Transient
+    @JsonProperty("account")
+    private Account account;
+
+    @Transient
+    @JsonProperty("accountReply")
+    private Account accountReply;
 }
