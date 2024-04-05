@@ -27,9 +27,12 @@ public class Review extends BaseEntity{
     @Min(value = 1, message = "Rating must be at least 1")
     @Max(value = 5, message = "Rating must be at most 5")
     private float rating;
-
     @OneToOne
     @JoinColumn(name = "partyBooking_id", referencedColumnName = "id")
-    @JsonIgnore
     private PartyBooking partyBooking;
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "venue_id")
+    private Venue venue;
 }
