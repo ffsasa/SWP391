@@ -35,39 +35,42 @@ public class PartyBookingController {
     @PreAuthorize("hasAuthority('HOST')")
     public ResponseEntity<ResponseObj> getAllForHost(@RequestParam(required = false, defaultValue = "") LocalDate date,
                                                      @RequestParam(required = false, defaultValue = "") String status,
-                                                     @RequestParam(required = false, defaultValue = "") LocalDate createdDate) {
+                                                     @RequestParam(required = false, defaultValue = "") LocalDate createdDate,
+                                                     @RequestParam(required = false, defaultValue = "1") int page,
+                                                     @RequestParam(required = false, defaultValue = "4") int size) {
         if (date != null){
             if (!status.isEmpty()){
                 if (createdDate != null){
                     StatusEnum statusEnum = StatusEnum.valueOf(status);
-                    return partyBookingService.getAll_ForHostByDateAndCreatedAndStatus(date, createdDate, statusEnum);
+                    return partyBookingService.getAll_ForHostByDateAndCreatedAndStatus(date, createdDate, statusEnum, page, size);
                 }
-                return partyBookingService.getAll_ForHostByTypeAndDate(StatusEnum.valueOf(status), date);
+                return partyBookingService.getAll_ForHostByTypeAndDate(StatusEnum.valueOf(status), date, page, size);
             } else {
                 if (createdDate != null){
-                    return partyBookingService.getAll_ForHostByDateAndCreated(date, createdDate);
+                    return partyBookingService.getAll_ForHostByDateAndCreated(date, createdDate, page, size);
                 }
-                return partyBookingService.getAll_ForHostByDate(date);
+                return partyBookingService.getAll_ForHostByDate(date, page, size);
             }
         } else {
             if (!status.isEmpty()){
                 if (createdDate != null){
-                    return partyBookingService.getAll_ForHostByStatusAndCreated(StatusEnum.valueOf(status), createdDate);
+                    return partyBookingService.getAll_ForHostByStatusAndCreated(StatusEnum.valueOf(status), createdDate, page, size);
                 }
-                return partyBookingService.getAll_ForHostByStatus(StatusEnum.valueOf(status));
+                return partyBookingService.getAll_ForHostByStatus(StatusEnum.valueOf(status), page, size);
             } else {
                 if (createdDate != null){
-                    return partyBookingService.getAll_ForHostByCreated(createdDate);
+                    return partyBookingService.getAll_ForHostByCreated(createdDate, page, size);
                 }
-                return partyBookingService.getAll_ForHost();
+                return partyBookingService.getAll_ForHost(page, size);
             }
         }
     }
 
     @GetMapping("/get-all-completed")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getAllCompleted() {
-        return partyBookingService.getAllCompleted();
+    public ResponseEntity<ResponseObj> getAllCompleted(@RequestParam(required = false, defaultValue = "1") int page,
+                                                       @RequestParam(required = false, defaultValue = "4") int size) {
+        return partyBookingService.getAllCompleted(page, size);
     }
 
     @GetMapping("/get-by-id-for-host/{partyBookingId}")

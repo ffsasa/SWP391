@@ -10,6 +10,8 @@ import com.bookingBirthday.bookingbirthdayforkids.service.PartyBookingService;
 import com.bookingBirthday.bookingbirthdayforkids.util.AuthenUtil;
 import com.bookingBirthday.bookingbirthdayforkids.util.TotalPriceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -70,7 +72,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getAll_ForHost() {
+    public ResponseEntity<ResponseObj> getAll_ForHost(int page, int size) {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
@@ -99,7 +101,11 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 if (partyBookingList.isEmpty()) {
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", null));
                 }
-                for (PartyBooking partyBooking : partyBookingList) {
+                int startIndex = Math.max(0, (page - 1) * size);
+                int endIndex = Math.min(startIndex + size, partyBookingList.size());
+
+                List<PartyBooking> currentPagePartyBookings = partyBookingList.subList(startIndex, endIndex);
+                for (PartyBooking partyBooking : currentPagePartyBookings) {
                     partyBooking.setVenueObject(partyBooking.getSlotInRoom().getSlot().getAccount().getVenue());
 
                     partyBooking.getPackageInBookings().forEach(packageInBooking -> {
@@ -107,7 +113,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                         packageInBooking.getAPackage().getVenue().setAccount(null);
                     });
                 }
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", currentPagePartyBookings));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not have any slots", null));
         } catch (Exception e) {
@@ -116,7 +122,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getAllCompleted() {
+    public ResponseEntity<ResponseObj> getAllCompleted(int page, int size) {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
@@ -149,7 +155,11 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 if (partyBookingList.isEmpty()) {
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", null));
                 }
-                for (PartyBooking partyBooking : partyBookingList) {
+                int startIndex = Math.max(0, (page - 1) * size);
+                int endIndex = Math.min(startIndex + size, partyBookingList.size());
+
+                List<PartyBooking> currentPagePartyBookings = partyBookingList.subList(startIndex, endIndex);
+                for (PartyBooking partyBooking : currentPagePartyBookings) {
                     partyBooking.setVenueObject(partyBooking.getSlotInRoom().getSlot().getAccount().getVenue());
 
                     partyBooking.getPackageInBookings().forEach(packageInBooking -> {
@@ -157,7 +167,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                         packageInBooking.getAPackage().getVenue().setAccount(null);
                     });
                 }
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", currentPagePartyBookings));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not have any slots", null));
         } catch (Exception e) {
@@ -230,7 +240,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getAll_ForHostByDate(LocalDate date) {
+    public ResponseEntity<ResponseObj> getAll_ForHostByDate(LocalDate date, int page, int size) {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
@@ -261,7 +271,11 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 if (partyBookingList.isEmpty()) {
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", partyBookingList));
                 }
-                for (PartyBooking partyBooking : partyBookingList) {
+                int startIndex = Math.max(0, (page - 1) * size);
+                int endIndex = Math.min(startIndex + size, partyBookingList.size());
+
+                List<PartyBooking> currentPagePartyBookings = partyBookingList.subList(startIndex, endIndex);
+                for (PartyBooking partyBooking : currentPagePartyBookings) {
                     partyBooking.setVenueObject(partyBooking.getSlotInRoom().getSlot().getAccount().getVenue());
 
                     partyBooking.getPackageInBookings().forEach(packageInBooking -> {
@@ -269,7 +283,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                         packageInBooking.getAPackage().getVenue().setAccount(null);
                     });
                 }
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", currentPagePartyBookings));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not have any slots", null));
         } catch (Exception e) {
@@ -278,7 +292,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getAll_ForHostByStatus(StatusEnum statusEnum) {
+    public ResponseEntity<ResponseObj> getAll_ForHostByStatus(StatusEnum statusEnum, int page, int size) {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
@@ -309,7 +323,11 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 if (partyBookingList.isEmpty()) {
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", partyBookingList));
                 }
-                for (PartyBooking partyBooking : partyBookingList) {
+                int startIndex = Math.max(0, (page - 1) * size);
+                int endIndex = Math.min(startIndex + size, partyBookingList.size());
+
+                List<PartyBooking> currentPagePartyBookings = partyBookingList.subList(startIndex, endIndex);
+                for (PartyBooking partyBooking : currentPagePartyBookings) {
                     partyBooking.setVenueObject(partyBooking.getSlotInRoom().getSlot().getAccount().getVenue());
 
                     partyBooking.getPackageInBookings().forEach(packageInBooking -> {
@@ -317,7 +335,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                         packageInBooking.getAPackage().getVenue().setAccount(null);
                     });
                 }
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", currentPagePartyBookings));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not have any slots", null));
         } catch (Exception e) {
@@ -326,7 +344,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getAll_ForHostByTypeAndDate(StatusEnum statusEnum, LocalDate date) {
+    public ResponseEntity<ResponseObj> getAll_ForHostByTypeAndDate(StatusEnum statusEnum, LocalDate date, int page, int size) {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
@@ -357,7 +375,12 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 if (partyBookingList.isEmpty()) {
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", partyBookingList));
                 }
-                for (PartyBooking partyBooking : partyBookingList) {
+
+                int startIndex = Math.max(0, (page - 1) * size);
+                int endIndex = Math.min(startIndex + size, partyBookingList.size());
+
+                List<PartyBooking> currentPagePartyBookings = partyBookingList.subList(startIndex, endIndex);
+                for (PartyBooking partyBooking : currentPagePartyBookings) {
                     partyBooking.setVenueObject(partyBooking.getSlotInRoom().getSlot().getAccount().getVenue());
 
                     partyBooking.getPackageInBookings().forEach(packageInBooking -> {
@@ -365,7 +388,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                         packageInBooking.getAPackage().getVenue().setAccount(null);
                     });
                 }
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", currentPagePartyBookings));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not have any slots", null));
         } catch (Exception e) {
@@ -374,8 +397,9 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getAll_ForHostByDateAndCreatedAndStatus(LocalDate date, LocalDate createdAt, StatusEnum statusEnum) {
+    public ResponseEntity<ResponseObj> getAll_ForHostByDateAndCreatedAndStatus(LocalDate date, LocalDate createdAt, StatusEnum statusEnum, int page, int size) {
         try {
+            Pageable pageable = PageRequest.of(page, size);
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User does not exist", null));
@@ -406,7 +430,12 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 if (partyBookingList.isEmpty()) {
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", partyBookingList));
                 }
-                for (PartyBooking partyBooking : partyBookingList) {
+                int startIndex = Math.max(0, (page - 1) * size);
+                int endIndex = Math.min(startIndex + size, partyBookingList.size());
+
+                List<PartyBooking> currentPagePartyBookings = partyBookingList.subList(startIndex, endIndex);
+                System.out.println("currentPagePartyBookings size: " + currentPagePartyBookings.size());
+                for (PartyBooking partyBooking : currentPagePartyBookings) {
                     partyBooking.setVenueObject(partyBooking.getSlotInRoom().getSlot().getAccount().getVenue());
 
                     partyBooking.getPackageInBookings().forEach(packageInBooking -> {
@@ -414,7 +443,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                         packageInBooking.getAPackage().getVenue().setAccount(null);
                     });
                 }
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", currentPagePartyBookings));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not have any slots", null));
         } catch (Exception e) {
@@ -423,7 +452,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getAll_ForHostByDateAndCreated(LocalDate date, LocalDate createdAt) {
+    public ResponseEntity<ResponseObj> getAll_ForHostByDateAndCreated(LocalDate date, LocalDate createdAt, int page, int size) {
 
         try {
             Long userId = AuthenUtil.getCurrentUserId();
@@ -456,7 +485,11 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 if (partyBookingList.isEmpty()) {
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", partyBookingList));
                 }
-                for (PartyBooking partyBooking : partyBookingList) {
+                int startIndex = Math.max(0, (page - 1) * size);
+                int endIndex = Math.min(startIndex + size, partyBookingList.size());
+
+                List<PartyBooking> currentPagePartyBookings = partyBookingList.subList(startIndex, endIndex);
+                for (PartyBooking partyBooking : currentPagePartyBookings) {
                     partyBooking.setVenueObject(partyBooking.getSlotInRoom().getSlot().getAccount().getVenue());
 
                     partyBooking.getPackageInBookings().forEach(packageInBooking -> {
@@ -464,7 +497,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                         packageInBooking.getAPackage().getVenue().setAccount(null);
                     });
                 }
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", currentPagePartyBookings));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not have any slots", null));
         } catch (Exception e) {
@@ -473,7 +506,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getAll_ForHostByStatusAndCreated(StatusEnum statusEnum, LocalDate createdAt) {
+    public ResponseEntity<ResponseObj> getAll_ForHostByStatusAndCreated(StatusEnum statusEnum, LocalDate createdAt, int page, int size) {
 
         try {
             Long userId = AuthenUtil.getCurrentUserId();
@@ -506,7 +539,11 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 if (partyBookingList.isEmpty()) {
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", partyBookingList));
                 }
-                for (PartyBooking partyBooking : partyBookingList) {
+                int startIndex = Math.max(0, (page - 1) * size);
+                int endIndex = Math.min(startIndex + size, partyBookingList.size());
+
+                List<PartyBooking> currentPagePartyBookings = partyBookingList.subList(startIndex, endIndex);
+                for (PartyBooking partyBooking : currentPagePartyBookings) {
                     partyBooking.setVenueObject(partyBooking.getSlotInRoom().getSlot().getAccount().getVenue());
 
                     partyBooking.getPackageInBookings().forEach(packageInBooking -> {
@@ -514,7 +551,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                         packageInBooking.getAPackage().getVenue().setAccount(null);
                     });
                 }
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", currentPagePartyBookings));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not have any slots", null));
         } catch (Exception e) {
@@ -523,7 +560,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> getAll_ForHostByCreated(LocalDate createdAt) {
+    public ResponseEntity<ResponseObj> getAll_ForHostByCreated(LocalDate createdAt, int page, int size) {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
@@ -555,7 +592,11 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 if (partyBookingList.isEmpty()) {
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "List is empty", partyBookingList));
                 }
-                for (PartyBooking partyBooking : partyBookingList) {
+                int startIndex = Math.max(0, (page - 1) * size);
+                int endIndex = Math.min(startIndex + size, partyBookingList.size());
+
+                List<PartyBooking> currentPagePartyBookings = partyBookingList.subList(startIndex, endIndex);
+                for (PartyBooking partyBooking : currentPagePartyBookings) {
                     partyBooking.setVenueObject(partyBooking.getSlotInRoom().getSlot().getAccount().getVenue());
 
                     partyBooking.getPackageInBookings().forEach(packageInBooking -> {
@@ -563,7 +604,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                         packageInBooking.getAPackage().getVenue().setAccount(null);
                     });
                 }
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", partyBookingList));
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Ok", currentPagePartyBookings));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This venue does not have any slots", null));
         } catch (Exception e) {
@@ -939,7 +980,6 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                         });
                         partyBooking.get().setStatus(StatusEnum.CANCELLED);
                         partyBooking.get().setDeleteAt(LocalDateTime.now());
-                        partyBooking.get().setActive(false);
                         partyBookingRepository.save(partyBooking.get());
 
                         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Cancel successful", null));
@@ -985,7 +1025,6 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                         });
                         partyBooking.get().setStatus(StatusEnum.CANCELLED);
                         partyBooking.get().setDeleteAt(LocalDateTime.now());
-                        partyBooking.get().setActive(false);
                         partyBookingRepository.save(partyBooking.get());
 
                         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj(HttpStatus.OK.toString(), "Cancel successful", null));

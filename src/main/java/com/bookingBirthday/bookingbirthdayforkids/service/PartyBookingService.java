@@ -17,27 +17,27 @@ import java.util.List;
 public interface PartyBookingService {
     public ResponseEntity<ResponseObj> getAllByUser();
 
-    public ResponseEntity<ResponseObj> getAll_ForHost();
+    public ResponseEntity<ResponseObj> getAll_ForHost(int page, int size);
 
-    public ResponseEntity<ResponseObj> getAllCompleted();
+    public ResponseEntity<ResponseObj> getAllCompleted(int page, int size);
 
     public ResponseEntity<ResponseObj> getById_ForHost(Long partyBookingId);
 
     public ResponseEntity<ResponseObj> getById_ForCustomer(Long partyBookingId);
 
-    ResponseEntity<ResponseObj> getAll_ForHostByDate(LocalDate date);
+    ResponseEntity<ResponseObj> getAll_ForHostByDate(LocalDate date, int page, int size);
 
-    ResponseEntity<ResponseObj> getAll_ForHostByStatus(StatusEnum statusEnum);
+    ResponseEntity<ResponseObj> getAll_ForHostByStatus(StatusEnum statusEnum, int page, int size);
 
-    ResponseEntity<ResponseObj> getAll_ForHostByTypeAndDate(StatusEnum statusEnum, LocalDate date);
+    ResponseEntity<ResponseObj> getAll_ForHostByTypeAndDate(StatusEnum statusEnum, LocalDate date, int page, int size);
 
-    ResponseEntity<ResponseObj> getAll_ForHostByDateAndCreatedAndStatus(LocalDate date, LocalDate createdAt ,StatusEnum statusEnum);
+    ResponseEntity<ResponseObj> getAll_ForHostByDateAndCreatedAndStatus(LocalDate date, LocalDate createdAt ,StatusEnum statusEnum, int page, int size);
 
-    ResponseEntity<ResponseObj> getAll_ForHostByDateAndCreated(LocalDate date, LocalDate createdAt);
+    ResponseEntity<ResponseObj> getAll_ForHostByDateAndCreated(LocalDate date, LocalDate createdAt, int page, int size);
 
-    ResponseEntity<ResponseObj> getAll_ForHostByStatusAndCreated(StatusEnum statusEnum, LocalDate createdAt);
+    ResponseEntity<ResponseObj> getAll_ForHostByStatusAndCreated(StatusEnum statusEnum, LocalDate createdAt, int page, int size);
 
-    ResponseEntity<ResponseObj> getAll_ForHostByCreated(LocalDate createdAt);
+    ResponseEntity<ResponseObj> getAll_ForHostByCreated(LocalDate createdAt, int page, int size);
 
     public ResponseEntity<ResponseObj> create(PartyBookingRequest partyBookingRequest);
 
