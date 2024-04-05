@@ -407,6 +407,7 @@ public class RoomServiceImpl implements RoomService {
                     for (PartyBooking partyBooking : partyBookingList) {
                         if (partyBooking.getSlotInRoom().equals(slotInRoom) && (partyBooking.getStatus().equals(StatusEnum.PENDING) || partyBooking.getStatus().equals(StatusEnum.CONFIRMED) || partyBooking.getStatus().equals(StatusEnum.COMPLETED))) {
                             slotInRoom.setStatus(true);
+                            slotInRoom.setPartyBookingId(partyBooking.getId());
                         }else if(partyBooking.getSlotInRoom().equals(slotInRoom) && partyBooking.getStatus().equals(StatusEnum.CANCELLED)){
                             slotInRoom.setStatus(false);
                         }

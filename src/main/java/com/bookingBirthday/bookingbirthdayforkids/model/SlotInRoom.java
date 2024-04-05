@@ -19,6 +19,10 @@ public class SlotInRoom extends BaseEntity{
     @JsonProperty("status")
     private boolean status;
 
+    @Transient
+    @JsonProperty("partyBookingId")
+    private Long partyBookingId;
+
     @ManyToOne
     @JoinColumn(name = "slot_id")
     private Slot slot;
