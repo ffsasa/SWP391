@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -102,11 +103,17 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 if (partyBookingList.isEmpty()) {
                     return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObjMeta(HttpStatus.ACCEPTED.toString(), "List is empty", null, null));
                 }
+                int totalPages = (int) Math.ceil((double) partyBookingList.size() / size);
+                if (page > totalPages) {
+                    Meta meta = new Meta(partyBookingList.size(), totalPages, page, size);
+                    meta.setPageSize(0);
+                    return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObjMeta(HttpStatus.ACCEPTED.toString(), "Page does not exist", Collections.emptyList(), meta));
+                }
                 int startIndex = Math.max(0, (page - 1) * size);
                 int endIndex = Math.min(startIndex + size, partyBookingList.size());
                 List<PartyBooking> currentPagePartyBookings = partyBookingList.subList(startIndex, endIndex);
 
-                int totalPages = (int) Math.ceil((double) partyBookingList.size() / size);
+
                 Meta meta = new Meta(partyBookingList.size(), totalPages, page, size);
                 for (PartyBooking partyBooking : currentPagePartyBookings) {
                     partyBooking.setVenueObject(partyBooking.getSlotInRoom().getSlot().getAccount().getVenue());
