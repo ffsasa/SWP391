@@ -26,9 +26,15 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews/{venueId}")
-    public ResponseEntity<ResponseObj> getAllReviewsByVenueId(@PathVariable Long venueId) {
-        return reviewService.getAllReviewsByVenueId(venueId);
+    public ResponseEntity<ResponseObj> getAllReviewsByVenueId(@PathVariable Long venueId,
+                                                              @RequestParam(required = false) Integer rating) {
+        if (rating == null) {
+            return reviewService.getAllReviewsByVenueId(venueId);
+        } else {
+            return reviewService.getAllReviewsByVenueIdAndRating(venueId, rating);
+        }
     }
+
 
     @PutMapping("/update-review/{bookingId}/{id}")
     public ResponseEntity<ResponseObj> update(@PathVariable Long bookingId,@PathVariable Long id, @Valid @RequestBody ReviewRequest reviewRequest){
