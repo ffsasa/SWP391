@@ -7,9 +7,10 @@ import org.springframework.http.ResponseEntity;
 
 public interface ReviewService {
     public ResponseEntity<ResponseObj> create(Long bookingId, ReviewRequest reviewRequest);
-    public ResponseEntity<ResponseObj> getAll(Long bookingId);
 
     public ResponseEntity<ResponseObj> reply(Long bookingId, Long id, ReplyReviewRequest replyReviewRequest);
+
+    ResponseEntity<ResponseObj> getAllReviewsByVenueId(Long venueId);
 
     public ResponseEntity<ResponseObj> update(Long bookingId, Long id, ReviewRequest reviewRequest);
 

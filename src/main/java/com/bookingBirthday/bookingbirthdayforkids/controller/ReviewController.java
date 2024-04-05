@@ -25,9 +25,9 @@ public class ReviewController {
         return reviewService.reply(bookingId, id, replyReviewRequest);
     }
 
-    @GetMapping("/get-all/{id}")
-    public ResponseEntity<ResponseObj> getAll(@PathVariable Long id){
-        return reviewService.getAll(id);
+    @GetMapping("/reviews/{venueId}")
+    public ResponseEntity<ResponseObj> getAllReviewsByVenueId(@PathVariable Long venueId) {
+        return reviewService.getAllReviewsByVenueId(venueId);
     }
 
     @PutMapping("/update-review/{bookingId}/{id}")

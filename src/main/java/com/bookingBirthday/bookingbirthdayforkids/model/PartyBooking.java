@@ -61,6 +61,7 @@ public class PartyBooking extends BaseEntity{
     private List<PackageInBooking> packageInBookings;
 
     @OneToOne(mappedBy = "partyBooking", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Review review;
 
     @ManyToOne
