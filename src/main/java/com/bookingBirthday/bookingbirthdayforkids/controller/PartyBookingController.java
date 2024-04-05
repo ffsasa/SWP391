@@ -4,6 +4,7 @@ import com.bookingBirthday.bookingbirthdayforkids.dto.request.PartyBookingReques
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.UpgradeServiceRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObjMeta;
+import com.bookingBirthday.bookingbirthdayforkids.model.PartyBooking;
 import com.bookingBirthday.bookingbirthdayforkids.model.StatusEnum;
 import com.bookingBirthday.bookingbirthdayforkids.model.UpgradeService;
 import com.bookingBirthday.bookingbirthdayforkids.service.PartyBookingService;
@@ -17,7 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/party-booking")
@@ -38,33 +39,55 @@ public class PartyBookingController {
                                                          @RequestParam(required = false, defaultValue = "") String status,
                                                          @RequestParam(required = false, defaultValue = "") LocalDate createdDate,
                                                          @RequestParam(required = false, defaultValue = "1") int page,
-                                                         @RequestParam(required = false, defaultValue = "4") int size) {
+                                                         @RequestParam(required = false, defaultValue = "4") int size,
+                                                         @RequestParam(required = false, defaultValue = "") String sort) throws InterruptedException {
+        ResponseEntity<ResponseObjMeta> responseEntity;
         if (date != null){
             if (!status.isEmpty()){
                 if (createdDate != null){
                     StatusEnum statusEnum = StatusEnum.valueOf(status);
-                    return partyBookingService.getAll_ForHostByDateAndCreatedAndStatus(date, createdDate, statusEnum, page, size);
+                    responseEntity = partyBookingService.getAll_ForHostByDateAndCreatedAndStatus(date, createdDate, statusEnum, page, size);
+                } else {
+                    responseEntity = partyBookingService.getAll_ForHostByTypeAndDate(StatusEnum.valueOf(status), date, page, size);
                 }
-                return partyBookingService.getAll_ForHostByTypeAndDate(StatusEnum.valueOf(status), date, page, size);
             } else {
                 if (createdDate != null){
-                    return partyBookingService.getAll_ForHostByDateAndCreated(date, createdDate, page, size);
+                    responseEntity = partyBookingService.getAll_ForHostByDateAndCreated(date, createdDate, page, size);
+                } else {
+                    responseEntity = partyBookingService.getAll_ForHostByDate(date, page, size);
                 }
-                return partyBookingService.getAll_ForHostByDate(date, page, size);
             }
         } else {
             if (!status.isEmpty()){
                 if (createdDate != null){
-                    return partyBookingService.getAll_ForHostByStatusAndCreated(StatusEnum.valueOf(status), createdDate, page, size);
+                    responseEntity = partyBookingService.getAll_ForHostByStatusAndCreated(StatusEnum.valueOf(status), createdDate, page, size);
+                } else {
+                    responseEntity = partyBookingService.getAll_ForHostByStatus(StatusEnum.valueOf(status), page, size);
                 }
-                return partyBookingService.getAll_ForHostByStatus(StatusEnum.valueOf(status), page, size);
             } else {
                 if (createdDate != null){
-                    return partyBookingService.getAll_ForHostByCreated(createdDate, page, size);
+                    responseEntity = partyBookingService.getAll_ForHostByCreated(createdDate, page, size);
+                } else {
+                    responseEntity = partyBookingService.getAll_ForHost(page, size);
                 }
-                return partyBookingService.getAll_ForHost(page, size);
             }
         }
+
+        Object data = Objects.requireNonNull(responseEntity.getBody()).getData();
+        if (data instanceof List<?> dataList) {
+            if (!dataList.isEmpty() && dataList.get(0) instanceof PartyBooking) {
+                List<PartyBooking> partyBookingList = (List<PartyBooking>) dataList;
+                if (sort != null) {
+                    if (sort.equals("ASC")) {
+                        partyBookingList.sort(Comparator.comparing(PartyBooking::getCreateAt));
+                    } else if (sort.equals("DESC")) {
+                        partyBookingList.sort(Comparator.comparing(PartyBooking::getCreateAt).reversed());
+                    }
+                }
+                responseEntity.getBody().setData(partyBookingList);
+            }
+        }
+        return responseEntity;
     }
 
     @GetMapping("/get-all-completed")
