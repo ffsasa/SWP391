@@ -3,6 +3,7 @@ package com.bookingBirthday.bookingbirthdayforkids.service;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.PartyBookingRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.UpgradeServiceRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
+import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObjMeta;
 import com.bookingBirthday.bookingbirthdayforkids.model.PartyBooking;
 import com.bookingBirthday.bookingbirthdayforkids.model.SlotInRoom;
 import com.bookingBirthday.bookingbirthdayforkids.model.StatusEnum;
@@ -17,27 +18,27 @@ import java.util.List;
 public interface PartyBookingService {
     public ResponseEntity<ResponseObj> getAllByUser();
 
-    public ResponseEntity<ResponseObj> getAll_ForHost(int page, int size);
+    public ResponseEntity<ResponseObjMeta> getAll_ForHost(int page, int size);
 
-    public ResponseEntity<ResponseObj> getAllCompleted(int page, int size);
+    public ResponseEntity<ResponseObjMeta> getAllCompleted(int page, int size);
 
     public ResponseEntity<ResponseObj> getById_ForHost(Long partyBookingId);
 
     public ResponseEntity<ResponseObj> getById_ForCustomer(Long partyBookingId);
 
-    ResponseEntity<ResponseObj> getAll_ForHostByDate(LocalDate date, int page, int size);
+    ResponseEntity<ResponseObjMeta> getAll_ForHostByDate(LocalDate date, int page, int size);
 
-    ResponseEntity<ResponseObj> getAll_ForHostByStatus(StatusEnum statusEnum, int page, int size);
+    ResponseEntity<ResponseObjMeta> getAll_ForHostByStatus(StatusEnum statusEnum, int page, int size);
 
-    ResponseEntity<ResponseObj> getAll_ForHostByTypeAndDate(StatusEnum statusEnum, LocalDate date, int page, int size);
+    ResponseEntity<ResponseObjMeta> getAll_ForHostByTypeAndDate(StatusEnum statusEnum, LocalDate date, int page, int size);
 
-    ResponseEntity<ResponseObj> getAll_ForHostByDateAndCreatedAndStatus(LocalDate date, LocalDate createdAt ,StatusEnum statusEnum, int page, int size);
+    ResponseEntity<ResponseObjMeta> getAll_ForHostByDateAndCreatedAndStatus(LocalDate date, LocalDate createdAt ,StatusEnum statusEnum, int page, int size);
 
-    ResponseEntity<ResponseObj> getAll_ForHostByDateAndCreated(LocalDate date, LocalDate createdAt, int page, int size);
+    ResponseEntity<ResponseObjMeta> getAll_ForHostByDateAndCreated(LocalDate date, LocalDate createdAt, int page, int size);
 
-    ResponseEntity<ResponseObj> getAll_ForHostByStatusAndCreated(StatusEnum statusEnum, LocalDate createdAt, int page, int size);
+    ResponseEntity<ResponseObjMeta> getAll_ForHostByStatusAndCreated(StatusEnum statusEnum, LocalDate createdAt, int page, int size);
 
-    ResponseEntity<ResponseObj> getAll_ForHostByCreated(LocalDate createdAt, int page, int size);
+    ResponseEntity<ResponseObjMeta> getAll_ForHostByCreated(LocalDate createdAt, int page, int size);
 
     public ResponseEntity<ResponseObj> create(PartyBookingRequest partyBookingRequest);
 
