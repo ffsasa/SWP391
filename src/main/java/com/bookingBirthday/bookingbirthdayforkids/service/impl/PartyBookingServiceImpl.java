@@ -1033,7 +1033,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
             Optional<PartyBooking> partyBooking = partyBookingRepository.findByIdAndIsActiveIsTrue(bookingId);
             if (partyBooking.isPresent()) {
                 if (partyBooking.get().getAccount().getId().equals(userId)) {
-                    if (partyBooking.get().getStatus() == StatusEnum.PENDING) {
+                    if (partyBooking.get().getStatus() == StatusEnum.PENDING || partyBooking.get().getStatus() == StatusEnum.CONFIRMED) {
                         partyBooking.get().getPackageInBookings().forEach(packageInBooking -> {
                             packageInBooking.setActive(false);
                             packageInBooking.setDeleteAt(LocalDateTime.now());
