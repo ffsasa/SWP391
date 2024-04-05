@@ -14,6 +14,10 @@ public interface ReviewService {
 
     ResponseEntity<ResponseObj> getAllReviewsByVenueId(Long venueId);
 
+    ResponseEntity<ResponseObj> getAllReviewsForHost();
+
+    ResponseEntity<ResponseObj> getAllReviewsForHostByRating(Integer rating);
+
     public ResponseEntity<ResponseObj> update(Long bookingId, Long id, ReviewRequest reviewRequest);
 
     public ResponseEntity<ResponseObj> delete(Long id);
