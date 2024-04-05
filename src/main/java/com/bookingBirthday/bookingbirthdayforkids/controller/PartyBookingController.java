@@ -3,6 +3,7 @@ package com.bookingBirthday.bookingbirthdayforkids.controller;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.PartyBookingRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.request.UpgradeServiceRequest;
 import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObj;
+import com.bookingBirthday.bookingbirthdayforkids.dto.response.ResponseObjMeta;
 import com.bookingBirthday.bookingbirthdayforkids.model.StatusEnum;
 import com.bookingBirthday.bookingbirthdayforkids.model.UpgradeService;
 import com.bookingBirthday.bookingbirthdayforkids.service.PartyBookingService;
@@ -33,11 +34,11 @@ public class PartyBookingController {
 
     @GetMapping("/get-all-party-booking-for-host")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getAllForHost(@RequestParam(required = false, defaultValue = "") LocalDate date,
-                                                     @RequestParam(required = false, defaultValue = "") String status,
-                                                     @RequestParam(required = false, defaultValue = "") LocalDate createdDate,
-                                                     @RequestParam(required = false, defaultValue = "1") int page,
-                                                     @RequestParam(required = false, defaultValue = "4") int size) {
+    public ResponseEntity<ResponseObjMeta> getAllForHost(@RequestParam(required = false, defaultValue = "") LocalDate date,
+                                                         @RequestParam(required = false, defaultValue = "") String status,
+                                                         @RequestParam(required = false, defaultValue = "") LocalDate createdDate,
+                                                         @RequestParam(required = false, defaultValue = "1") int page,
+                                                         @RequestParam(required = false, defaultValue = "4") int size) {
         if (date != null){
             if (!status.isEmpty()){
                 if (createdDate != null){
@@ -68,7 +69,7 @@ public class PartyBookingController {
 
     @GetMapping("/get-all-completed")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseObj> getAllCompleted(@RequestParam(required = false, defaultValue = "1") int page,
+    public ResponseEntity<ResponseObjMeta> getAllCompleted(@RequestParam(required = false, defaultValue = "1") int page,
                                                        @RequestParam(required = false, defaultValue = "4") int size) {
         return partyBookingService.getAllCompleted(page, size);
     }
