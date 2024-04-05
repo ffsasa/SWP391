@@ -45,6 +45,8 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     SlotRepository slotRepository;
     @Autowired
     PackageRepository packageRepository;
+    @Autowired
+    ReviewRepository reviewRepository;
 
     //Sửa
     @Override
@@ -1136,6 +1138,10 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                         upgradeService.setDeleteAt(LocalDateTime.now());
                         upgradeServiceRepository.save(upgradeService);
                     });
+                    partyBooking.get().getReview().setActive(false);
+                    partyBooking.get().getReview().setDeleteAt(LocalDateTime.now());
+                    reviewRepository.save(partyBooking.get().getReview());
+
                     partyBooking.get().setDeleteAt(LocalDateTime.now());
                     partyBooking.get().setActive(false);
                     partyBookingRepository.save(partyBooking.get());
