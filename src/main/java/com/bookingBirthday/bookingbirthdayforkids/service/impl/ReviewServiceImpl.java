@@ -115,6 +115,61 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    public ResponseEntity<ResponseObj> getAllReviewsForHost() {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
+        }
+
+        Optional<Account> account = accountRepository.findById(userId);
+        Venue venue = account.get().getVenue();
+        if (venue == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You don't have any venue", null));
+        }
+        List<Review> reviewList = reviewRepository.findAllByVenueId(venue.getId());
+        if (reviewList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "There are no reviews yet", null));
+        }
+        for (Review review : reviewList) {
+            review.setPartyBookingId(review.getPartyBooking().getId());
+            review.setAccount(review.getPartyBooking().getAccount());
+            review.setAccountReply(review.getVenue().getAccount());
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseObj(HttpStatus.OK.toString(), "List", reviewList));
+    }
+    @Override
+    public ResponseEntity<ResponseObj> getAllReviewsForHostByRating(Integer rating) {
+        Long userId = AuthenUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "User not found", null));
+        }
+
+        Optional<Account> account = accountRepository.findById(userId);
+        Venue venue = account.get().getVenue();
+        if (venue == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "You don't have any venue", null));
+        }
+        if (rating < 0 || rating > 5) {
+            return ResponseEntity.badRequest().body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Rating must be between 0 and 5", null));
+        }
+
+        List<Review> reviewList = reviewRepository.findAllByVenueIdAndRating(venue.getId(), rating);
+        if (reviewList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "There are no reviews with the specified rating", null));
+        }
+        for (Review review : reviewList) {
+            review.setPartyBookingId(review.getPartyBooking().getId());
+            review.setAccount(review.getPartyBooking().getAccount());
+            review.setAccountReply(review.getVenue().getAccount());
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseObj(HttpStatus.OK.toString(), "List", reviewList));
+    }
+
+    @Override
     public ResponseEntity<ResponseObj> update(Long bookingId, Long id, ReviewRequest reviewRequest) {
         Long userId = AuthenUtil.getCurrentUserId();
         if (userId == null) {
