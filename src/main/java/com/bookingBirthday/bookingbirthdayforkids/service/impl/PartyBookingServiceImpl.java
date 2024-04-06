@@ -923,7 +923,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> updatePackage(Long partyBookingId, long packageDecoId, long packageFoodId) {
+    public ResponseEntity<ResponseObj> updatePackage(Long partyBookingId, Long packageDecoId, Long packageFoodId) {
         try {
             Long userId = AuthenUtil.getCurrentUserId();
             if (userId == null) {
@@ -938,7 +938,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
 
                 List<PackageInBooking> packageInBookingList = existPartyBooking.get().getPackageInBookings();
                 for (PackageInBooking packageInBooking : packageInBookingList) {
-                    if (packageDecoId != 0) {
+                    if (packageDecoId != null) {
                         Optional<Package> packageDeco = packageRepository.findById(packageDecoId);
                         if (packageDeco.isEmpty()) {
                             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package deco does not exist", null));
@@ -955,7 +955,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                         }
                     }
 
-                    if (packageFoodId != 0) {
+                    if (packageFoodId != null) {
                         Optional<Package> packageFood = packageRepository.findById(packageFoodId);
                         if (packageFood.isEmpty()) {
                             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package food does not exist", null));
