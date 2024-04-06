@@ -1015,6 +1015,18 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                 existPartyBooking.get().setParticipantAmount(participantAmount == 0 ? existPartyBooking.get().getParticipantAmount() : participantAmount);
                 existPartyBooking.get().setUpdateAt(LocalDateTime.now());
 
+                float pricing = 0;
+                for (UpgradeService upgradeService : existPartyBooking.get().getUpgradeServices()) {
+                    pricing += upgradeService.getServices().getPricing() * upgradeService.getCount();
+                }
+
+                pricing += TotalPriceUtil.getTotalPricingPackage(existPartyBooking.get());
+                pricing += existPartyBooking.get().getSlotInRoom().getRoom().getPricing();
+
+                existPartyBooking.get().setTotalPrice(pricing);
+
+                partyBookingRepository.save(existPartyBooking.get());
+
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObj(HttpStatus.ACCEPTED.toString(), "Update successful", existPartyBooking));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "This party booking does not exist", null));
