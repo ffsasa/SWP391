@@ -1174,7 +1174,7 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                     LocalTime currentTime = LocalTime.now();
                     Time timeStart = Time.valueOf(partyBooking.get().getSlotInRoom().getSlot().getTimeStart());
                     LocalTime localTimeStart = timeStart.toLocalTime();
-                    if (partyBooking.get().getStatus() == StatusEnum.CONFIRMED && currentTime.isAfter(localTimeStart.plusHours(1))) {
+                    if (partyBooking.get().getStatus() == StatusEnum.CONFIRMED && currentTime.isAfter(localTimeStart.plusSeconds(1))) {
                         partyBooking.get().setStatus(StatusEnum.COMPLETED);
                         partyBooking.get().setUpdateAt(LocalDateTime.now());
                         partyBookingRepository.save(partyBooking.get());

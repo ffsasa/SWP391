@@ -48,7 +48,7 @@ public class PartyBookingCronJob {
         List<PartyBooking> pendingBookings = partyBookingService.findPendingBookings();
         for (PartyBooking booking : pendingBookings) {
             try {
-                if (currentTime.isAfter(booking.getCreateAt().plusMinutes(30))){
+                if (currentTime.isAfter(booking.getCreateAt().plusHours(0).plusMinutes(30))){
                     booking.setStatus(StatusEnum.CANCELLED);
                     partyBookingService.updateCronJob(booking.getId(), booking);
                 }
