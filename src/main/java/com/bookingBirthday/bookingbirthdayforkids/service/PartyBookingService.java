@@ -46,7 +46,7 @@ public interface PartyBookingService {
 
     public ResponseEntity<ResponseObj> updateOrganizationTime(Long partyBookingId, LocalDate date, Long slotInRoomId);
 
-    public ResponseEntity<ResponseObj> updatePackage(Long partyBookingId, long packageDecoId, long packageFoodId);
+    public ResponseEntity<ResponseObj> updatePackage(Long partyBookingId, Long packageDecoId, Long packageFoodId);
 
     public ResponseEntity<ResponseObj> updateBasicInfo(Long partyBookingId, String kidName, String reservationAgent, LocalDate kidDOB, String email, String phoneNumber, int participantAmount);
 
