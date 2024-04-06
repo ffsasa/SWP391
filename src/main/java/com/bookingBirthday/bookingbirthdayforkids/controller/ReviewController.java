@@ -37,7 +37,7 @@ public class ReviewController {
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @GetMapping("/get-all-reviews-for-host")
     public ResponseEntity<ResponseObj> getAllReviewsForHost(@RequestParam(required = false) Integer rating) {
-        if (rating == 0) {
+        if (rating != 0) {
             return reviewService.getAllReviewsForHostByRating(rating);
         } else {
             return reviewService.getAllReviewsForHost();
