@@ -20,15 +20,15 @@ public class ReviewController {
         return reviewService.create(bookingId, reviewRequest);
     }
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
-    @PostMapping("/reply/{bookingId}/{id}")
-    public ResponseEntity<ResponseObj> reply(@PathVariable Long bookingId,@PathVariable Long id, @Valid @RequestBody ReplyReviewRequest replyReviewRequest){
-        return reviewService.reply(bookingId, id, replyReviewRequest);
+    @PutMapping("/reply/{id}")
+    public ResponseEntity<ResponseObj> reply(@PathVariable Long id, @Valid @RequestBody ReplyReviewRequest replyReviewRequest){
+        return reviewService.reply(id, replyReviewRequest);
     }
 
     @GetMapping("/get-all-reviews/{venueId}")
     public ResponseEntity<ResponseObj> getAllReviewsByVenueId(@PathVariable Long venueId,
                                                               @RequestParam(required = false) Integer rating) {
-        if (rating == 0) {
+        if (rating == 0 || rating == null) {
             return reviewService.getAllReviewsByVenueId(venueId);
         } else {
             return reviewService.getAllReviewsByVenueIdAndRating(venueId, rating);
@@ -37,7 +37,7 @@ public class ReviewController {
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('HOST')")
     @GetMapping("/get-all-reviews-for-host")
     public ResponseEntity<ResponseObj> getAllReviewsForHost(@RequestParam(required = false) Integer rating) {
-        if (rating != null) {
+        if (rating == 0) {
             return reviewService.getAllReviewsForHostByRating(rating);
         } else {
             return reviewService.getAllReviewsForHost();

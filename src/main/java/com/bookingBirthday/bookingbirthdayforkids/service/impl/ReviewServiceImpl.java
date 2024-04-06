@@ -62,14 +62,14 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public ResponseEntity<ResponseObj> reply(Long bookingId, Long id, ReplyReviewRequest replyReviewRequest) {
+    public ResponseEntity<ResponseObj> reply(Long id, ReplyReviewRequest replyReviewRequest) {
         Long userId = AuthenUtil.getCurrentUserId();
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObj(HttpStatus.UNAUTHORIZED.toString(), "400", null));
         }
         Account account = accountRepository.findById(userId).get();
         Review review = reviewRepository.findById(id).get();
-        Optional<PartyBooking> partyBooking = partyBookingRepository.findById(bookingId);
+        Optional<PartyBooking> partyBooking = partyBookingRepository.findById(review.getPartyBooking().getId());
         if (partyBooking.isPresent()) {
             review.setReplyMessage(replyReviewRequest.getReplyMessage());
             reviewRepository.save(review);

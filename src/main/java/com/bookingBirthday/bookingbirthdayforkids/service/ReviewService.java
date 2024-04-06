@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 public interface ReviewService {
     public ResponseEntity<ResponseObj> create(Long bookingId, ReviewRequest reviewRequest);
 
-    public ResponseEntity<ResponseObj> reply(Long bookingId, Long id, ReplyReviewRequest replyReviewRequest);
+    public ResponseEntity<ResponseObj> reply(Long id, ReplyReviewRequest replyReviewRequest);
 
     ResponseEntity<ResponseObj> getAllReviewsByVenueIdAndRating(Long venueId, Integer rating);
 
