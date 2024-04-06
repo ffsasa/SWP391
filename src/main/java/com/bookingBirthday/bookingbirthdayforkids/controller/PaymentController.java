@@ -87,7 +87,7 @@ public class PaymentController {
             paymentRepository.save(payment);
             paymentService.paymentSuccess(bookingId);
 
-            response.sendRedirect("http://localhost:3000/payment/success/"+bookingId);
+            response.sendRedirect("https://lovekids.vercel.app/payment/success/"+bookingId);
 
             return ResponseEntity.ok(true);
         } else{
@@ -102,7 +102,7 @@ public class PaymentController {
             payment.setPaymentMethod(paymentMethod);
             paymentRepository.save(payment);
             paymentService.paymentFail(bookingId);
-            response.sendRedirect("http://localhost:3000/payment/failed");
+            response.sendRedirect("https://lovekids.vercel.app/payment/failed/"+bookingId);
 
     }
      return ResponseEntity.ok(false);
