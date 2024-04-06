@@ -28,7 +28,7 @@ public class ReviewController {
     @GetMapping("/get-all-reviews/{venueId}")
     public ResponseEntity<ResponseObj> getAllReviewsByVenueId(@PathVariable Long venueId,
                                                               @RequestParam(required = false) Integer rating) {
-        if (rating == null) {
+        if (rating == 0) {
             return reviewService.getAllReviewsByVenueId(venueId);
         } else {
             return reviewService.getAllReviewsByVenueIdAndRating(venueId, rating);

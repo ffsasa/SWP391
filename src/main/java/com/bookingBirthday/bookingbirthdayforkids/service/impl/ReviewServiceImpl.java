@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -86,8 +87,8 @@ public class ReviewServiceImpl implements ReviewService {
         List<Review> reviewList = reviewRepository.findAllByVenueIdAndRating(venueId, rating);
 
         if (reviewList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "There are no reviews with the specified rating", null));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObj(HttpStatus.OK.toString(), "There are no reviews with the specified rating", new ArrayList<>()));
         }
         for (Review review : reviewList) {
             review.setPartyBookingId(review.getPartyBooking().getId());
@@ -102,8 +103,8 @@ public class ReviewServiceImpl implements ReviewService {
     public ResponseEntity<ResponseObj> getAllReviewsByVenueId(Long venueId) {
         List<Review> reviewList = reviewRepository.findAllByVenueId(venueId);
         if (reviewList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "There are no reviews yet", null));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObj(HttpStatus.OK.toString(), "There are no reviews yet", new ArrayList<>()));
         }
         for (Review review : reviewList) {
             review.setPartyBookingId(review.getPartyBooking().getId());
@@ -128,8 +129,8 @@ public class ReviewServiceImpl implements ReviewService {
         }
         List<Review> reviewList = reviewRepository.findAllByVenueId(venue.getId());
         if (reviewList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "There are no reviews yet", null));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObj(HttpStatus.OK.toString(), "There are no reviews yet", new ArrayList<>()));
         }
         for (Review review : reviewList) {
             review.setPartyBookingId(review.getPartyBooking().getId());
@@ -157,8 +158,8 @@ public class ReviewServiceImpl implements ReviewService {
 
         List<Review> reviewList = reviewRepository.findAllByVenueIdAndRating(venue.getId(), rating);
         if (reviewList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "There are no reviews with the specified rating", null));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObj(HttpStatus.OK.toString(), "There are no reviews with the specified rating", new ArrayList<>()));
         }
         for (Review review : reviewList) {
             review.setPartyBookingId(review.getPartyBooking().getId());
