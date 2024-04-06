@@ -950,8 +950,6 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                                 packageInBooking.setUpdateAt(LocalDateTime.now());
                                 packageInBookingRepository.save(packageInBooking);
                             }
-                        } else {
-                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package deco does not exist", null));
                         }
                     }
 
@@ -967,11 +965,11 @@ public class PartyBookingServiceImpl implements PartyBookingService {
                                 packageInBooking.setUpdateAt(LocalDateTime.now());
                                 packageInBookingRepository.save(packageInBooking);
                             }
-                        } else {
-                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObj(HttpStatus.BAD_REQUEST.toString(), "Package food does not exist", null));
                         }
                     }
                 }
+
+
 
                 float pricing = 0;
                 for (UpgradeService upgradeService : existPartyBooking.get().getUpgradeServices()) {
