@@ -448,9 +448,11 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         if (partyBookingOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Party booking not found", null));
         }
+        Venue venue =partyBookingOptional.get().getSlotInRoom().getRoom().getVenue();
+        Long venueId = venue.getId();
         PartyBooking partyBooking = partyBookingOptional.get();
         List<PackageInBooking> selectedPackages = partyBooking.getPackageInBookings();
-        List<Package> allPackages = packageRepository.findAllByIsActiveIsTrue();
+        List<Package> allPackages = packageRepository.findAllByVenueIdAndIsActiveIsTrue(venueId);
         List<Package> availablePackages = new ArrayList<>();
         for (Package aPackage : allPackages) {
             boolean isSelected = false;
@@ -481,9 +483,11 @@ public class PackageServiceImpl implements com.bookingBirthday.bookingbirthdayfo
         if (partyBookingOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObj(HttpStatus.NOT_FOUND.toString(), "Party booking not found", null));
         }
+        Venue venue =partyBookingOptional.get().getSlotInRoom().getRoom().getVenue();
+        Long venueId = venue.getId();
         PartyBooking partyBooking = partyBookingOptional.get();
         List<PackageInBooking> selectedPackages = partyBooking.getPackageInBookings();
-        List<Package> allPackages = packageRepository.findAllByPackageTypeAndIsActiveIsTrue(typeEnum);
+        List<Package> allPackages = packageRepository.findAllByVenueIdAndPackageTypeAndIsActiveIsTrue(venueId,typeEnum);
         List<Package> availablePackages = new ArrayList<>();
         for (Package aPackage : allPackages) {
             boolean isSelected = false;
